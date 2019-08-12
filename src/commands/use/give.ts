@@ -43,6 +43,10 @@ export const giveCakeToMember = async (args: Arguments): Promise<string> => {
     return `${EMOJI_RECORD_NOT_FOUND} Uh oh, I couldn't find them.`;
   }
 
+  if (discordMember.id === args.message.member.id) {
+    return `${EMOJI_DONT_DO_THAT} Don't be greedy!`;
+  }
+
   if (await isShamed(server.discordId, discordMember.id)) {
     return `${EMOJI_DONT_DO_THAT} They have been **shamed** and can not get ${server.config.cakeNamePlural}!`;
   }
