@@ -7,6 +7,7 @@ import { logEvent } from '../../../utils/logger';
 type Config =
   | 'command-prefix'
   | 'log-channel'
+  | 'redeem-channel'
   | 'manager-roles'
   | 'blesser-roles'
   | 'dropper-roles'
@@ -51,6 +52,11 @@ export const setConfig = async (args: Arguments): Promise<string> => {
   if (args.config === 'log-channel') {
     const channelId = args.value.replace(/^<#/, '').replace(/>$/, '');
     server.config.logChannelId = channelId;
+  }
+
+  if (args.config === 'redeem-channel') {
+    const channelId = args.value.replace(/^<#/, '').replace(/>$/, '');
+    server.config.redeemChannelId = channelId;
   }
 
   if (args.config === 'manager-roles') {

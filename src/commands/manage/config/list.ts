@@ -31,6 +31,14 @@ export const getConfigList = async (args: Arguments): Promise<string[] | string>
   systemTable.push(['command-prefix', `It's the command prefix!`, server.config.commandPrefix, '-']);
   systemTable.push(['log-channel', 'Where to log events', server.config.logChannelId, '']);
 
+  const redeemChannel = args.message.guild.channels.get(server.config.redeemChannelId);
+  systemTable.push([
+    'redeem-channel',
+    'Where to log prize redeem requests',
+    redeemChannel ? `#${redeemChannel.name}` : server.config.redeemChannelId,
+    '',
+  ]);
+
   systemTable.push([
     'manager-roles',
     'Roles allowed to manage Cake Boss (comma-separated)',

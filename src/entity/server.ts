@@ -13,6 +13,7 @@ import Config from './config';
 import Member from './member';
 import Drop from './drop';
 import ShamedMember from './shamed-member';
+import Prize from './prize';
 
 @Entity()
 export default class Server extends BaseEntity {
@@ -43,6 +44,9 @@ export default class Server extends BaseEntity {
 
   @OneToMany(() => ShamedMember, shamedMember => shamedMember.server)
   shamed!: ShamedMember[];
+
+  @OneToMany(() => Prize, prize => prize.server)
+  prizes!: Prize[];
 
   @OneToMany(() => Drop, drop => drop.server)
   drops!: Drop[];
