@@ -53,46 +53,148 @@ export const setConfig = async (args: Arguments): Promise<string> => {
     }
 
     server.config.commandPrefix = prefix;
+
+    await server.config.save();
+    await logEvent(args.client, args.message, `${EMOJI_CONFIG_EVENT} \`${args.config}\` set to \`${args.value}\`.`);
+
+    return `${EMOJI_JOB_WELL_DONE} Done!`;
   }
 
   if (args.config === 'log-channel') {
     const channelId = args.value.replace(/^<#/, '').replace(/>$/, '');
+    const channel = args.message.guild.channels.get(channelId);
+
+    if (!channel) {
+      return `${EMOJI_VALIDATION_ERROR} Not a valid channel!`;
+    }
+
     server.config.logChannelId = channelId;
+
+    await server.config.save();
+    await logEvent(args.client, args.message, `${EMOJI_CONFIG_EVENT} \`${args.config}\` set to \`#${channel.name}\`.`);
+
+    return `${EMOJI_JOB_WELL_DONE} Done!`;
   }
 
   if (args.config === 'redeem-channel') {
     const channelId = args.value.replace(/^<#/, '').replace(/>$/, '');
+    const channel = args.message.guild.channels.get(channelId);
+
+    if (!channel) {
+      return `${EMOJI_VALIDATION_ERROR} Not a valid channel!`;
+    }
+
     server.config.redeemChannelId = channelId;
+
+    await server.config.save();
+    await logEvent(args.client, args.message, `${EMOJI_CONFIG_EVENT} \`${args.config}\` set to \`#${channel.name}\`.`);
+
+    return `${EMOJI_JOB_WELL_DONE} Done!`;
   }
 
   if (args.config === 'manager-roles') {
-    server.config.managerRoles = args.value.split(',').filter(roleName => {
+    const foundRoles = args.value.split(',').filter(roleName => {
       return args.message.guild.roles.find(role => role.name === roleName.trim());
     });
+
+    const notFoundRoles = args.value.split(',').filter(roleName => {
+      return !args.message.guild.roles.find(role => role.name === roleName.trim());
+    });
+
+    server.config.managerRoles = foundRoles;
+
+    await server.config.save();
+    await logEvent(
+      args.client,
+      args.message,
+      `${EMOJI_CONFIG_EVENT} \`${args.config}\` set to \`${server.config.managerRoles.join(', ')}\`.`,
+    );
+
+    if (notFoundRoles.length > 0) {
+      return `${EMOJI_JOB_WELL_DONE} Done! The following roles were skipped for not existing: ${notFoundRoles.join(
+        ', ',
+      )}`;
+    }
+    return `${EMOJI_JOB_WELL_DONE} Done!`;
   }
 
   if (args.config === 'blesser-roles') {
-    server.config.blesserRoles = args.value.split(',').filter(roleName => {
+    const foundRoles = args.value.split(',').filter(roleName => {
       return args.message.guild.roles.find(role => role.name === roleName.trim());
     });
+
+    const notFoundRoles = args.value.split(',').filter(roleName => {
+      return !args.message.guild.roles.find(role => role.name === roleName.trim());
+    });
+
+    server.config.blesserRoles = foundRoles;
+
+    await server.config.save();
+    await logEvent(
+      args.client,
+      args.message,
+      `${EMOJI_CONFIG_EVENT} \`${args.config}\` set to \`${server.config.blesserRoles.join(', ')}\`.`,
+    );
+
+    if (notFoundRoles.length > 0) {
+      return `${EMOJI_JOB_WELL_DONE} Done! The following roles were skipped for not existing: ${notFoundRoles.join(
+        ', ',
+      )}`;
+    }
+    return `${EMOJI_JOB_WELL_DONE} Done!`;
   }
 
   if (args.config === 'dropper-roles') {
-    server.config.dropperRoles = args.value.split(',').filter(roleName => {
+    const foundRoles = args.value.split(',').filter(roleName => {
       return args.message.guild.roles.find(role => role.name === roleName.trim());
     });
+
+    const notFoundRoles = args.value.split(',').filter(roleName => {
+      return !args.message.guild.roles.find(role => role.name === roleName.trim());
+    });
+
+    server.config.dropperRoles = foundRoles;
+
+    await server.config.save();
+    await logEvent(
+      args.client,
+      args.message,
+      `${EMOJI_CONFIG_EVENT} \`${args.config}\` set to \`${server.config.dropperRoles.join(', ')}\`.`,
+    );
+
+    if (notFoundRoles.length > 0) {
+      return `${EMOJI_JOB_WELL_DONE} Done! The following roles were skipped for not existing: ${notFoundRoles.join(
+        ', ',
+      )}`;
+    }
+    return `${EMOJI_JOB_WELL_DONE} Done!`;
   }
 
   if (args.config === 'cake-emoji') {
     server.config.cakeEmoji = args.value;
+
+    await server.config.save();
+    await logEvent(args.client, args.message, `${EMOJI_CONFIG_EVENT} \`${args.config}\` set to \`${args.value}\`.`);
+
+    return `${EMOJI_JOB_WELL_DONE} Done!`;
   }
 
   if (args.config === 'cake-name-singular') {
     server.config.cakeNameSingular = args.value;
+
+    await server.config.save();
+    await logEvent(args.client, args.message, `${EMOJI_CONFIG_EVENT} \`${args.config}\` set to \`${args.value}\`.`);
+
+    return `${EMOJI_JOB_WELL_DONE} Done!`;
   }
 
   if (args.config === 'cake-name-plural') {
     server.config.cakeNamePlural = args.value;
+
+    await server.config.save();
+    await logEvent(args.client, args.message, `${EMOJI_CONFIG_EVENT} \`${args.config}\` set to \`${args.value}\`.`);
+
+    return `${EMOJI_JOB_WELL_DONE} Done!`;
   }
 
   if (args.config === 'requirement-to-give') {
@@ -103,6 +205,11 @@ export const setConfig = async (args: Arguments): Promise<string> => {
     }
 
     server.config.requirementToGive = minimum;
+
+    await server.config.save();
+    await logEvent(args.client, args.message, `${EMOJI_CONFIG_EVENT} \`${args.config}\` set to \`${args.value}\`.`);
+
+    return `${EMOJI_JOB_WELL_DONE} Done!`;
   }
 
   if (args.config === 'give-limit') {
@@ -113,6 +220,11 @@ export const setConfig = async (args: Arguments): Promise<string> => {
     }
 
     server.config.giveLimit = limit;
+
+    await server.config.save();
+    await logEvent(args.client, args.message, `${EMOJI_CONFIG_EVENT} \`${args.config}\` set to \`${args.value}\`.`);
+
+    return `${EMOJI_JOB_WELL_DONE} Done!`;
   }
 
   if (args.config === 'give-limit-hour-reset') {
@@ -123,12 +235,14 @@ export const setConfig = async (args: Arguments): Promise<string> => {
     }
 
     server.config.giveLimitHourReset = reset;
+
+    await server.config.save();
+    await logEvent(args.client, args.message, `${EMOJI_CONFIG_EVENT} \`${args.config}\` set to \`${args.value}\`.`);
+
+    return `${EMOJI_JOB_WELL_DONE} Done!`;
   }
 
-  await server.config.save();
-  await logEvent(args.client, args.message, `${EMOJI_CONFIG_EVENT} \`${args.config}\` set to \`${args.value}\`.`);
-
-  return `${EMOJI_JOB_WELL_DONE} Done!`;
+  return `${EMOJI_VALIDATION_ERROR} Not a valid config!`;
 };
 
 export const command = 'set <config> <value>';
