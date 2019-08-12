@@ -5,6 +5,7 @@ import { canManage } from '../../../utils/permissions';
 import { logEvent } from '../../../utils/logger';
 
 type Config =
+  | 'command-prefix'
   | 'log-channel'
   | 'manager-roles'
   | 'blesser-roles'
@@ -33,6 +34,16 @@ export const setConfig = async (args: Arguments): Promise<string> => {
   const server = await Server.findOne({ where: { discordId: args.message.guild.id }, relations: ['config'] });
 
   if (server) {
+    if (args.config === 'command-prefix') {
+      const prefix = args.value.trim();
+
+      if (prefix === '') {
+        return '😨 Invalid prefix, sorry!';
+      }
+
+      server.config.commandPrefix = prefix;
+    }
+
     if (args.config === 'log-channel') {
       const channelId = args.value.replace(/^<#/, '').replace(/>$/, '');
       server.config.logChannelId = channelId;
@@ -65,25 +76,31 @@ export const setConfig = async (args: Arguments): Promise<string> => {
     if (args.config === 'requirement-to-give') {
       const minimum = parseInt(args.value, 10);
 
-      if (Number.isInteger(minimum)) {
-        server.config.requirementToGive = minimum;
+      if (!Number.isInteger(minimum) || minimum < 0) {
+        return '😨 Invalid requirement, sorry! Must be a positive number!';
       }
+
+      server.config.requirementToGive = minimum;
     }
 
     if (args.config === 'give-limit') {
       const limit = parseInt(args.value, 10);
 
-      if (Number.isInteger(limit) && limit >= 1) {
-        server.config.giveLimit = limit;
+      if (!Number.isInteger(limit) || limit < 1) {
+        return '😨 Invalid limit, sorry! Must be 1 or more.';
       }
+
+      server.config.giveLimit = limit;
     }
 
     if (args.config === 'give-limit-hour-reset') {
       const reset = parseInt(args.value, 10);
 
-      if (Number.isInteger(reset) && reset >= 1) {
-        server.config.giveLimitHourReset = reset;
+      if (!Number.isInteger(reset) || reset < 1) {
+        return '😨 Invalid hour, sorry! Must be 1 or more.';
       }
+
+      server.config.giveLimitHourReset = reset;
     }
 
     await server.config.save();

@@ -14,11 +14,9 @@ import Server from './entity/server';
 const NODE_ENV: string = process.env.NODE_ENV as string;
 dotenv.config({ path: `./.env.${NODE_ENV}` });
 
-const COMMAND_PREFIX: string = process.env.COMMAND_PREFIX as string;
-
 const client = new Discord.Client();
 const parser = yargs
-  .scriptName(COMMAND_PREFIX)
+  .scriptName('[command-prefix]')
   .commandDir('commands/manage', { exclude: /\.test\./gm, extensions: [NODE_ENV === 'production' ? 'js' : 'ts'] })
   .commandDir('commands/use', { exclude: /\.test\./gm, extensions: [NODE_ENV === 'production' ? 'js' : 'ts'] })
   .strict()
@@ -60,13 +58,21 @@ client.on('guildDelete', async (guild: Guild) => {
   }
 });
 
-client.on('message', (message: Message) => {
+client.on('message', async (message: Message) => {
   const cleanContent = message.content.trim().toLowerCase();
+  const server = await Server.findOne({ where: { discordId: message.guild.id }, relations: ['config'] });
 
-  if (message.author.id !== client.user.id && cleanContent.startsWith(`${COMMAND_PREFIX}`)) {
+  if (!server) {
+    handleError(new Error('Could not find server.'), message);
+    return;
+  }
+
+  const { commandPrefix } = server.config;
+
+  if (message.author.id !== client.user.id && cleanContent.startsWith(`${commandPrefix}`)) {
     try {
       parser.parse(
-        cleanContent.replace(`${COMMAND_PREFIX}`, ''),
+        cleanContent.replace(`${commandPrefix}`, ''),
         { client, message, needsFetch: false, promisedOutput: null },
         async (error, argv, output) => {
           if (error) {
@@ -80,7 +86,7 @@ client.on('message', (message: Message) => {
           }
 
           if (argv.help) {
-            const helpOutput = output.replace(/- /gm, '-');
+            const helpOutput = output.replace(/(\[command-prefix\] )/gm, commandPrefix);
             message.channel.send(`😅\n\n\`\`\`\n${helpOutput}\n\`\`\``);
           } else if (argv.promisedOutput) {
             const commandOutput: string = (await argv.promisedOutput) as string;

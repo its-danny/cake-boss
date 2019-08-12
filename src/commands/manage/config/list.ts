@@ -25,6 +25,7 @@ export const getConfigList = async (args: Arguments): Promise<string> => {
       style: { head: [], border: [] },
     });
 
+    table.push(['command-prefix', `It's the command prefix...`, server.config.commandPrefix, '-']);
     table.push(['log-channel', 'Where to log events', server.config.logChannelId, '']);
 
     table.push([
@@ -65,6 +66,8 @@ export const getConfigList = async (args: Arguments): Promise<string> => {
       'Use `-config set <config> <value>` to change config options.',
       `\n\`\`\`\n\n${table.toString()}\n\`\`\``,
     ];
+
+    console.log(response);
 
     return response.join('\n');
   }

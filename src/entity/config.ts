@@ -5,6 +5,9 @@ export default class Config extends BaseEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 
+  @Column({ nullable: false, default: '-' })
+  commandPrefix!: string;
+
   @Column({ nullable: false, default: '' })
   logChannelId!: string;
 
