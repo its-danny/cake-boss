@@ -26,7 +26,9 @@ export const getEarned = async (args: Arguments): Promise<string> => {
     return `You ain't got any!`;
   }
 
-  return `You've earned a total of ${member.earned} ${server.config.cakeEmoji}!`;
+  return `${server.config.cakeEmoji} You've earned a total of ${member.earned} ${
+    member.earned === 1 ? server.config.cakeNameSingular : server.config.cakeNamePlural
+  }!`;
 };
 
 export const command = 'earned';

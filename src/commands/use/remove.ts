@@ -4,6 +4,12 @@ import Server from '../../entity/server';
 import { canManage } from '../../utils/permissions';
 import Member from '../../entity/member';
 import { logEvent } from '../../utils/logger';
+import {
+  EMOJI_VALIDATION_ERROR,
+  EMOJI_INCORRECT_PERMISSIONS,
+  EMOJI_RECORD_NOT_FOUND,
+  EMOJI_JOB_WELL_DONE,
+} from '../../utils/emoji';
 
 interface Arguments {
   [x: string]: unknown;
@@ -17,7 +23,7 @@ interface Arguments {
 
 export const removeCakes = async (args: Arguments): Promise<string> => {
   if (!(await canManage(args.message))) {
-    return `😝 You ain't got permission to do that!`;
+    return `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`;
   }
 
   const server = await Server.findOne({
@@ -35,19 +41,19 @@ export const removeCakes = async (args: Arguments): Promise<string> => {
   const discordMember = args.message.guild.members.get(memberId);
 
   if (!discordMember) {
-    return `😢 Uh oh, I couldn't find them.`;
+    return `${EMOJI_RECORD_NOT_FOUND} Uh oh, I couldn't find them.`;
   }
 
   const member = await Member.findOne({ where: { discordId: discordMember.id } });
 
   if (!member) {
-    return `😢 Uh oh, I couldn't find them.`;
+    return `${EMOJI_RECORD_NOT_FOUND} Uh oh, I couldn't find them.`;
   }
 
   const amount = args.amount ? args.amount : 1;
 
   if (!Number.isInteger(amount) && amount <= 0) {
-    return '😨 Invalid amount, sorry!';
+    return `${EMOJI_VALIDATION_ERROR} Invalid amount, sorry!`;
   }
 
   if (member.balance > 0) {
@@ -64,7 +70,7 @@ export const removeCakes = async (args: Arguments): Promise<string> => {
     } from \`${discordMember.user.tag}\`.`,
   );
 
-  return '😁 Done!';
+  return `${EMOJI_JOB_WELL_DONE} Done!`;
 };
 
 export const command = 'remove <member> [amount]';

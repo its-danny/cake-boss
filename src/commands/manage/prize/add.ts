@@ -4,6 +4,12 @@ import { canManage } from '../../../utils/permissions';
 import Server from '../../../entity/server';
 import Prize from '../../../entity/prize';
 import { logEvent } from '../../../utils/logger';
+import {
+  EMOJI_VALIDATION_ERROR,
+  EMOJI_INCORRECT_PERMISSIONS,
+  EMOJI_PRIZE_EVENT,
+  EMOJI_JOB_WELL_DONE,
+} from '../../../utils/emoji';
 
 interface Arguments {
   [x: string]: unknown;
@@ -18,7 +24,7 @@ interface Arguments {
 
 export const addPrize = async (args: Arguments): Promise<string> => {
   if (!(await canManage(args.message))) {
-    return `😝 You ain't got permission to do that!`;
+    return `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`;
   }
 
   const server = await Server.findOne({ where: { discordId: args.message.guild.id }, relations: ['config'] });
@@ -28,19 +34,19 @@ export const addPrize = async (args: Arguments): Promise<string> => {
   }
 
   if (server.config.redeemChannelId === '') {
-    return `😨 You need to set the \`redeem-channel\` config before using prizes`;
+    return `${EMOJI_VALIDATION_ERROR} You need to set the \`redeem-channel\` config before using prizes`;
   }
 
-  if (args.description.trim() === '') {
-    return '😨 Description required!';
+  if (args.description === '') {
+    return `${EMOJI_VALIDATION_ERROR} Description required!`;
   }
 
-  if (args.reactionEmoji.trim() === '') {
-    return '😨 Reaction emoji required!';
+  if (args.reactionEmoji === '') {
+    return `${EMOJI_VALIDATION_ERROR} Reaction emoji required!`;
   }
 
   if (args.price <= 0) {
-    return '😨 Price must be 1 or more!';
+    return `${EMOJI_VALIDATION_ERROR} Price must be 1 or more!`;
   }
 
   const prize = new Prize();
@@ -50,9 +56,13 @@ export const addPrize = async (args: Arguments): Promise<string> => {
   prize.price = args.price;
   await prize.save();
 
-  logEvent(args.client, args.message, `🎁 \`@${args.message.author.tag}\` added a new prize! \`${prize.description}\``);
+  logEvent(
+    args.client,
+    args.message,
+    `${EMOJI_PRIZE_EVENT} \`@${args.message.author.tag}\` added a new prize! \`${prize.description}\``,
+  );
 
-  return '😁 Done!';
+  return `${EMOJI_JOB_WELL_DONE} Done!`;
 };
 
 export const command = 'add <description> <reactionEmoji> <price>';

@@ -5,6 +5,7 @@ import Drop from '../../entity/drop';
 import { logEvent } from '../../utils/logger';
 import Member from '../../entity/member';
 import { isShamed } from '../../utils/permissions';
+import { EMOJI_DONT_DO_THAT, EMOJI_RECORD_NOT_FOUND, EMOJI_JOB_WELL_DONE } from '../../utils/emoji';
 
 interface Arguments {
   [x: string]: unknown;
@@ -25,13 +26,13 @@ export const takeCake = async (args: Arguments): Promise<string> => {
   }
 
   if (await isShamed(server.discordId, args.message.member.id)) {
-    return `😡 You have been **shamed** and can not get ${server.config.cakeNamePlural}!`;
+    return `${EMOJI_DONT_DO_THAT} You have been **shamed** and can not get ${server.config.cakeNamePlural}!`;
   }
 
   const drop = await Drop.findOne({ where: { server, channelDiscordId: args.message.channel.id } });
 
   if (!drop) {
-    return `😢 There are no drops here!`;
+    return `${EMOJI_RECORD_NOT_FOUND} There are no drops here!`;
   }
 
   drop.amount -= 1;
@@ -58,7 +59,7 @@ export const takeCake = async (args: Arguments): Promise<string> => {
     `${server.config.cakeEmoji} \`@${args.message.author.tag}\` took a ${server.config.cakeNameSingular} from \`#${discordChannel.name}\`!`,
   );
 
-  return `😁 You got it, <@${args.message.member.id}>!`;
+  return `${EMOJI_JOB_WELL_DONE} ${server.config.cakeEmoji} You got it, <@${args.message.member.id}>!`;
 };
 
 export const command = 'take';

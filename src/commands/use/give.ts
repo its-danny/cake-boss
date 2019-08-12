@@ -4,6 +4,7 @@ import Server from '../../entity/server';
 import { canGive, isShamed } from '../../utils/permissions';
 import Member from '../../entity/member';
 import { logEvent } from '../../utils/logger';
+import { EMOJI_DONT_DO_THAT, EMOJI_INCORRECT_PERMISSIONS, EMOJI_RECORD_NOT_FOUND } from '../../utils/emoji';
 
 interface Arguments {
   [x: string]: unknown;
@@ -17,7 +18,7 @@ interface Arguments {
 
 export const giveCakeToMember = async (args: Arguments): Promise<string> => {
   if (!(await canGive(args.message))) {
-    return `😝 You can't do that yet!`;
+    return `${EMOJI_INCORRECT_PERMISSIONS} You can't do that yet!`;
   }
 
   const server = await Server.findOne({
@@ -30,7 +31,7 @@ export const giveCakeToMember = async (args: Arguments): Promise<string> => {
   }
 
   if (await isShamed(args.message.guild.id, args.message.member.id)) {
-    return `😡 You have been **shamed** and can not give ${server.config.cakeNamePlural}!`;
+    return `${EMOJI_DONT_DO_THAT} You have been **shamed** and can not give ${server.config.cakeNamePlural}!`;
   }
 
   await args.message.guild.fetchMembers();
@@ -39,18 +40,18 @@ export const giveCakeToMember = async (args: Arguments): Promise<string> => {
   const discordMember = args.message.guild.members.get(memberId);
 
   if (!discordMember) {
-    return `😢 Uh oh, I couldn't find them.`;
+    return `${EMOJI_RECORD_NOT_FOUND} Uh oh, I couldn't find them.`;
   }
 
   if (await isShamed(server.discordId, discordMember.id)) {
-    return `😡 They have been **shamed** and can not get ${server.config.cakeNamePlural}!`;
+    return `${EMOJI_DONT_DO_THAT} They have been **shamed** and can not get ${server.config.cakeNamePlural}!`;
   }
 
   const receivingMember = await Member.findOrCreate(args.message.guild.id, discordMember.user.id, discordMember.id);
   const givingMember = await Member.findOne({ where: { discordId: args.message.member.id } });
 
   if (!givingMember) {
-    return `😢 Uh oh, I couldn't find you.`;
+    return `${EMOJI_RECORD_NOT_FOUND} Uh oh, I couldn't find you.`;
   }
 
   let amount = args.amount ? args.amount : 1;
@@ -81,9 +82,9 @@ export const giveCakeToMember = async (args: Arguments): Promise<string> => {
     }!`,
   );
 
-  return `<@${args.message.member.id}> gave <@${receivingMember.discordId}> ${amount} ${
+  return `${server.config.cakeEmoji} <@${args.message.member.id}> gave <@${receivingMember.discordId}> ${amount} ${
     amount > 1 ? server.config.cakeNamePlural : server.config.cakeNameSingular
-  }! ${server.config.cakeEmoji}`;
+  }!`;
 };
 
 export const command = 'give <member> [amount]';

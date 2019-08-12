@@ -3,6 +3,12 @@ import { Client, Message } from 'discord.js';
 import Server from '../../../entity/server';
 import { canManage } from '../../../utils/permissions';
 import { logEvent } from '../../../utils/logger';
+import {
+  EMOJI_VALIDATION_ERROR,
+  EMOJI_INCORRECT_PERMISSIONS,
+  EMOJI_CONFIG_EVENT,
+  EMOJI_JOB_WELL_DONE,
+} from '../../../utils/emoji';
 
 type Config =
   | 'command-prefix'
@@ -30,7 +36,7 @@ interface Arguments {
 
 export const setConfig = async (args: Arguments): Promise<string> => {
   if (!(await canManage(args.message))) {
-    return `😝 You ain't got permission to do that!`;
+    return `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`;
   }
 
   const server = await Server.findOne({ where: { discordId: args.message.guild.id }, relations: ['config'] });
@@ -43,7 +49,7 @@ export const setConfig = async (args: Arguments): Promise<string> => {
     const prefix = args.value.trim();
 
     if (prefix === '') {
-      return '😨 Invalid prefix, sorry!';
+      return `${EMOJI_VALIDATION_ERROR} Invalid prefix, sorry!`;
     }
 
     server.config.commandPrefix = prefix;
@@ -93,7 +99,7 @@ export const setConfig = async (args: Arguments): Promise<string> => {
     const minimum = parseInt(args.value, 10);
 
     if (!Number.isInteger(minimum) || minimum < 0) {
-      return '😨 Invalid requirement, sorry! Must be a positive number!';
+      return `${EMOJI_VALIDATION_ERROR} Invalid requirement, sorry! Must be a positive number!`;
     }
 
     server.config.requirementToGive = minimum;
@@ -103,7 +109,7 @@ export const setConfig = async (args: Arguments): Promise<string> => {
     const limit = parseInt(args.value, 10);
 
     if (!Number.isInteger(limit) || limit < 1) {
-      return '😨 Invalid limit, sorry! Must be 1 or more.';
+      return `${EMOJI_VALIDATION_ERROR} Invalid limit, sorry! Must be 1 or more.`;
     }
 
     server.config.giveLimit = limit;
@@ -113,16 +119,16 @@ export const setConfig = async (args: Arguments): Promise<string> => {
     const reset = parseInt(args.value, 10);
 
     if (!Number.isInteger(reset) || reset < 1) {
-      return '😨 Invalid hour, sorry! Must be 1 or more.';
+      return `${EMOJI_VALIDATION_ERROR} Invalid hour, sorry! Must be 1 or more.`;
     }
 
     server.config.giveLimitHourReset = reset;
   }
 
   await server.config.save();
-  await logEvent(args.client, args.message, `⚙️ \`${args.config}\` set to \`${args.value}\`.`);
+  await logEvent(args.client, args.message, `${EMOJI_CONFIG_EVENT} \`${args.config}\` set to \`${args.value}\`.`);
 
-  return '😁 Done!';
+  return `${EMOJI_JOB_WELL_DONE} Done!`;
 };
 
 export const command = 'set <config> <value>';

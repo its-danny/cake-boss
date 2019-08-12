@@ -1,5 +1,6 @@
 import { Client, Message, TextChannel } from 'discord.js';
 import Server from '../entity/server';
+import { EMOJI_ERROR_EVENT } from './emoji';
 
 export const logEvent = async (client: Client, message: Message, string: string) => {
   const server = await Server.findOne({ where: { discordId: message.guild.id }, relations: ['config'] });
@@ -28,7 +29,7 @@ export const logError = async (client: Client, message: Message, error: Error) =
     const channel: TextChannel = client.channels.get(server.config.logChannelId) as TextChannel;
 
     if (channel) {
-      channel.send(`>>> 😨 ${error.name}: ${error.message}`);
+      channel.send(`>>> ${EMOJI_ERROR_EVENT} ${error.name}: ${error.message}`);
     }
   }
 };

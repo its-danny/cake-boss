@@ -1,4 +1,5 @@
 import { Entity, BaseEntity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { EMOJI_CAKE } from '../utils/emoji';
 
 @Entity()
 export default class Config extends BaseEntity {
@@ -20,7 +21,7 @@ export default class Config extends BaseEntity {
   @Column({ nullable: false, default: '' })
   redeemChannelId!: string;
 
-  @Column({ nullable: false, default: '🍰' })
+  @Column({ nullable: false, default: EMOJI_CAKE })
   cakeEmoji!: string;
 
   @Column({ nullable: false, default: 'cake' })

@@ -4,6 +4,12 @@ import { canDrop } from '../../utils/permissions';
 import Server from '../../entity/server';
 import Drop from '../../entity/drop';
 import { logEvent } from '../../utils/logger';
+import {
+  EMOJI_INCORRECT_PERMISSIONS,
+  EMOJI_RECORD_NOT_FOUND,
+  EMOJI_JOB_WELL_DONE,
+  EMOJI_WORKING_HARD,
+} from '../../utils/emoji';
 
 interface Arguments {
   [x: string]: unknown;
@@ -17,7 +23,7 @@ interface Arguments {
 
 export const dropCakes = async (args: Arguments): Promise<string> => {
   if (!(await canDrop(args.message))) {
-    return `😝 You ain't got permission to do that!`;
+    return `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`;
   }
 
   const server = await Server.findOne({
@@ -33,7 +39,7 @@ export const dropCakes = async (args: Arguments): Promise<string> => {
   const discordChannel = args.message.guild.channels.get(channelId) as TextChannel;
 
   if (!discordChannel) {
-    return `😢 Uh oh, I couldn't find that channel.`;
+    return `${EMOJI_RECORD_NOT_FOUND} Uh oh, I couldn't find that channel.`;
   }
 
   const amount = args.amount ? args.amount : 1;
@@ -55,12 +61,12 @@ export const dropCakes = async (args: Arguments): Promise<string> => {
   );
 
   discordChannel.send(
-    `😅 ${amount} ${
+    `${EMOJI_WORKING_HARD} ${server.config.cakeEmoji} ${amount} ${
       amount > 1 ? server.config.cakeNamePlural : server.config.cakeNameSingular
-    } just dropped! \`+take\` it! ${server.config.cakeEmoji}`,
+    } just dropped! \`${server.config.commandPrefix}take\` it!`,
   );
 
-  return '😁 Done!';
+  return `${EMOJI_JOB_WELL_DONE} Done!`;
 };
 
 export const command = 'drop <channel> [amount]';

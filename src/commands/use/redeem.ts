@@ -4,6 +4,7 @@ import { isShamed } from '../../utils/permissions';
 import Server from '../../entity/server';
 import { logEvent } from '../../utils/logger';
 import Member from '../../entity/member';
+import { EMOJI_DONT_DO_THAT, EMOJI_PRIZE_EVENT } from '../../utils/emoji';
 
 interface Arguments {
   [x: string]: unknown;
@@ -25,7 +26,7 @@ export const redeemCake = async (args: Arguments): Promise<string> => {
   }
 
   if (await isShamed(args.message.guild.id, args.message.member.id)) {
-    return `😡 You have been **shamed** and can not redeem ${server.config.cakeNamePlural}!`;
+    return `${EMOJI_DONT_DO_THAT} You have been **shamed** and can not redeem ${server.config.cakeNamePlural}!`;
   }
 
   const prizeList: string[] = [];
@@ -48,7 +49,7 @@ export const redeemCake = async (args: Arguments): Promise<string> => {
         logEvent(
           args.client,
           args.message,
-          `🎁 \`@${args.message.author.tag}\` redeemed a prize! \`${prize.description}\``,
+          `${EMOJI_PRIZE_EVENT} \`@${args.message.author.tag}\` redeemed a prize! \`${prize.description}\``,
         );
       };
     }
@@ -57,7 +58,7 @@ export const redeemCake = async (args: Arguments): Promise<string> => {
   });
 
   return [
-    `🎁 **React to redeem!** Message will be deleted after 10 seconds.`,
+    `${EMOJI_PRIZE_EVENT} **React to redeem!** Message will be deleted after 10 seconds.`,
     `\`--------------------------------------------------------\`\n`,
     `${prizeList.join('\n')}`,
   ].join('\n');

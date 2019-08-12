@@ -3,6 +3,7 @@ import { Client, Message } from 'discord.js';
 import Table from 'cli-table';
 import { canManage } from '../../../utils/permissions';
 import Server from '../../../entity/server';
+import { EMOJI_INCORRECT_PERMISSIONS, EMOJI_CAKE } from '../../../utils/emoji';
 
 interface Arguments {
   [x: string]: unknown;
@@ -14,7 +15,7 @@ interface Arguments {
 
 export const getConfigList = async (args: Arguments): Promise<string[] | string> => {
   if (!(await canManage(args.message))) {
-    return `😝 You ain't got permission to do that!`;
+    return `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`;
   }
 
   const server = await Server.findOne({ where: { discordId: args.message.guild.id }, relations: ['config'] });
@@ -65,7 +66,7 @@ export const getConfigList = async (args: Arguments): Promise<string[] | string>
     style: { head: [], border: [] },
   });
 
-  brandingTable.push(['cake-emoji', 'Emoji to use for cakes', server.config.cakeEmoji, '🍰']);
+  brandingTable.push(['cake-emoji', 'Emoji to use for cakes', server.config.cakeEmoji, EMOJI_CAKE]);
   brandingTable.push(['cake-name-singular', 'Name to use for cake (singular)', server.config.cakeNameSingular, 'cake']);
   brandingTable.push(['cake-name-plural', 'Name to use for cake (plural)', server.config.cakeNamePlural, 'cakes']);
 
@@ -90,7 +91,7 @@ export const getConfigList = async (args: Arguments): Promise<string[] | string>
   ]);
 
   return [
-    `\n\`\`\`\nSystem\n${systemTable.toString()}\n\`\`\``,
+    `${server.config.cakeEmoji} **Config**\n\n\`\`\`\nSystem\n${systemTable.toString()}\n\`\`\``,
     `\n\`\`\`\nBranding\n${brandingTable.toString()}\n\`\`\``,
     `\n\`\`\`\nUsage\n${usageTable.toString()}\n\`\`\``,
   ];

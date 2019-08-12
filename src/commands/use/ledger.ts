@@ -4,6 +4,7 @@ import { Client, Message } from 'discord.js';
 import moment from 'moment';
 import Server from '../../entity/server';
 import { canManage } from '../../utils/permissions';
+import { EMOJI_INCORRECT_PERMISSIONS } from '../../utils/emoji';
 
 interface Arguments {
   [x: string]: unknown;
@@ -15,7 +16,7 @@ interface Arguments {
 
 export const getLedger = async (args: Arguments): Promise<string> => {
   if (!(await canManage(args.message))) {
-    return `😝 You ain't got permission to do that!`;
+    return `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`;
   }
 
   const server = await Server.findOne({

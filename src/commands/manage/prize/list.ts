@@ -3,6 +3,7 @@ import { Client, Message } from 'discord.js';
 import Table from 'cli-table';
 import { canManage } from '../../../utils/permissions';
 import Server from '../../../entity/server';
+import { EMOJI_VALIDATION_ERROR, EMOJI_INCORRECT_PERMISSIONS } from '../../../utils/emoji';
 
 interface Arguments {
   [x: string]: unknown;
@@ -14,7 +15,7 @@ interface Arguments {
 
 export const getPrizeList = async (args: Arguments): Promise<string> => {
   if (!(await canManage(args.message))) {
-    return `😝 You ain't got permission to do that!`;
+    return `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`;
   }
 
   const server = await Server.findOne({
@@ -27,7 +28,7 @@ export const getPrizeList = async (args: Arguments): Promise<string> => {
   }
 
   if (server.config.redeemChannelId === '') {
-    return `😨 You need to set the \`redeem-channel\` config before using prizes`;
+    return `${EMOJI_VALIDATION_ERROR} You need to set the \`redeem-channel\` config before using prizes`;
   }
 
   const table = new Table({

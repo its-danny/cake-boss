@@ -4,6 +4,7 @@ import Server from '../../entity/server';
 import { canBless, isShamed } from '../../utils/permissions';
 import Member from '../../entity/member';
 import { logEvent } from '../../utils/logger';
+import { EMOJI_DONT_DO_THAT, EMOJI_INCORRECT_PERMISSIONS, EMOJI_RECORD_NOT_FOUND } from '../../utils/emoji';
 
 interface Arguments {
   [x: string]: unknown;
@@ -17,7 +18,7 @@ interface Arguments {
 
 export const blessMember = async (args: Arguments): Promise<string> => {
   if (!(await canBless(args.message))) {
-    return `😝 You ain't got permission to do that!`;
+    return `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`;
   }
 
   const server = await Server.findOne({
@@ -35,11 +36,11 @@ export const blessMember = async (args: Arguments): Promise<string> => {
   const discordMember = args.message.guild.members.get(memberId);
 
   if (!discordMember) {
-    return `😢 Uh oh, I couldn't find them.`;
+    return `${EMOJI_RECORD_NOT_FOUND} Uh oh, I couldn't find them.`;
   }
 
   if (await isShamed(server.discordId, discordMember.id)) {
-    return `😡 They have been **shamed** and can not get ${server.config.cakeNamePlural}!`;
+    return `${EMOJI_DONT_DO_THAT} They have been **shamed** and can not get ${server.config.cakeNamePlural}!`;
   }
 
   const member = await Member.findOrCreate(args.message.guild.id, discordMember.user.id, discordMember.id);
@@ -58,9 +59,9 @@ export const blessMember = async (args: Arguments): Promise<string> => {
     }!`,
   );
 
-  return `<@${args.message.member.id}> blessed <@${member.discordId}> with ${amount} ${
+  return `${server.config.cakeEmoji} <@${args.message.member.id}> blessed <@${member.discordId}> with ${amount} ${
     amount > 1 ? server.config.cakeNamePlural : server.config.cakeNameSingular
-  }! ${server.config.cakeEmoji}`;
+  }!`;
 };
 
 export const command = 'bless <member> [amount]';

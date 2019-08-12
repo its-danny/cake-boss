@@ -4,6 +4,7 @@ import Table from 'cli-table';
 import moment from 'moment';
 import { canManage } from '../../../utils/permissions';
 import Server from '../../../entity/server';
+import { EMOJI_INCORRECT_PERMISSIONS, EMOJI_RECORD_NOT_FOUND } from '../../../utils/emoji';
 
 interface Arguments {
   [x: string]: unknown;
@@ -15,7 +16,7 @@ interface Arguments {
 
 export const getShamedList = async (args: Arguments): Promise<string> => {
   if (!(await canManage(args.message))) {
-    return `😝 You ain't got permission to do that!`;
+    return `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`;
   }
 
   const server = await Server.findOne({
@@ -38,7 +39,7 @@ export const getShamedList = async (args: Arguments): Promise<string> => {
     const discordMember = args.message.guild.members.get(shamed.member.discordId);
 
     if (!discordMember) {
-      return `😢 Uh oh, had trouble finding a user.`;
+      return `${EMOJI_RECORD_NOT_FOUND} Uh oh, had trouble finding a user.`;
     }
 
     table.push([discordMember.user.tag, moment(shamed.createdAt).format('MMMM Do YYYY')]);

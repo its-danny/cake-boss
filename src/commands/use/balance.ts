@@ -26,7 +26,9 @@ export const getBalance = async (args: Arguments): Promise<string> => {
     return `You ain't got any!`;
   }
 
-  return `Your current balance is ${member.balance} ${server.config.cakeEmoji}!`;
+  return `${server.config.cakeEmoji} Your current balance is ${member.balance} ${
+    member.balance === 1 ? server.config.cakeNameSingular : server.config.cakeNamePlural
+  }!`;
 };
 
 export const command = 'balance';

@@ -10,6 +10,7 @@ import schedule from 'node-schedule';
 import { logError } from './utils/logger';
 import { setupServer } from './utils/server-status';
 import Server from './entity/server';
+import { EMOJI_JOB_WELL_DONE, EMOJI_WORKING_HARD, EMOJI_THINKING, EMOJI_CAKE } from './utils/emoji';
 
 const NODE_ENV: string = process.env.NODE_ENV as string;
 dotenv.config({ path: `./.env.${NODE_ENV}` });
@@ -35,9 +36,9 @@ const messagesToWatch: WatchedMessage[] = [];
 
 client.on('ready', () => {
   client.user.setUsername('CAKE BOSS!');
-  client.user.setActivity('in the kitchen 🍰');
+  client.user.setActivity(`in the kitchen ${EMOJI_CAKE}`);
 
-  console.log('🍰');
+  console.log(EMOJI_CAKE);
 });
 
 const handleError = async (error: Error, message: Message) => {
@@ -69,7 +70,7 @@ client.on('messageReactionAdd', (reaction, user) => {
   messagesToWatch.forEach(async (watching, index) => {
     if (user.id === watching.userId && Object.hasOwnProperty.call(watching.reactions, reaction.emoji.toString())) {
       watching.reactions[reaction.emoji.toString()]();
-      watching.message.edit('😁 Prize redeemed!');
+      watching.message.edit(`${EMOJI_JOB_WELL_DONE} Prize redeemed!`);
       messagesToWatch.splice(index, 1);
     }
   });
@@ -109,7 +110,7 @@ client.on('message', async (message: Message) => {
           let sentMessage: Message | null = null;
 
           if (argv.needsFetch) {
-            sentMessage = (await message.channel.send('🤔')) as Message;
+            sentMessage = (await message.channel.send(EMOJI_THINKING)) as Message;
           }
 
           if (argv.help) {
@@ -117,7 +118,7 @@ client.on('message', async (message: Message) => {
               .replace(/(\[command-prefix\] )/gm, commandPrefix)
               .replace(/cakes/gm, cakeNamePlural);
 
-            message.channel.send(`😅\n\n\`\`\`\n${helpOutput}\n\`\`\``);
+            message.channel.send(`${EMOJI_WORKING_HARD}\n\n\`\`\`\n${helpOutput}\n\`\`\``);
           }
 
           if (argv.promisedOutput) {

@@ -4,6 +4,7 @@ import { canManage } from '../../../utils/permissions';
 import Server from '../../../entity/server';
 import Member from '../../../entity/member';
 import ShamedMember from '../../../entity/shamed-member';
+import { EMOJI_INCORRECT_PERMISSIONS, EMOJI_RECORD_NOT_FOUND, EMOJI_JOB_WELL_DONE } from '../../../utils/emoji';
 
 interface Arguments {
   [x: string]: unknown;
@@ -16,7 +17,7 @@ interface Arguments {
 
 export const shameMember = async (args: Arguments): Promise<string> => {
   if (!(await canManage(args.message))) {
-    return `😝 You ain't got permission to do that!`;
+    return `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`;
   }
 
   const server = await Server.findOne({ where: { discordId: args.message.guild.id }, relations: ['shamed'] });
@@ -31,7 +32,7 @@ export const shameMember = async (args: Arguments): Promise<string> => {
   const discordMember = args.message.guild.members.get(memberId);
 
   if (!discordMember) {
-    return `😢 Uh oh, I couldn't find them.`;
+    return `${EMOJI_RECORD_NOT_FOUND} Uh oh, I couldn't find them.`;
   }
 
   const member = await Member.findOrCreate(args.message.guild.id, discordMember.user.id, discordMember.id);
@@ -41,7 +42,7 @@ export const shameMember = async (args: Arguments): Promise<string> => {
   shamedMember.server = server;
   await shamedMember.save();
 
-  return '😁 Done!';
+  return `${EMOJI_JOB_WELL_DONE} Done!`;
 };
 
 export const command = 'add <member>';
