@@ -25,38 +25,38 @@ export const blessMember = async (args: Arguments): Promise<string> => {
     relations: ['config', 'members'],
   });
 
-  if (server) {
-    await args.message.guild.fetchMembers();
-
-    const memberId = args.member.replace(/^<@!?/, '').replace(/>$/, '');
-    const discordMember = args.message.guild.members.get(memberId);
-
-    if (!discordMember) {
-      return `😢 Uh oh, I couldn't find them.`;
-    }
-
-    const member = await Member.findOrCreate(args.message.guild.id, discordMember.user.id, discordMember.id);
-    const amount = args.amount ? args.amount : 1;
-
-    member.earned += amount;
-    member.balance += amount;
-
-    await member.save();
-
-    logEvent(
-      args.client,
-      args.message,
-      `${server.config.cakeEmoji} \`${args.message.author.tag}\` blessed \`${discordMember.user.tag}\` with ${amount} ${
-        amount > 1 ? server.config.cakeNamePlural : server.config.cakeNameSingular
-      }!`,
-    );
-
-    return `<@${args.message.member.id}> blessed <@${member.discordId}> with ${amount} ${
-      amount > 1 ? server.config.cakeNamePlural : server.config.cakeNameSingular
-    }! ${server.config.cakeEmoji}`;
+  if (!server) {
+    throw new Error('Could not find server.');
   }
 
-  throw new Error('Could not find server.');
+  await args.message.guild.fetchMembers();
+
+  const memberId = args.member.replace(/^<@!?/, '').replace(/>$/, '');
+  const discordMember = args.message.guild.members.get(memberId);
+
+  if (!discordMember) {
+    return `😢 Uh oh, I couldn't find them.`;
+  }
+
+  const member = await Member.findOrCreate(args.message.guild.id, discordMember.user.id, discordMember.id);
+  const amount = args.amount ? args.amount : 1;
+
+  member.earned += amount;
+  member.balance += amount;
+
+  await member.save();
+
+  logEvent(
+    args.client,
+    args.message,
+    `${server.config.cakeEmoji} \`${args.message.author.tag}\` blessed \`${discordMember.user.tag}\` with ${amount} ${
+      amount > 1 ? server.config.cakeNamePlural : server.config.cakeNameSingular
+    }!`,
+  );
+
+  return `<@${args.message.member.id}> blessed <@${member.discordId}> with ${amount} ${
+    amount > 1 ? server.config.cakeNamePlural : server.config.cakeNameSingular
+  }! ${server.config.cakeEmoji}`;
 };
 
 export const command = 'bless <member> [amount]';

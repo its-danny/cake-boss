@@ -25,57 +25,57 @@ export const giveCakeToMember = async (args: Arguments): Promise<string> => {
     relations: ['config', 'members'],
   });
 
-  if (server) {
-    await args.message.guild.fetchMembers();
-
-    const memberId = args.member.replace(/^<@!?/, '').replace(/>$/, '');
-    const discordMember = args.message.guild.members.get(memberId);
-
-    if (!discordMember) {
-      return `😢 Uh oh, I couldn't find them.`;
-    }
-
-    const receivingMember = await Member.findOrCreate(args.message.guild.id, discordMember.user.id, discordMember.id);
-    const givingMember = await Member.findOne({ where: { discordId: args.message.member.id } });
-
-    if (!givingMember) {
-      return `😢 Uh oh, I couldn't find you.`;
-    }
-
-    let amount = args.amount ? args.amount : 1;
-
-    if (amount > server.config.giveLimit) {
-      amount = server.config.giveLimit;
-    }
-
-    if (amount > server.config.giveLimit - givingMember.givenSinceReset) {
-      amount -= server.config.giveLimit - givingMember.givenSinceReset;
-    }
-
-    receivingMember.earned += amount;
-    receivingMember.balance += amount;
-
-    await receivingMember.save();
-
-    givingMember.given += amount;
-    givingMember.givenSinceReset += amount;
-
-    await givingMember.save();
-
-    logEvent(
-      args.client,
-      args.message,
-      `${server.config.cakeEmoji}  \`${args.message.author.tag}\` gave \`${discordMember.user.tag}\` ${amount} ${
-        amount > 1 ? server.config.cakeNamePlural : server.config.cakeNameSingular
-      }!`,
-    );
-
-    return `<@${args.message.member.id}> gave <@${receivingMember.discordId}> ${amount} ${
-      amount > 1 ? server.config.cakeNamePlural : server.config.cakeNameSingular
-    }! ${server.config.cakeEmoji}`;
+  if (!server) {
+    throw new Error('Could not find server.');
   }
 
-  throw new Error('Could not find server.');
+  await args.message.guild.fetchMembers();
+
+  const memberId = args.member.replace(/^<@!?/, '').replace(/>$/, '');
+  const discordMember = args.message.guild.members.get(memberId);
+
+  if (!discordMember) {
+    return `😢 Uh oh, I couldn't find them.`;
+  }
+
+  const receivingMember = await Member.findOrCreate(args.message.guild.id, discordMember.user.id, discordMember.id);
+  const givingMember = await Member.findOne({ where: { discordId: args.message.member.id } });
+
+  if (!givingMember) {
+    return `😢 Uh oh, I couldn't find you.`;
+  }
+
+  let amount = args.amount ? args.amount : 1;
+
+  if (amount > server.config.giveLimit) {
+    amount = server.config.giveLimit;
+  }
+
+  if (amount > server.config.giveLimit - givingMember.givenSinceReset) {
+    amount -= server.config.giveLimit - givingMember.givenSinceReset;
+  }
+
+  receivingMember.earned += amount;
+  receivingMember.balance += amount;
+
+  await receivingMember.save();
+
+  givingMember.given += amount;
+  givingMember.givenSinceReset += amount;
+
+  await givingMember.save();
+
+  logEvent(
+    args.client,
+    args.message,
+    `${server.config.cakeEmoji}  \`${args.message.author.tag}\` gave \`${discordMember.user.tag}\` ${amount} ${
+      amount > 1 ? server.config.cakeNamePlural : server.config.cakeNameSingular
+    }!`,
+  );
+
+  return `<@${args.message.member.id}> gave <@${receivingMember.discordId}> ${amount} ${
+    amount > 1 ? server.config.cakeNamePlural : server.config.cakeNameSingular
+  }! ${server.config.cakeEmoji}`;
 };
 
 export const command = 'give <member> [amount]';

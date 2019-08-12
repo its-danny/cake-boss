@@ -17,28 +17,28 @@ export const getLeaderboard = async (args: Arguments): Promise<string> => {
     relations: ['config', 'members'],
   });
 
-  if (server) {
-    const table = new Table({
-      head: ['', 'Member', 'Earned'],
-      style: { head: [], border: [] },
-    });
-
-    await args.message.guild.fetchMembers();
-
-    const sorted = server.members
-      .concat()
-      .sort((a, b) => b.earned - a.earned)
-      .slice(0, 10);
-
-    sorted.forEach((member, index) => {
-      const discordMember = args.message.guild.members.get(member.discordId);
-      table.push([`#${index + 1}`, discordMember ? discordMember.displayName : member.discordId, member.earned]);
-    });
-
-    return `${server.config.cakeEmoji} **Leaders!** \n\n\`\`\`\n\n${table.toString()}\n\`\`\``;
+  if (!server) {
+    throw new Error('Could not find server.');
   }
 
-  throw new Error('Could not find server.');
+  const table = new Table({
+    head: ['', 'Member', 'Earned'],
+    style: { head: [], border: [] },
+  });
+
+  await args.message.guild.fetchMembers();
+
+  const sorted = server.members
+    .concat()
+    .sort((a, b) => b.earned - a.earned)
+    .slice(0, 10);
+
+  sorted.forEach((member, index) => {
+    const discordMember = args.message.guild.members.get(member.discordId);
+    table.push([`#${index + 1}`, discordMember ? discordMember.displayName : member.discordId, member.earned]);
+  });
+
+  return `${server.config.cakeEmoji} **Leaders!** \n\n\`\`\`\n\n${table.toString()}\n\`\`\``;
 };
 
 export const command = 'leaders';

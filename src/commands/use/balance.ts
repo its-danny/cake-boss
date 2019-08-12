@@ -16,17 +16,17 @@ export const getBalance = async (args: Arguments): Promise<string> => {
     relations: ['config', 'members'],
   });
 
-  if (server) {
-    const member = server.members.find(mem => mem.discordId === args.message.member.id);
-
-    if (!member) {
-      return `You ain't got any!`;
-    }
-
-    return `Your current balance is ${member.balance} ${server.config.cakeEmoji}!`;
+  if (!server) {
+    throw new Error('Could not find server.');
   }
 
-  throw new Error('Could not find server.');
+  const member = server.members.find(mem => mem.discordId === args.message.member.id);
+
+  if (!member) {
+    return `You ain't got any!`;
+  }
+
+  return `Your current balance is ${member.balance} ${server.config.cakeEmoji}!`;
 };
 
 export const command = 'balance';

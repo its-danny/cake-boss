@@ -16,17 +16,17 @@ export const getEarned = async (args: Arguments): Promise<string> => {
     relations: ['config', 'members'],
   });
 
-  if (server) {
-    const member = server.members.find(mem => mem.discordId === args.message.member.id);
-
-    if (!member) {
-      return `You ain't got any!`;
-    }
-
-    return `You've earned a total of ${member.earned} ${server.config.cakeEmoji}!`;
+  if (!server) {
+    throw new Error('Could not find server.');
   }
 
-  throw new Error('Could not find server.');
+  const member = server.members.find(mem => mem.discordId === args.message.member.id);
+
+  if (!member) {
+    return `You ain't got any!`;
+  }
+
+  return `You've earned a total of ${member.earned} ${server.config.cakeEmoji}!`;
 };
 
 export const command = 'earned';

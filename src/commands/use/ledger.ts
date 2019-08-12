@@ -22,23 +22,23 @@ export const getLedger = async (args: Arguments): Promise<string> => {
     relations: ['config', 'members'],
   });
 
-  if (server) {
-    const table = new Table({
-      head: ['Member', 'Balance', 'Earned'],
-      style: { head: [], border: [] },
-    });
-
-    await args.message.guild.fetchMembers();
-
-    server.members.forEach(member => {
-      const discordMember = args.message.guild.members.get(member.discordId);
-      table.push([discordMember ? discordMember.displayName : member.discordId, member.balance, member.earned]);
-    });
-
-    return `${server.config.cakeEmoji} **Ledger** \n\n\`\`\`\n\n${table.toString()}\n\`\`\``;
+  if (!server) {
+    throw new Error('Could not find server.');
   }
 
-  throw new Error('Could not find server.');
+  const table = new Table({
+    head: ['Member', 'Balance', 'Earned'],
+    style: { head: [], border: [] },
+  });
+
+  await args.message.guild.fetchMembers();
+
+  server.members.forEach(member => {
+    const discordMember = args.message.guild.members.get(member.discordId);
+    table.push([discordMember ? discordMember.displayName : member.discordId, member.balance, member.earned]);
+  });
+
+  return `${server.config.cakeEmoji} **Ledger** \n\n\`\`\`\n\n${table.toString()}\n\`\`\``;
 };
 
 export const command = 'ledger';
