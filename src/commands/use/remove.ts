@@ -68,7 +68,7 @@ export const removeCakes = async (args: Arguments): Promise<string> => {
 };
 
 export const command = 'remove <member> [amount]';
-export const describe = `Remove cakes from somone's balance (when redeeming for prizes)`;
+export const describe = `Remove cakes from somone's balance`;
 
 export const builder = (yargs: Argv) => yargs;
 

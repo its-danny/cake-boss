@@ -72,7 +72,7 @@ export const disappearCakes = async (args: Arguments): Promise<string> => {
 };
 
 export const command = 'disappear <member> [amount]';
-export const describe = `Erase some cakes from history (when they're being mean)`;
+export const describe = `Erase some cakes from history`;
 
 export const builder = (yargs: Argv) => yargs;
 
