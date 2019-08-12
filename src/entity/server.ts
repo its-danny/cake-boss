@@ -10,6 +10,9 @@ export default class Server extends BaseEntity {
   @Column({ nullable: false })
   discordId!: string;
 
+  @Column({ nullable: false, default: 0 })
+  timeSinceLastReset!: number;
+
   @Column({ nullable: false, default: true })
   active!: boolean;
 

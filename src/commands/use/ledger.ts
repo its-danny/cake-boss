@@ -14,7 +14,7 @@ interface Arguments {
 
 export const getLedger = async (args: Arguments): Promise<string> => {
   if (!(await canManage(args.message))) {
-    return `You ain't got permission to do that! 😝`;
+    return `😝 You ain't got permission to do that!`;
   }
 
   const server = await Server.findOne({

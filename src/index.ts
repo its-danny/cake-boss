@@ -6,6 +6,7 @@ import yargs from 'yargs';
 import { createConnection } from 'typeorm';
 import moment from 'moment';
 import fs from 'fs';
+import schedule from 'node-schedule';
 import { logError } from './utils/logger';
 import { setupServer } from './utils/server-status';
 import Server from './entity/server';
@@ -104,6 +105,25 @@ createConnection()
     client.login(DISCORD_TOKEN);
 
     fs.writeFileSync('./.uptime', moment().utc(), 'utf8');
+
+    schedule.scheduleJob('0 * * * *', async () => {
+      const servers = await Server.find({ relations: ['config', 'members'] });
+
+      servers.forEach(async server => {
+        server.timeSinceLastReset += 1;
+
+        if (server.timeSinceLastReset >= server.config.giveLimitHourReset) {
+          server.timeSinceLastReset = 0;
+
+          server.members.forEach(async member => {
+            member.givenSinceReset = 0;
+            await member.save();
+          });
+
+          await server.save();
+        }
+      });
+    });
   })
   .catch(error => {
     if (NODE_ENV === 'production') {

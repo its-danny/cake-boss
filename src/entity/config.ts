@@ -22,4 +22,13 @@ export default class Config extends BaseEntity {
 
   @Column('simple-array', { nullable: false, default: '' })
   blesserRoles!: string[];
+
+  @Column({ nullable: false, default: 0 })
+  requirementToGive!: number;
+
+  @Column({ nullable: false, default: 5 })
+  giveLimit!: number;
+
+  @Column({ nullable: false, default: 1 })
+  giveLimitHourReset!: number;
 }

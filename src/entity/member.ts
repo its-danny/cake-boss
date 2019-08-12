@@ -16,6 +16,12 @@ export default class Member extends BaseEntity {
   @Column({ nullable: false, default: 0 })
   earned!: number;
 
+  @Column({ nullable: false, default: 0 })
+  given!: number;
+
+  @Column({ nullable: false, default: 0 })
+  givenSinceReset!: number;
+
   @ManyToOne(() => User, user => user.members)
   user!: User;
 

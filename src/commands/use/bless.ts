@@ -18,7 +18,7 @@ interface Arguments {
 
 export const blessMember = async (args: Arguments): Promise<string> => {
   if (!(await canBless(args.message))) {
-    return `You ain't got permission to do that! 😝`;
+    return `😝 You ain't got permission to do that!`;
   }
 
   const server = await Server.findOne({
@@ -29,14 +29,14 @@ export const blessMember = async (args: Arguments): Promise<string> => {
   if (server) {
     await args.message.guild.fetchMembers();
 
-    const memberId = args.member.replace('<@', '').replace('>', '');
+    const memberId = args.member.replace(/^<@!?/, '').replace(/>$/, '');
     const discordMember = args.message.guild.members.get(memberId);
 
     if (!discordMember) {
-      return `😢 Uh oh, I couldn't find that member.`;
+      return `😢 Uh oh, I couldn't find them.`;
     }
 
-    let member: Member | undefined = await Member.findOne({ where: { discordId: discordMember.id } });
+    let member = await Member.findOne({ where: { discordId: discordMember.id } });
 
     if (!member) {
       const user = new User();
@@ -62,14 +62,14 @@ export const blessMember = async (args: Arguments): Promise<string> => {
     logEvent(
       args.client,
       args.message,
-      `${server.config.cakeEmoji} <@${args.message.member.id}> blessed <@${member.discordId}> with ${amount} ${
+      `${server.config.cakeEmoji} \`${args.message.author.tag}\` blessed \`${discordMember.user.tag}\` with ${amount} ${
         amount > 1 ? server.config.cakeNamePlural : server.config.cakeNameSingular
       }!`,
     );
 
     return `<@${args.message.member.id}> blessed <@${member.discordId}> with ${amount} ${
       amount > 1 ? server.config.cakeNamePlural : server.config.cakeNameSingular
-    }!`;
+    }! ${server.config.cakeEmoji}`;
   }
 
   throw new Error('Could not find server.');
