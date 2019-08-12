@@ -1,7 +1,7 @@
 import { Argv } from 'yargs';
 import { Client, Message } from 'discord.js';
 import Server from '../../entity/server';
-import { canGive } from '../../utils/permissions';
+import { canGive, isShamed } from '../../utils/permissions';
 import Member from '../../entity/member';
 import { logEvent } from '../../utils/logger';
 
@@ -29,6 +29,10 @@ export const giveCakeToMember = async (args: Arguments): Promise<string> => {
     throw new Error('Could not find server.');
   }
 
+  if (await isShamed(args.message.guild.id, args.message.member.id)) {
+    return `😡 You have been **shamed** and can not give ${server.config.cakeNamePlural}!`;
+  }
+
   await args.message.guild.fetchMembers();
 
   const memberId = args.member.replace(/^<@!?/, '').replace(/>$/, '');
@@ -36,6 +40,10 @@ export const giveCakeToMember = async (args: Arguments): Promise<string> => {
 
   if (!discordMember) {
     return `😢 Uh oh, I couldn't find them.`;
+  }
+
+  if (await isShamed(server.discordId, discordMember.id)) {
+    return `😡 They have been **shamed** and can not get ${server.config.cakeNamePlural}!`;
   }
 
   const receivingMember = await Member.findOrCreate(args.message.guild.id, discordMember.user.id, discordMember.id);

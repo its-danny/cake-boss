@@ -4,6 +4,7 @@ import Server from '../../entity/server';
 import Drop from '../../entity/drop';
 import { logEvent } from '../../utils/logger';
 import Member from '../../entity/member';
+import { isShamed } from '../../utils/permissions';
 
 interface Arguments {
   [x: string]: unknown;
@@ -21,6 +22,10 @@ export const takeCake = async (args: Arguments): Promise<string> => {
 
   if (!server) {
     throw new Error('Could not find server.');
+  }
+
+  if (await isShamed(server.discordId, args.message.member.id)) {
+    return `😡 You have been **shamed** and can not get ${server.config.cakeNamePlural}!`;
   }
 
   const drop = await Drop.findOne({ where: { server, channelDiscordId: args.message.channel.id } });

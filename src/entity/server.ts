@@ -12,6 +12,7 @@ import {
 import Config from './config';
 import Member from './member';
 import Drop from './drop';
+import ShamedMember from './shamed-member';
 
 @Entity()
 export default class Server extends BaseEntity {
@@ -39,6 +40,9 @@ export default class Server extends BaseEntity {
 
   @OneToMany(() => Member, member => member.server)
   members!: Member[];
+
+  @OneToMany(() => ShamedMember, shamedMember => shamedMember.server)
+  shamed!: ShamedMember[];
 
   @OneToMany(() => Drop, drop => drop.server)
   drops!: Drop[];

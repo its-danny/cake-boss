@@ -1,7 +1,7 @@
 import { Argv } from 'yargs';
 import { Client, Message } from 'discord.js';
 import Server from '../../entity/server';
-import { canBless } from '../../utils/permissions';
+import { canBless, isShamed } from '../../utils/permissions';
 import Member from '../../entity/member';
 import { logEvent } from '../../utils/logger';
 
@@ -36,6 +36,10 @@ export const blessMember = async (args: Arguments): Promise<string> => {
 
   if (!discordMember) {
     return `😢 Uh oh, I couldn't find them.`;
+  }
+
+  if (await isShamed(server.discordId, discordMember.id)) {
+    return `😡 They have been **shamed** and can not get ${server.config.cakeNamePlural}!`;
   }
 
   const member = await Member.findOrCreate(args.message.guild.id, discordMember.user.id, discordMember.id);

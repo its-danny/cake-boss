@@ -6,9 +6,11 @@ import {
   ManyToOne,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
 import User from './user';
 import Server from './server';
+import ShamedMember from './shamed-member';
 
 @Entity()
 export default class Member extends BaseEntity {
@@ -41,6 +43,9 @@ export default class Member extends BaseEntity {
 
   @ManyToOne(() => Server, server => server.members)
   server!: Server;
+
+  @OneToMany(() => ShamedMember, shamedMember => shamedMember.member)
+  shamed!: ShamedMember[];
 
   static async findOrCreate(serverDiscordId: string, discordUserId: string, discordMemberId: string): Promise<Member> {
     const server = await Server.findOne({
