@@ -9,10 +9,10 @@ interface Arguments {
   client: Client;
   message: Message;
   needsFetch: boolean;
-  promisedOutput: Promise<string> | null;
+  promisedOutput: Promise<string[] | string> | null;
 }
 
-export const getConfigList = async (args: Arguments): Promise<string> => {
+export const getConfigList = async (args: Arguments): Promise<string[] | string> => {
   if (!(await canManage(args.message))) {
     return `😝 You ain't got permission to do that!`;
   }
@@ -20,56 +20,62 @@ export const getConfigList = async (args: Arguments): Promise<string> => {
   const server = await Server.findOne({ where: { discordId: args.message.guild.id }, relations: ['config'] });
 
   if (server) {
-    const table = new Table({
+    const systemTable = new Table({
       head: ['Name', 'Description', 'Value', 'Default'],
       style: { head: [], border: [] },
     });
 
-    table.push(['command-prefix', `It's the command prefix...`, server.config.commandPrefix, '-']);
-    table.push(['log-channel', 'Where to log events', server.config.logChannelId, '']);
+    systemTable.push(['command-prefix', `It's the command prefix!`, server.config.commandPrefix, '-']);
+    systemTable.push(['log-channel', 'Where to log events', server.config.logChannelId, '']);
 
-    table.push([
+    systemTable.push([
       'manager-roles',
       'Roles allowed to manage Cake Boss (comma-separated)',
       server.config.managerRoles.join(', '),
       '',
     ]);
 
-    table.push([
+    systemTable.push([
       'blesser-roles',
       'Roles allowed to bless others with cake (comma-separated)',
       server.config.blesserRoles.join(', '),
       '',
     ]);
 
-    table.push(['cake-emoji', 'Emoji to use for cakes', server.config.cakeEmoji, '🍰']);
-    table.push(['cake-name-singular', 'Name to use for cake (singular)', server.config.cakeNameSingular, 'cake']);
-    table.push(['cake-name-plural', 'Name to use for cake (plural)', server.config.cakeNamePlural, 'cakes']);
+    const brandingTable = new Table({
+      head: ['Name', 'Description', 'Value', 'Default'],
+      style: { head: [], border: [] },
+    });
 
-    table.push([
+    brandingTable.push(['cake-emoji', 'Emoji to use for cakes', server.config.cakeEmoji, '🍰']);
+    brandingTable.push(['cake-name-singular', 'Name to use for cake (singular)', server.config.cakeNameSingular, 'cake']);
+    brandingTable.push(['cake-name-plural', 'Name to use for cake (plural)', server.config.cakeNamePlural, 'cakes']);
+
+    const usageTable = new Table({
+      head: ['Name', 'Description', 'Value', 'Default'],
+      style: { head: [], border: [] },
+    });
+
+    usageTable.push([
       'requirement-to-give',
       'How much cake someone has to earn before giving',
       server.config.requirementToGive,
       0,
     ]);
 
-    table.push(['give-limit', 'How many cakes someone can give in a cycle (min: 1)', server.config.giveLimit, 5]);
-    table.push([
+    usageTable.push(['give-limit', 'How many cakes someone can give in a cycle (min: 1)', server.config.giveLimit, 5]);
+    usageTable.push([
       'give-limit-hour-reset',
       'How many hours are in a cycle (min: 1)',
       server.config.giveLimitHourReset,
       1,
     ]);
 
-    const response = [
-      '**Config**\n',
-      'Use `-config set <config> <value>` to change config options.',
-      `\n\`\`\`\n\n${table.toString()}\n\`\`\``,
-    ];
-
-    console.log(response);
-
-    return response.join('\n');
+    return [
+      `\n\`\`\`\nSystem\n${systemTable.toString()}\n\`\`\``,
+      `\n\`\`\`\nBranding\n${brandingTable.toString()}\n\`\`\``,
+      `\n\`\`\`\nUsage\n${usageTable.toString()}\n\`\`\``
+    ]
   }
 
   throw new Error('Could not find server.');

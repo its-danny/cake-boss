@@ -89,13 +89,19 @@ client.on('message', async (message: Message) => {
 
             message.channel.send(`😅\n\n\`\`\`\n${helpOutput}\n\`\`\``);
           } else if (argv.promisedOutput) {
-            const commandOutput: string = (await argv.promisedOutput) as string;
+            let commandOutput: string[] | string = (await argv.promisedOutput) as string[] | string;
 
-            if (tempMessage) {
-              tempMessage.edit(commandOutput);
-            } else {
-              message.channel.send(commandOutput);
+            if (!Array.isArray(commandOutput)) {
+              commandOutput = [commandOutput]
             }
+
+            commandOutput.forEach((out, i) => {
+              if (tempMessage && i === 0) {
+                tempMessage.edit(out);
+              } else {
+                message.channel.send(out);
+              }
+            })
           }
         },
       );
