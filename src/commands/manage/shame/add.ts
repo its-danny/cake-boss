@@ -4,7 +4,13 @@ import { canManage } from '../../../utils/permissions';
 import Server from '../../../entity/server';
 import Member from '../../../entity/member';
 import ShamedMember from '../../../entity/shamed-member';
-import { EMOJI_INCORRECT_PERMISSIONS, EMOJI_RECORD_NOT_FOUND, EMOJI_JOB_WELL_DONE } from '../../../utils/emoji';
+import {
+  EMOJI_INCORRECT_PERMISSIONS,
+  EMOJI_RECORD_NOT_FOUND,
+  EMOJI_JOB_WELL_DONE,
+  EMOJI_SHAME,
+} from '../../../utils/emoji';
+import { logEvent } from '../../../utils/logger';
 
 interface Arguments {
   [x: string]: unknown;
@@ -41,6 +47,12 @@ export const shameMember = async (args: Arguments): Promise<string> => {
   shamedMember.member = member;
   shamedMember.server = server;
   await shamedMember.save();
+
+  logEvent(
+    args.client,
+    args.message,
+    `${EMOJI_SHAME} \`@${args.message.author.tag}\` added \`@${discordMember.user.tag}\` to the shame list.`,
+  );
 
   return `${EMOJI_JOB_WELL_DONE} Done!`;
 };

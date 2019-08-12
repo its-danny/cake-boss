@@ -12,3 +12,4 @@ export const EMOJI_THINKING = '🤔';
 export const EMOJI_WORKING_HARD = '😅';
 export const EMOJI_DONT_DO_THAT = '😡';
 export const EMOJI_JOB_WELL_DONE = '😁';
+export const EMOJI_SHAME = '🤢';
