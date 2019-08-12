@@ -30,7 +30,14 @@ export const getConfigList = async (args: Arguments): Promise<string[] | string>
   });
 
   systemTable.push(['command-prefix', `It's the command prefix!`, server.config.commandPrefix, '-']);
-  systemTable.push(['log-channel', 'Where to log events', server.config.logChannelId, '']);
+
+  const logChannel = args.message.guild.channels.get(server.config.logChannelId);
+  systemTable.push([
+    'log-channel',
+    'Where to log events',
+    logChannel ? `#${logChannel.name}` : server.config.logChannelId,
+    ''
+  ]);
 
   const redeemChannel = args.message.guild.channels.get(server.config.redeemChannelId);
   systemTable.push([
