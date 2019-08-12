@@ -30,6 +30,20 @@ export const canBless = async (message: Message): Promise<boolean> => {
   return false;
 };
 
+export const canDrop = async (message: Message): Promise<boolean> => {
+  if (message.member.hasPermission('ADMINISTRATOR')) {
+    return true;
+  }
+
+  const server = await Server.findOne({ where: { discordId: message.guild.id }, relations: ['config'] });
+
+  if (server) {
+    return message.member.roles.some(role => server.config.dropperRoles.includes(role.name));
+  }
+
+  return false;
+};
+
 export const canGive = async (message: Message): Promise<boolean> => {
   const server = await Server.findOne({ where: { discordId: message.guild.id }, relations: ['config'] });
 

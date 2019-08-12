@@ -42,13 +42,25 @@ export const getConfigList = async (args: Arguments): Promise<string[] | string>
       '',
     ]);
 
+    systemTable.push([
+      'dropper-roles',
+      'Roles allowed to drop cakes in channels (comma-separated)',
+      server.config.dropperRoles.join(', '),
+      '',
+    ]);
+
     const brandingTable = new Table({
       head: ['Name', 'Description', 'Value', 'Default'],
       style: { head: [], border: [] },
     });
 
     brandingTable.push(['cake-emoji', 'Emoji to use for cakes', server.config.cakeEmoji, '🍰']);
-    brandingTable.push(['cake-name-singular', 'Name to use for cake (singular)', server.config.cakeNameSingular, 'cake']);
+    brandingTable.push([
+      'cake-name-singular',
+      'Name to use for cake (singular)',
+      server.config.cakeNameSingular,
+      'cake',
+    ]);
     brandingTable.push(['cake-name-plural', 'Name to use for cake (plural)', server.config.cakeNamePlural, 'cakes']);
 
     const usageTable = new Table({
@@ -74,8 +86,8 @@ export const getConfigList = async (args: Arguments): Promise<string[] | string>
     return [
       `\n\`\`\`\nSystem\n${systemTable.toString()}\n\`\`\``,
       `\n\`\`\`\nBranding\n${brandingTable.toString()}\n\`\`\``,
-      `\n\`\`\`\nUsage\n${usageTable.toString()}\n\`\`\``
-    ]
+      `\n\`\`\`\nUsage\n${usageTable.toString()}\n\`\`\``,
+    ];
   }
 
   throw new Error('Could not find server.');

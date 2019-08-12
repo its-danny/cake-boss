@@ -27,4 +27,37 @@ export default class Member extends BaseEntity {
 
   @ManyToOne(() => Server, server => server.members)
   server!: Server;
+
+  static async findOrCreate(serverDiscordId: string, discordUserId: string, discordMemberId: string): Promise<Member> {
+    const server = await Server.findOne({
+      where: { discordId: serverDiscordId },
+      relations: ['members'],
+    });
+
+    if (!server) {
+      throw new Error('Could not find server.');
+    }
+
+    let user = await User.findOne({ where: { discordId: discordUserId } });
+
+    if (!user) {
+      user = new User();
+      user.discordId = discordUserId;
+
+      await user.save();
+    }
+
+    let member = await Member.findOne({ where: { discordId: discordMemberId } });
+
+    if (!member) {
+      member = new Member();
+      member.discordId = discordMemberId;
+      member.server = server;
+      member.user = user;
+
+      await member.save();
+    }
+
+    return member;
+  }
 }

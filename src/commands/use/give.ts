@@ -3,7 +3,6 @@ import { Client, Message } from 'discord.js';
 import Server from '../../entity/server';
 import { canGive } from '../../utils/permissions';
 import Member from '../../entity/member';
-import User from '../../entity/user';
 import { logEvent } from '../../utils/logger';
 
 interface Arguments {
@@ -36,22 +35,7 @@ export const giveCakeToMember = async (args: Arguments): Promise<string> => {
       return `😢 Uh oh, I couldn't find them.`;
     }
 
-    let receivingMember = await Member.findOne({ where: { discordId: discordMember.id } });
-
-    if (!receivingMember) {
-      const user = new User();
-      user.discordId = discordMember.user.id;
-
-      await user.save();
-
-      receivingMember = new Member();
-      receivingMember.discordId = discordMember.id;
-      receivingMember.server = server;
-      receivingMember.user = user;
-
-      await receivingMember.save();
-    }
-
+    const receivingMember = await Member.findOrCreate(args.message.guild.id, discordMember.user.id, discordMember.id);
     const givingMember = await Member.findOne({ where: { discordId: args.message.member.id } });
 
     if (!givingMember) {

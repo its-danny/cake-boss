@@ -9,6 +9,7 @@ type Config =
   | 'log-channel'
   | 'manager-roles'
   | 'blesser-roles'
+  | 'dropper-roles'
   | 'cake-emoji'
   | 'cake-name-singular'
   | 'cake-name-plural'
@@ -57,6 +58,12 @@ export const setConfig = async (args: Arguments): Promise<string> => {
 
     if (args.config === 'blesser-roles') {
       server.config.blesserRoles = args.value.split(',').filter(roleName => {
+        return args.message.guild.roles.find(role => role.name === roleName.trim());
+      });
+    }
+
+    if (args.config === 'dropper-roles') {
+      server.config.dropperRoles = args.value.split(',').filter(roleName => {
         return args.message.guild.roles.find(role => role.name === roleName.trim());
       });
     }

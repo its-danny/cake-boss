@@ -3,7 +3,6 @@ import { Client, Message } from 'discord.js';
 import Server from '../../entity/server';
 import { canBless } from '../../utils/permissions';
 import Member from '../../entity/member';
-import User from '../../entity/user';
 import { logEvent } from '../../utils/logger';
 
 interface Arguments {
@@ -36,22 +35,7 @@ export const blessMember = async (args: Arguments): Promise<string> => {
       return `😢 Uh oh, I couldn't find them.`;
     }
 
-    let member = await Member.findOne({ where: { discordId: discordMember.id } });
-
-    if (!member) {
-      const user = new User();
-      user.discordId = discordMember.user.id;
-
-      await user.save();
-
-      member = new Member();
-      member.discordId = discordMember.id;
-      member.server = server;
-      member.user = user;
-
-      await member.save();
-    }
-
+    const member = await Member.findOrCreate(args.message.guild.id, discordMember.user.id, discordMember.id);
     const amount = args.amount ? args.amount : 1;
 
     member.earned += amount;

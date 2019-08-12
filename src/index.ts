@@ -85,14 +85,16 @@ client.on('message', async (message: Message) => {
           }
 
           if (argv.help) {
-            const helpOutput = output.replace(/(\[command-prefix\] )/gm, commandPrefix).replace(/cakes/gm, cakeNamePlural);
+            const helpOutput = output
+              .replace(/(\[command-prefix\] )/gm, commandPrefix)
+              .replace(/cakes/gm, cakeNamePlural);
 
             message.channel.send(`😅\n\n\`\`\`\n${helpOutput}\n\`\`\``);
           } else if (argv.promisedOutput) {
             let commandOutput: string[] | string = (await argv.promisedOutput) as string[] | string;
 
             if (!Array.isArray(commandOutput)) {
-              commandOutput = [commandOutput]
+              commandOutput = [commandOutput];
             }
 
             commandOutput.forEach((out, i) => {
@@ -101,7 +103,7 @@ client.on('message', async (message: Message) => {
               } else {
                 message.channel.send(out);
               }
-            })
+            });
           }
         },
       );

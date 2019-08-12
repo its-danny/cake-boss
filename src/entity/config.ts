@@ -26,6 +26,9 @@ export default class Config extends BaseEntity {
   @Column('simple-array', { nullable: false, default: '' })
   blesserRoles!: string[];
 
+  @Column('simple-array', { nullable: false, default: '' })
+  dropperRoles!: string[];
+
   @Column({ nullable: false, default: 0 })
   requirementToGive!: number;
 
