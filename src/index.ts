@@ -20,8 +20,7 @@ const parser = yargs
   .commandDir('commands/manage', { exclude: /\.test\./gm, extensions: [NODE_ENV === 'production' ? 'js' : 'ts'] })
   .commandDir('commands/use', { exclude: /\.test\./gm, extensions: [NODE_ENV === 'production' ? 'js' : 'ts'] })
   .strict()
-  .help()
-  .epilog('Eat more cake!');
+  .help();
 
 const SENTRY_DSN: string = process.env.SENTRY_DSN as string;
 Sentry.init({ dsn: SENTRY_DSN });
@@ -67,7 +66,7 @@ client.on('message', async (message: Message) => {
     return;
   }
 
-  const { commandPrefix } = server.config;
+  const { commandPrefix, cakeNamePlural } = server.config;
 
   if (message.author.id !== client.user.id && cleanContent.startsWith(`${commandPrefix}`)) {
     try {
@@ -86,7 +85,8 @@ client.on('message', async (message: Message) => {
           }
 
           if (argv.help) {
-            const helpOutput = output.replace(/(\[command-prefix\] )/gm, commandPrefix);
+            const helpOutput = output.replace(/(\[command-prefix\] )/gm, commandPrefix).replace(/cakes/gm, cakeNamePlural);
+
             message.channel.send(`😅\n\n\`\`\`\n${helpOutput}\n\`\`\``);
           } else if (argv.promisedOutput) {
             const commandOutput: string = (await argv.promisedOutput) as string;

@@ -76,7 +76,7 @@ export const blessMember = async (args: Arguments): Promise<string> => {
 };
 
 export const command = 'bless <member> [amount]';
-export const describe = 'Bless someone';
+export const describe = 'Bless them with cakes';
 
 export const builder = (yargs: Argv) => yargs;
 
