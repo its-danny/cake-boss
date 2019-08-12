@@ -1,4 +1,12 @@
-import { Entity, BaseEntity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import {
+  Entity,
+  BaseEntity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import User from './user';
 import Server from './server';
 
@@ -6,6 +14,12 @@ import Server from './server';
 export default class Member extends BaseEntity {
   @PrimaryGeneratedColumn()
   id!: number;
+
+  @CreateDateColumn({ nullable: false })
+  createdAt!: Date;
+
+  @UpdateDateColumn({ nullable: true })
+  updatedAt!: Date;
 
   @Column({ nullable: false })
   discordId!: string;

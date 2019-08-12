@@ -1,9 +1,15 @@
-import { Entity, BaseEntity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, BaseEntity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
 @Entity()
 export default class Config extends BaseEntity {
   @PrimaryGeneratedColumn()
   id!: number;
+
+  @CreateDateColumn({ nullable: false })
+  createdAt!: Date;
+
+  @UpdateDateColumn({ nullable: true })
+  updatedAt!: Date;
 
   @Column({ nullable: false, default: '-' })
   commandPrefix!: string;

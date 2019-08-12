@@ -1,4 +1,14 @@
-import { Entity, BaseEntity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn, OneToMany } from 'typeorm';
+import {
+  Entity,
+  BaseEntity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToOne,
+  JoinColumn,
+  OneToMany,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import Config from './config';
 import Member from './member';
 import Drop from './drop';
@@ -7,6 +17,12 @@ import Drop from './drop';
 export default class Server extends BaseEntity {
   @PrimaryGeneratedColumn()
   id!: number;
+
+  @CreateDateColumn({ nullable: false })
+  createdAt!: Date;
+
+  @UpdateDateColumn({ nullable: true })
+  updatedAt!: Date;
 
   @Column({ nullable: false })
   discordId!: string;

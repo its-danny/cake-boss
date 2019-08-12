@@ -1,6 +1,7 @@
 import { Argv } from 'yargs';
 import Table from 'cli-table';
 import { Client, Message } from 'discord.js';
+import moment from 'moment';
 import Server from '../../entity/server';
 import { canManage } from '../../utils/permissions';
 
@@ -27,7 +28,7 @@ export const getLedger = async (args: Arguments): Promise<string> => {
   }
 
   const table = new Table({
-    head: ['Member', 'Balance', 'Earned'],
+    head: ['Member', 'Balance', 'Earned', 'Date Added'],
     style: { head: [], border: [] },
   });
 
@@ -35,7 +36,12 @@ export const getLedger = async (args: Arguments): Promise<string> => {
 
   server.members.forEach(member => {
     const discordMember = args.message.guild.members.get(member.discordId);
-    table.push([discordMember ? discordMember.displayName : member.discordId, member.balance, member.earned]);
+    table.push([
+      discordMember ? discordMember.displayName : member.discordId,
+      member.balance,
+      member.earned,
+      moment(member.createdAt).format('MMMM Do YYYY'),
+    ]);
   });
 
   return `${server.config.cakeEmoji} **Ledger** \n\n\`\`\`\n\n${table.toString()}\n\`\`\``;
