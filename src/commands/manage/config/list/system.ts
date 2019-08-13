@@ -33,14 +33,11 @@ export const getConfigList = async (args: Arguments): Promise<string[] | string>
 
   const logChannel = server.config.logChannelId ? args.message.guild.channels.get(server.config.logChannelId) : null;
 
-  table.push([
-    'log-channel',
-    'Where to log events',
-    logChannel ? `#${logChannel.name}` : '',
-    '',
-  ]);
+  table.push(['log-channel', 'Where to log events', logChannel ? `#${logChannel.name}` : '', '']);
 
-  const redeemChannel = server.config.redeemChannelId ? args.message.guild.channels.get(server.config.redeemChannelId) : null;
+  const redeemChannel = server.config.redeemChannelId
+    ? args.message.guild.channels.get(server.config.redeemChannelId)
+    : null;
 
   table.push([
     'redeem-channel',

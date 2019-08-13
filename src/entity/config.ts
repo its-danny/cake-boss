@@ -15,7 +15,7 @@ export default class Config extends BaseEntity {
   @Column({ nullable: false, default: '-' })
   commandPrefix!: string;
 
-  @Column({ nullable: true, type: String})
+  @Column({ nullable: true, type: String })
   logChannelId!: string | null;
 
   @Column({ nullable: true, type: String })

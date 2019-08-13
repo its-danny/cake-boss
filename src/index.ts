@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 import Discord, { Message, Guild } from 'discord.js';
 import * as Sentry from '@sentry/node';
 import yargs from 'yargs';
-import { createConnection } from 'typeorm';
+import { createConnection, getConnection } from 'typeorm';
 import moment from 'moment';
 import fs from 'fs';
 import schedule from 'node-schedule';
@@ -11,8 +11,9 @@ import { setupServer } from './utils/server-status';
 import Server from './entity/server';
 import { EMOJI_JOB_WELL_DONE, EMOJI_WORKING_HARD, EMOJI_THINKING, EMOJI_CAKE, EMOJI_ERROR } from './utils/emoji';
 
+dotenv.config({ path: `./.env` });
+
 const NODE_ENV: string = process.env.NODE_ENV as string;
-dotenv.config({ path: `./.env.${NODE_ENV}` });
 
 const client = new Discord.Client();
 const parser = yargs
@@ -80,6 +81,7 @@ client.on('message', async (message: Message) => {
     .split(' ')
     .map((s, i) => (i === 0 ? s.toLowerCase() : s))
     .join(' ');
+
   const server = await Server.findOne({ where: { discordId: message.guild.id }, relations: ['config'] });
 
   if (!server) {
