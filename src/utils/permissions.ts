@@ -11,7 +11,7 @@ export const canManage = async (message: Message): Promise<boolean> => {
   const server = await Server.findOne({ where: { discordId: message.guild.id }, relations: ['config'] });
 
   if (server) {
-    return message.member.roles.some(role => server.config.managerRoles.includes(role.name));
+    return message.member.roles.some(role => server.config.managerRoleIds.includes(role.id));
   }
 
   return false;
@@ -25,7 +25,7 @@ export const canBless = async (message: Message): Promise<boolean> => {
   const server = await Server.findOne({ where: { discordId: message.guild.id }, relations: ['config'] });
 
   if (server) {
-    return message.member.roles.some(role => server.config.blesserRoles.includes(role.name));
+    return message.member.roles.some(role => server.config.blesserRoleIds.includes(role.id));
   }
 
   return false;
@@ -39,7 +39,7 @@ export const canDrop = async (message: Message): Promise<boolean> => {
   const server = await Server.findOne({ where: { discordId: message.guild.id }, relations: ['config'] });
 
   if (server) {
-    return message.member.roles.some(role => server.config.dropperRoles.includes(role.name));
+    return message.member.roles.some(role => server.config.dropperRoleIds.includes(role.id));
   }
 
   return false;

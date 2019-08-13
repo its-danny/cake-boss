@@ -31,13 +31,13 @@ export default class Config extends BaseEntity {
   cakeNamePlural!: string;
 
   @Column('simple-array', { nullable: false, default: '' })
-  managerRoles!: string[];
+  managerRoleIds!: string[];
 
   @Column('simple-array', { nullable: false, default: '' })
-  blesserRoles!: string[];
+  blesserRoleIds!: string[];
 
   @Column('simple-array', { nullable: false, default: '' })
-  dropperRoles!: string[];
+  dropperRoleIds!: string[];
 
   @Column({ nullable: false, default: 0 })
   requirementToGive!: number;

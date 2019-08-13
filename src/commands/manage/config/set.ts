@@ -108,7 +108,7 @@ export const setConfig = async (args: Arguments): Promise<string> => {
       return !args.message.guild.roles.find(role => role.name === roleName.trim());
     });
 
-    server.config.managerRoles = foundRolesIds;
+    server.config.managerRoleIds = foundRolesIds;
 
     await server.config.save();
     await logEvent(
@@ -142,7 +142,7 @@ export const setConfig = async (args: Arguments): Promise<string> => {
       return !args.message.guild.roles.find(role => role.name === roleName.trim());
     });
 
-    server.config.blesserRoles = foundRolesIds;
+    server.config.blesserRoleIds = foundRolesIds;
 
     await server.config.save();
     await logEvent(
@@ -176,7 +176,7 @@ export const setConfig = async (args: Arguments): Promise<string> => {
       return !args.message.guild.roles.find(role => role.name === roleName.trim());
     });
 
-    server.config.dropperRoles = foundRolesIds;
+    server.config.dropperRoleIds = foundRolesIds;
 
     await server.config.save();
     await logEvent(

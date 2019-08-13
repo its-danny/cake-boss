@@ -53,7 +53,7 @@ export const getConfigList = async (args: Arguments): Promise<string[] | string>
     'manager-roles',
     'Roles allowed to manage Cake Boss (comma-separated)',
 
-    server.config.managerRoles
+    server.config.managerRoleIds
       .map(roleId => {
         const role = args.message.guild.roles.get(roleId);
 
@@ -70,7 +70,7 @@ export const getConfigList = async (args: Arguments): Promise<string[] | string>
     'blesser-roles',
     'Roles allowed to bless others with cake (comma-separated)',
 
-    server.config.blesserRoles
+    server.config.blesserRoleIds
       .map(roleId => {
         const role = args.message.guild.roles.get(roleId);
 
@@ -87,7 +87,7 @@ export const getConfigList = async (args: Arguments): Promise<string[] | string>
     'dropper-roles',
     'Roles allowed to drop cakes in channels (comma-separated)',
 
-    server.config.dropperRoles
+    server.config.dropperRoleIds
       .map(roleId => {
         const role = args.message.guild.roles.get(roleId);
 
