@@ -20,7 +20,8 @@ const parser = yargs
   .scriptName('[command-prefix]')
   .commandDir('commands/manage', { exclude: /\.test\./gm, extensions: [NODE_ENV === 'production' ? 'js' : 'ts'] })
   .commandDir('commands/use', { exclude: /\.test\./gm, extensions: [NODE_ENV === 'production' ? 'js' : 'ts'] })
-  .strict()
+  .strict(true)
+  .showHelpOnFail(true)
   .help();
 
 const SENTRY_DSN: string = process.env.SENTRY_DSN as string;
@@ -104,7 +105,9 @@ client.on('message', async (message: Message) => {
         { client, message, needsFetch: false, promisedOutput: null, reactions: null },
         async (error, argv, output) => {
           if (error) {
-            handleError(error, message);
+            if (error.name !== 'YError') {
+              handleError(error, message);
+            }
           }
 
           let sentMessage: Message | null = null;
