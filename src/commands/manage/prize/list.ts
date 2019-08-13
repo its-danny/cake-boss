@@ -32,12 +32,22 @@ export const getPrizeList = async (args: Arguments): Promise<string> => {
   }
 
   const table = new Table({
-    head: ['ID', 'Description', 'Reaction Emoji', 'Price'],
+    head: ['ID', 'Description', 'Reaction Emoji', 'Price', 'Role to Give'],
     style: { head: [], border: [] },
   });
 
   server.prizes.forEach(prize => {
-    table.push([prize.id, prize.description, prize.reactionEmoji, prize.price]);
+    let roleColumn = '';
+
+    if (prize.roleId) {
+      const role = args.message.guild.roles.find(r => r.id === prize.roleId);
+
+      if (role) {
+        roleColumn = role.name;
+      }
+    }
+
+    table.push([prize.id, prize.description, prize.reactionEmoji, prize.price, roleColumn]);
 
     return false;
   });

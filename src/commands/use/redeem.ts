@@ -46,6 +46,14 @@ export const redeemCake = async (args: Arguments): Promise<string> => {
         member.balance -= prize.price;
         await member.save();
 
+        if (prize.roleId) {
+          const role = args.message.guild.roles.find(r => r.id === prize.roleId);
+
+          if (role) {
+            args.message.member.addRole(role);
+          }
+        }
+
         logEvent(
           args.client,
           args.message,

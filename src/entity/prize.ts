@@ -29,6 +29,9 @@ export default class Prize extends BaseEntity {
   @Column({ nullable: false, default: 1 })
   price!: number;
 
+  @Column({ nullable: true })
+  roleId!: string;
+
   @ManyToOne(() => Server, server => server.prizes)
   server!: Server;
 }

@@ -56,9 +56,26 @@ export const editPrize = async (args: Arguments): Promise<string> => {
     return `${EMOJI_VALIDATION_ERROR} Couldn't find that prize, are you sure \`${args.id}\` is the right ID?`;
   }
 
+  let roleId;
+
+  if (args.role) {
+    const roleFound = args.message.guild.roles.find(role => role.name === args.role);
+
+    if (roleFound) {
+      roleId = roleFound.id;
+    } else {
+      return `${EMOJI_VALIDATION_ERROR} Role must be valid!`;
+    }
+  }
+
   prize.description = args.description;
   prize.reactionEmoji = args.reactionEmoji;
   prize.price = args.price;
+
+  if (roleId) {
+    prize.roleId = roleId;
+  }
+
   await prize.save();
 
   logEvent(
@@ -70,7 +87,7 @@ export const editPrize = async (args: Arguments): Promise<string> => {
   return `${EMOJI_JOB_WELL_DONE} Done!`;
 };
 
-export const command = 'edit <id> <description> <reactionEmoji> <price>';
+export const command = 'edit <id> <description> <reactionEmoji> <price> [role]';
 export const describe = 'Edit a prize';
 
 export const builder = (yargs: Argv) => yargs;

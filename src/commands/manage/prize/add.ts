@@ -18,6 +18,7 @@ interface Arguments {
   description: string;
   reactionEmoji: string;
   price: number;
+  role?: string;
   needsFetch: boolean;
   promisedOutput: Promise<string[] | string> | null;
 }
@@ -49,11 +50,28 @@ export const addPrize = async (args: Arguments): Promise<string> => {
     return `${EMOJI_VALIDATION_ERROR} Price must be 1 or more!`;
   }
 
+  let roleId;
+
+  if (args.role) {
+    const roleFound = args.message.guild.roles.find(role => role.name === args.role);
+
+    if (roleFound) {
+      roleId = roleFound.id;
+    } else {
+      return `${EMOJI_VALIDATION_ERROR} Role must be valid!`;
+    }
+  }
+
   const prize = new Prize();
   prize.server = server;
   prize.description = args.description;
   prize.reactionEmoji = args.reactionEmoji;
   prize.price = args.price;
+
+  if (roleId) {
+    prize.roleId = roleId;
+  }
+
   await prize.save();
 
   logEvent(
@@ -65,7 +83,7 @@ export const addPrize = async (args: Arguments): Promise<string> => {
   return `${EMOJI_JOB_WELL_DONE} Done!`;
 };
 
-export const command = 'add <description> <reactionEmoji> <price>';
+export const command = 'add <description> <reactionEmoji> <price> [role]';
 export const describe = 'Add a prize';
 
 export const builder = (yargs: Argv) => yargs;
