@@ -4,7 +4,7 @@ import { Client, Message } from 'discord.js';
 import moment from 'moment';
 import Server from '../../entity/server';
 import { canManage } from '../../utils/permissions';
-import { EMOJI_INCORRECT_PERMISSIONS } from '../../utils/emoji';
+import { EMOJI_INCORRECT_PERMISSIONS, EMOJI_WORKING_HARD } from '../../utils/emoji';
 
 interface Arguments {
   [x: string]: unknown;
@@ -26,6 +26,10 @@ export const getLedger = async (args: Arguments): Promise<string> => {
 
   if (!server) {
     throw new Error('Could not find server.');
+  }
+
+  if (server.members.length === 0) {
+    return `${EMOJI_WORKING_HARD} Nobody has ${server.config.cakeNamePlural} yet!`;
   }
 
   const table = new Table({
