@@ -6,7 +6,6 @@ export const EMOJI_RECORD_NOT_FOUND = '😢';
 
 export const EMOJI_CONFIG_EVENT = '⚙️';
 export const EMOJI_PRIZE_EVENT = '🎁';
-export const EMOJI_ERROR_EVENT = '🛑';
 
 export const EMOJI_THINKING = '🤔';
 export const EMOJI_WORKING_HARD = '😅';

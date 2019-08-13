@@ -7,10 +7,15 @@ import { createConnection } from 'typeorm';
 import moment from 'moment';
 import fs from 'fs';
 import schedule from 'node-schedule';
-import { logError } from './utils/logger';
 import { setupServer } from './utils/server-status';
 import Server from './entity/server';
-import { EMOJI_JOB_WELL_DONE, EMOJI_WORKING_HARD, EMOJI_THINKING, EMOJI_CAKE } from './utils/emoji';
+import {
+  EMOJI_JOB_WELL_DONE,
+  EMOJI_WORKING_HARD,
+  EMOJI_THINKING,
+  EMOJI_CAKE,
+  EMOJI_VALIDATION_ERROR,
+} from './utils/emoji';
 
 const NODE_ENV: string = process.env.NODE_ENV as string;
 dotenv.config({ path: `./.env.${NODE_ENV}` });
@@ -43,9 +48,7 @@ client.on('ready', () => {
 });
 
 const handleError = async (error: Error, message: Message) => {
-  logError(client, message, error);
-
-  message.channel.send('Uh oh, something broke!');
+  message.channel.send(`${EMOJI_VALIDATION_ERROR} Uh oh, something broke!`);
 
   if (NODE_ENV === 'production') {
     Sentry.captureException(error);
