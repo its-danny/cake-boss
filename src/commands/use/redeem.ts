@@ -1,5 +1,6 @@
 import { Argv } from 'yargs';
 import { Client, Message } from 'discord.js';
+import moment from 'moment';
 import { isShamed } from '../../utils/permissions';
 import Server from '../../entity/server';
 import { logEvent } from '../../utils/logger';
@@ -57,7 +58,9 @@ export const redeemCake = async (args: Arguments): Promise<string> => {
         logEvent(
           args.client,
           args.message,
-          `${EMOJI_PRIZE_EVENT} \`@${args.message.author.tag}\` redeemed a prize! \`${prize.description}\``,
+          `${EMOJI_PRIZE_EVENT} \`${moment().format('MMMM Do YYYY')}\` \`@${
+            args.message.author.tag
+          }\` redeemed a prize: \`${prize.description}\`!`,
         );
       };
     }

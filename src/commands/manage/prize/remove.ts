@@ -9,6 +9,7 @@ import {
   EMOJI_PRIZE_EVENT,
   EMOJI_JOB_WELL_DONE,
   EMOJI_INCORRECT_PERMISSIONS,
+  EMOJI_CONFIG_EVENT,
 } from '../../../utils/emoji';
 
 interface Arguments {
@@ -46,7 +47,7 @@ export const removePrize = async (args: Arguments): Promise<string> => {
   logEvent(
     args.client,
     args.message,
-    `${EMOJI_PRIZE_EVENT} \`@${args.message.author.tag}\` removed a prize! \`${prize.description}\``,
+    `${EMOJI_CONFIG_EVENT} \`@${args.message.author.tag}\` removed a prize: \`${prize.description}\``,
   );
 
   return `${EMOJI_JOB_WELL_DONE} Done!`;
