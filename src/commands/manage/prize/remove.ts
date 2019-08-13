@@ -6,7 +6,6 @@ import Prize from '../../../entity/prize';
 import { logEvent } from '../../../utils/logger';
 import {
   EMOJI_VALIDATION_ERROR,
-  EMOJI_PRIZE_EVENT,
   EMOJI_JOB_WELL_DONE,
   EMOJI_INCORRECT_PERMISSIONS,
   EMOJI_CONFIG_EVENT,
