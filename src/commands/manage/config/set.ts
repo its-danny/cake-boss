@@ -17,6 +17,7 @@ type Config =
   | 'manager-roles'
   | 'blesser-roles'
   | 'dropper-roles'
+  | 'nickname'
   | 'cake-emoji'
   | 'cake-name-singular'
   | 'cake-name-plural'
@@ -190,6 +191,25 @@ export const setConfig = async (args: Arguments): Promise<string> => {
         ', ',
       )}`;
     }
+
+    return `${EMOJI_JOB_WELL_DONE} Done!`;
+  }
+
+  if (args.config === 'nickname') {
+    if (args.value.trim() === '') {
+      return `${EMOJI_ERROR} That's not a nickname!`;
+    }
+
+    server.config.nickname = args.value;
+    await server.config.save();
+
+    const member = args.message.guild.members.get(args.client.user.id);
+
+    if (server && member) {
+      member.setNickname(server.config.nickname);
+    }
+
+    await logEvent(args.client, args.message, `${EMOJI_CONFIG_EVENT} \`${args.config}\` set to \`${args.value}\`.`);
 
     return `${EMOJI_JOB_WELL_DONE} Done!`;
   }

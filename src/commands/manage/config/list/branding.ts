@@ -29,6 +29,7 @@ export const getConfigList = async (args: Arguments): Promise<string[] | string>
     style: { head: [], border: [] },
   });
 
+  table.push(['nickname', 'Emoji to use for cakes', server.config.nickname, 'CAKE BOSS!']);
   table.push(['cake-emoji', 'Emoji to use for cakes', server.config.cakeEmoji, EMOJI_CAKE]);
   table.push(['cake-name-singular', 'Name to use for cake (singular)', server.config.cakeNameSingular, 'cake']);
   table.push(['cake-name-plural', 'Name to use for cake (plural)', server.config.cakeNamePlural, 'cakes']);

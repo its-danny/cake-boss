@@ -21,6 +21,9 @@ export default class Config extends BaseEntity {
   @Column({ nullable: true, type: String })
   redeemChannelId!: string | null;
 
+  @Column({ nullable: true, type: String, default: 'CAKE BOSS!' })
+  nickname!: string | null;
+
   @Column({ nullable: false, default: EMOJI_CAKE })
   cakeEmoji!: string;
 

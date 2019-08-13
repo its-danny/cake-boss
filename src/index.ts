@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 import Discord, { Message, Guild } from 'discord.js';
 import * as Sentry from '@sentry/node';
 import yargs from 'yargs';
-import { createConnection, getConnection } from 'typeorm';
+import { createConnection } from 'typeorm';
 import moment from 'moment';
 import fs from 'fs';
 import schedule from 'node-schedule';
@@ -35,9 +35,17 @@ interface WatchedMessage {
 
 const messagesToWatch: WatchedMessage[] = [];
 
-client.on('ready', () => {
-  client.user.setUsername('CAKE BOSS!');
-  client.user.setActivity(`in the kitchen ${EMOJI_CAKE}`);
+client.on('ready', async () => {
+  client.user.setActivity(`in the kitchen! 😅`);
+
+  client.guilds.forEach(async guild => {
+    const server = await Server.findOne({ where: { discordId: guild.id }, relations: ['config'] });
+    const member = guild.members.get(client.user.id);
+
+    if (server && server.config.nickname && member) {
+      member.setNickname(server.config.nickname);
+    }
+  });
 
   console.log(EMOJI_CAKE);
 });

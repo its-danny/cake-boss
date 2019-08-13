@@ -11,7 +11,5 @@ export const describe = 'Check out the GitHub';
 export const builder = (yargs: Argv) => yargs;
 
 export const handler = (args: Arguments) => {
-  args.promisedOutput = new Promise(resolve =>
-    resolve(`<https://github.com/dannytatom/cake-boss>`)
-  );
+  args.promisedOutput = new Promise(resolve => resolve(`<https://github.com/dannytatom/cake-boss>`));
 };
