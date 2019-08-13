@@ -15,11 +15,11 @@ export default class Config extends BaseEntity {
   @Column({ nullable: false, default: '-' })
   commandPrefix!: string;
 
-  @Column({ nullable: false, default: '' })
-  logChannelId!: string;
+  @Column({ nullable: true, type: String})
+  logChannelId!: string | null;
 
-  @Column({ nullable: false, default: '' })
-  redeemChannelId!: string;
+  @Column({ nullable: true, type: String })
+  redeemChannelId!: string | null;
 
   @Column({ nullable: false, default: EMOJI_CAKE })
   cakeEmoji!: string;

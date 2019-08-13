@@ -31,21 +31,21 @@ export const getConfigList = async (args: Arguments): Promise<string[] | string>
 
   table.push(['command-prefix', `It's the command prefix!`, server.config.commandPrefix, '-']);
 
-  const logChannel = args.message.guild.channels.get(server.config.logChannelId);
+  const logChannel = server.config.logChannelId ? args.message.guild.channels.get(server.config.logChannelId) : null;
 
   table.push([
     'log-channel',
     'Where to log events',
-    logChannel ? `#${logChannel.name}` : server.config.logChannelId,
+    logChannel ? `#${logChannel.name}` : '',
     '',
   ]);
 
-  const redeemChannel = args.message.guild.channels.get(server.config.redeemChannelId);
+  const redeemChannel = server.config.redeemChannelId ? args.message.guild.channels.get(server.config.redeemChannelId) : null;
 
   table.push([
     'redeem-channel',
     'Where to log prize redeem requests',
-    redeemChannel ? `#${redeemChannel.name}` : server.config.redeemChannelId,
+    redeemChannel ? `#${redeemChannel.name}` : '',
     '',
   ]);
 

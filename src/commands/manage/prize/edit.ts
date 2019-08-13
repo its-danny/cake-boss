@@ -34,7 +34,7 @@ export const editPrize = async (args: Arguments): Promise<string> => {
     throw new Error('Could not find server.');
   }
 
-  if (server.config.redeemChannelId === '') {
+  if (!server.config.redeemChannelId || server.config.redeemChannelId === '') {
     return `${EMOJI_ERROR} You need to set the \`redeem-channel\` config before using prizes.`;
   }
 

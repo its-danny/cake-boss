@@ -27,7 +27,7 @@ export const redeemCake = async (args: Arguments): Promise<string> => {
     throw new Error('Could not find server.');
   }
 
-  if (server.config.redeemChannelId === '') {
+  if (!server.config.redeemChannelId || server.config.redeemChannelId === '') {
     return `${EMOJI_ERROR} Server not yet set up for prizes!`;
   }
 
