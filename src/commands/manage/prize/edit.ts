@@ -5,7 +5,7 @@ import Server from '../../../entity/server';
 import Prize from '../../../entity/prize';
 import { logEvent } from '../../../utils/logger';
 import {
-  EMOJI_VALIDATION_ERROR,
+  EMOJI_ERROR,
   EMOJI_JOB_WELL_DONE,
   EMOJI_INCORRECT_PERMISSIONS,
   EMOJI_CONFIG_EVENT,
@@ -35,25 +35,25 @@ export const editPrize = async (args: Arguments): Promise<string> => {
   }
 
   if (server.config.redeemChannelId === '') {
-    return `${EMOJI_VALIDATION_ERROR} You need to set the \`redeem-channel\` config before using prizes`;
+    return `${EMOJI_ERROR} You need to set the \`redeem-channel\` config before using prizes.`;
   }
 
   if (args.description.trim() === '') {
-    return `${EMOJI_VALIDATION_ERROR} Description required!`;
+    return `${EMOJI_ERROR} Description required!`;
   }
 
   if (args.reactionEmoji.trim() === '') {
-    return `${EMOJI_VALIDATION_ERROR} Reaction emoji required!`;
+    return `${EMOJI_ERROR} Reaction emoji required!`;
   }
 
   if (args.price <= 0) {
-    return `${EMOJI_VALIDATION_ERROR} Price must be 1 or more!`;
+    return `${EMOJI_ERROR} Price must be 1 or more!`;
   }
 
   const prize = await Prize.findOne({ server, id: args.id });
 
   if (!prize) {
-    return `${EMOJI_VALIDATION_ERROR} Couldn't find that prize, are you sure \`${args.id}\` is the right ID?`;
+    return `${EMOJI_ERROR} Couldn't find that prize, are you sure \`${args.id}\` is the right ID?`;
   }
 
   let roleId;
@@ -64,7 +64,7 @@ export const editPrize = async (args: Arguments): Promise<string> => {
     if (roleFound) {
       roleId = roleFound.id;
     } else {
-      return `${EMOJI_VALIDATION_ERROR} Role must be valid!`;
+      return `${EMOJI_ERROR} Role must be valid!`;
     }
   }
 

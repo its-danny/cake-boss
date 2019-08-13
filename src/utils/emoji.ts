@@ -1,6 +1,6 @@
 export const EMOJI_CAKE = '🍰';
 
-export const EMOJI_VALIDATION_ERROR = '😨';
+export const EMOJI_ERROR = '😨';
 export const EMOJI_INCORRECT_PERMISSIONS = '😝';
 export const EMOJI_RECORD_NOT_FOUND = '😢';
 

@@ -5,7 +5,7 @@ import Server from '../../../entity/server';
 import Prize from '../../../entity/prize';
 import { logEvent } from '../../../utils/logger';
 import {
-  EMOJI_VALIDATION_ERROR,
+  EMOJI_ERROR,
   EMOJI_JOB_WELL_DONE,
   EMOJI_INCORRECT_PERMISSIONS,
   EMOJI_CONFIG_EVENT,
@@ -32,13 +32,13 @@ export const removePrize = async (args: Arguments): Promise<string> => {
   }
 
   if (server.config.redeemChannelId === '') {
-    return `${EMOJI_VALIDATION_ERROR} You need to set the \`redeem-channel\` config before using prizes.`;
+    return `${EMOJI_ERROR} You need to set the \`redeem-channel\` config before using prizes.`;
   }
 
   const prize = await Prize.findOne({ server, id: args.id });
 
   if (!prize) {
-    return `${EMOJI_VALIDATION_ERROR} Couldn't find that prize, are you sure \`${args.id}\` is the right ID?`;
+    return `${EMOJI_ERROR} Couldn't find that prize, are you sure \`${args.id}\` is the right ID?`;
   }
 
   await prize.remove();

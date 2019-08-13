@@ -5,7 +5,7 @@ import { canManage } from '../../utils/permissions';
 import Member from '../../entity/member';
 import { logEvent } from '../../utils/logger';
 import {
-  EMOJI_VALIDATION_ERROR,
+  EMOJI_ERROR,
   EMOJI_INCORRECT_PERMISSIONS,
   EMOJI_RECORD_NOT_FOUND,
   EMOJI_JOB_WELL_DONE,
@@ -53,7 +53,7 @@ export const removeCakes = async (args: Arguments): Promise<string> => {
   const amount = args.amount ? args.amount : 1;
 
   if (!Number.isInteger(amount) && amount <= 0) {
-    return `${EMOJI_VALIDATION_ERROR} Invalid amount, sorry!`;
+    return `${EMOJI_ERROR} Invalid amount, sorry!`;
   }
 
   if (member.balance > 0) {

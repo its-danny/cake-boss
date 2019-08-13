@@ -3,7 +3,7 @@ import { Client, Message } from 'discord.js';
 import Table from 'cli-table';
 import { canManage } from '../../../utils/permissions';
 import Server from '../../../entity/server';
-import { EMOJI_VALIDATION_ERROR, EMOJI_INCORRECT_PERMISSIONS } from '../../../utils/emoji';
+import { EMOJI_ERROR, EMOJI_INCORRECT_PERMISSIONS } from '../../../utils/emoji';
 
 interface Arguments {
   [x: string]: unknown;
@@ -28,7 +28,7 @@ export const getPrizeList = async (args: Arguments): Promise<string> => {
   }
 
   if (server.config.redeemChannelId === '') {
-    return `${EMOJI_VALIDATION_ERROR} You need to set the \`redeem-channel\` config before using prizes`;
+    return `${EMOJI_ERROR} You need to set the \`redeem-channel\` config before using prizes.`;
   }
 
   const table = new Table({

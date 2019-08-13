@@ -9,13 +9,7 @@ import fs from 'fs';
 import schedule from 'node-schedule';
 import { setupServer } from './utils/server-status';
 import Server from './entity/server';
-import {
-  EMOJI_JOB_WELL_DONE,
-  EMOJI_WORKING_HARD,
-  EMOJI_THINKING,
-  EMOJI_CAKE,
-  EMOJI_VALIDATION_ERROR,
-} from './utils/emoji';
+import { EMOJI_JOB_WELL_DONE, EMOJI_WORKING_HARD, EMOJI_THINKING, EMOJI_CAKE, EMOJI_ERROR } from './utils/emoji';
 
 const NODE_ENV: string = process.env.NODE_ENV as string;
 dotenv.config({ path: `./.env.${NODE_ENV}` });
@@ -48,7 +42,7 @@ client.on('ready', () => {
 });
 
 const handleError = async (error: Error, message: Message) => {
-  message.channel.send(`${EMOJI_VALIDATION_ERROR} Uh oh, something broke!`);
+  message.channel.send(`${EMOJI_ERROR} Uh oh, something broke!`);
 
   if (NODE_ENV === 'production') {
     Sentry.captureException(error);
@@ -100,17 +94,22 @@ client.on('message', async (message: Message) => {
       // NOTE: I'm not entirely sure how or where to type these,
       // so putting this comment here to remind myself what is what.
       //
+      // deleteCaller    boolean
       // needsFetch:     boolean
       // promisedOutput: Promise<string> | null
       // reactions:      {[key: string]: () => void} | null
       parser.parse(
         cleanContent.replace(`${commandPrefix}`, ''),
-        { client, message, needsFetch: false, promisedOutput: null, reactions: null },
+        { client, message, deleteCaller: false, needsFetch: false, promisedOutput: null, reactions: null },
         async (error, argv, output) => {
           if (error) {
             if (error.name !== 'YError') {
               handleError(error, message);
             }
+          }
+
+          if (argv.deleteCaller) {
+            message.delete();
           }
 
           let sentMessage: Message | null = null;

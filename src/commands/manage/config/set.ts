@@ -4,7 +4,7 @@ import Server from '../../../entity/server';
 import { canManage } from '../../../utils/permissions';
 import { logEvent } from '../../../utils/logger';
 import {
-  EMOJI_VALIDATION_ERROR,
+  EMOJI_ERROR,
   EMOJI_INCORRECT_PERMISSIONS,
   EMOJI_CONFIG_EVENT,
   EMOJI_JOB_WELL_DONE,
@@ -49,7 +49,7 @@ export const setConfig = async (args: Arguments): Promise<string> => {
     const prefix = args.value.trim();
 
     if (prefix === '') {
-      return `${EMOJI_VALIDATION_ERROR} Invalid prefix, sorry!`;
+      return `${EMOJI_ERROR} Invalid prefix, sorry!`;
     }
 
     server.config.commandPrefix = prefix;
@@ -65,7 +65,7 @@ export const setConfig = async (args: Arguments): Promise<string> => {
     const channel = args.message.guild.channels.get(channelId);
 
     if (!channel) {
-      return `${EMOJI_VALIDATION_ERROR} Not a valid channel!`;
+      return `${EMOJI_ERROR} Not a valid channel!`;
     }
 
     server.config.logChannelId = channelId;
@@ -81,7 +81,7 @@ export const setConfig = async (args: Arguments): Promise<string> => {
     const channel = args.message.guild.channels.get(channelId);
 
     if (!channel) {
-      return `${EMOJI_VALIDATION_ERROR} Not a valid channel!`;
+      return `${EMOJI_ERROR} Not a valid channel!`;
     }
 
     server.config.redeemChannelId = channelId;
@@ -225,7 +225,7 @@ export const setConfig = async (args: Arguments): Promise<string> => {
     const minimum = parseInt(args.value, 10);
 
     if (!Number.isInteger(minimum) || minimum < 0) {
-      return `${EMOJI_VALIDATION_ERROR} Invalid requirement, sorry! Must be a positive number!`;
+      return `${EMOJI_ERROR} Invalid requirement, sorry! Must be a positive number!`;
     }
 
     server.config.requirementToGive = minimum;
@@ -240,7 +240,7 @@ export const setConfig = async (args: Arguments): Promise<string> => {
     const limit = parseInt(args.value, 10);
 
     if (!Number.isInteger(limit) || limit < 1) {
-      return `${EMOJI_VALIDATION_ERROR} Invalid limit, sorry! Must be 1 or more.`;
+      return `${EMOJI_ERROR} Invalid limit, sorry! Must be 1 or more.`;
     }
 
     server.config.giveLimit = limit;
@@ -255,7 +255,7 @@ export const setConfig = async (args: Arguments): Promise<string> => {
     const reset = parseInt(args.value, 10);
 
     if (!Number.isInteger(reset) || reset < 1) {
-      return `${EMOJI_VALIDATION_ERROR} Invalid hour, sorry! Must be 1 or more.`;
+      return `${EMOJI_ERROR} Invalid hour, sorry! Must be 1 or more.`;
     }
 
     server.config.giveLimitHourReset = reset;
@@ -266,7 +266,7 @@ export const setConfig = async (args: Arguments): Promise<string> => {
     return `${EMOJI_JOB_WELL_DONE} Done!`;
   }
 
-  return `${EMOJI_VALIDATION_ERROR} Not a valid config!`;
+  return `${EMOJI_ERROR} Not a valid config!`;
 };
 
 export const command = 'set <config> <value>';
