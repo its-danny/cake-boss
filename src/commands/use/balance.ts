@@ -2,7 +2,7 @@ import { Argv } from 'yargs';
 import { Client, Message } from 'discord.js';
 import Server from '../../entity/server';
 
-interface Arguments {
+export interface Arguments {
   [x: string]: unknown;
   client: Client;
   message: Message;

@@ -11,7 +11,7 @@ import {
   EMOJI_JOB_WELL_DONE,
 } from '../../utils/emoji';
 
-interface Arguments {
+export interface Arguments {
   [x: string]: unknown;
   client: Client;
   message: Message;

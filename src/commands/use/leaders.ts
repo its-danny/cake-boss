@@ -4,7 +4,7 @@ import { Client, Message } from 'discord.js';
 import Server from '../../entity/server';
 import { EMOJI_WORKING_HARD } from '../../utils/emoji';
 
-interface Arguments {
+export interface Arguments {
   [x: string]: unknown;
   client: Client;
   message: Message;

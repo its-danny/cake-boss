@@ -73,6 +73,7 @@
 
    "exclude": [
       "src/**/*.test.ts",
+      "src/utils/__mocks__/*",
       "src/migration/**/*"
    ]
  }

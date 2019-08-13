@@ -6,7 +6,7 @@ import Server from '../../entity/server';
 import { canManage } from '../../utils/permissions';
 import { EMOJI_INCORRECT_PERMISSIONS, EMOJI_WORKING_HARD } from '../../utils/emoji';
 
-interface Arguments {
+export interface Arguments {
   [x: string]: unknown;
   client: Client;
   message: Message;

@@ -36,6 +36,16 @@ interface WatchedMessage {
 
 const messagesToWatch: WatchedMessage[] = [];
 
+const handleError = async (error: Error, message: Message) => {
+  message.channel.send(`${EMOJI_ERROR} Uh oh, something broke!`);
+
+  if (NODE_ENV === 'production') {
+    Sentry.captureException(error);
+  } else {
+    console.error(error);
+  }
+};
+
 client.on('ready', async () => {
   client.user.setActivity(`in the kitchen! 😅`);
 
@@ -50,16 +60,6 @@ client.on('ready', async () => {
 
   console.log(EMOJI_CAKE);
 });
-
-const handleError = async (error: Error, message: Message) => {
-  message.channel.send(`${EMOJI_ERROR} Uh oh, something broke!`);
-
-  if (NODE_ENV === 'production') {
-    Sentry.captureException(error);
-  } else {
-    console.error(error);
-  }
-};
 
 client.on('guildCreate', (guild: Guild) => {
   setupServer(guild.id);
