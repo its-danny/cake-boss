@@ -52,21 +52,51 @@ export const getConfigList = async (args: Arguments): Promise<string[] | string>
   table.push([
     'manager-roles',
     'Roles allowed to manage Cake Boss (comma-separated)',
-    server.config.managerRoles.join(', '),
+
+    server.config.managerRoles
+      .map(roleId => {
+        const role = args.message.guild.roles.get(roleId);
+
+        if (role) {
+          return role.name;
+        }
+      })
+      .join(', '),
+
     '',
   ]);
 
   table.push([
     'blesser-roles',
     'Roles allowed to bless others with cake (comma-separated)',
-    server.config.blesserRoles.join(', '),
+
+    server.config.blesserRoles
+      .map(roleId => {
+        const role = args.message.guild.roles.get(roleId);
+
+        if (role) {
+          return role.name;
+        }
+      })
+      .join(', '),
+
     '',
   ]);
 
   table.push([
     'dropper-roles',
     'Roles allowed to drop cakes in channels (comma-separated)',
-    server.config.dropperRoles.join(', '),
+
+    server.config.dropperRoles
+      .map(roleId => {
+        const role = args.message.guild.roles.get(roleId);
+
+        if (role) {
+          return role.name;
+        }
+      })
+      .join(', '),
+
     '',
   ]);
 

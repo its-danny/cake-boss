@@ -93,7 +93,14 @@ export const setConfig = async (args: Arguments): Promise<string> => {
   }
 
   if (args.config === 'manager-roles') {
-    const foundRoles = args.value.split(',').filter(roleName => {
+    const foundRolesIds = args.value
+      .split(',')
+      .filter(roleName => {
+        return args.message.guild.roles.find(role => role.name === roleName.trim());
+      })
+      .map(roleName => args.message.guild.roles.find(role => role.name === roleName.trim()).id);
+
+    const foundRolesNames = args.value.split(',').filter(roleName => {
       return args.message.guild.roles.find(role => role.name === roleName.trim());
     });
 
@@ -101,13 +108,13 @@ export const setConfig = async (args: Arguments): Promise<string> => {
       return !args.message.guild.roles.find(role => role.name === roleName.trim());
     });
 
-    server.config.managerRoles = foundRoles;
+    server.config.managerRoles = foundRolesIds;
 
     await server.config.save();
     await logEvent(
       args.client,
       args.message,
-      `${EMOJI_CONFIG_EVENT} \`${args.config}\` set to \`${server.config.managerRoles.join(', ')}\`.`,
+      `${EMOJI_CONFIG_EVENT} \`${args.config}\` set to \`${foundRolesNames.join(', ')}\`.`,
     );
 
     if (notFoundRoles.length > 0) {
@@ -115,11 +122,19 @@ export const setConfig = async (args: Arguments): Promise<string> => {
         ', ',
       )}`;
     }
+
     return `${EMOJI_JOB_WELL_DONE} Done!`;
   }
 
   if (args.config === 'blesser-roles') {
-    const foundRoles = args.value.split(',').filter(roleName => {
+    const foundRolesIds = args.value
+      .split(',')
+      .filter(roleName => {
+        return args.message.guild.roles.find(role => role.name === roleName.trim());
+      })
+      .map(roleName => args.message.guild.roles.find(role => role.name === roleName.trim()).id);
+
+    const foundRolesNames = args.value.split(',').filter(roleName => {
       return args.message.guild.roles.find(role => role.name === roleName.trim());
     });
 
@@ -127,13 +142,13 @@ export const setConfig = async (args: Arguments): Promise<string> => {
       return !args.message.guild.roles.find(role => role.name === roleName.trim());
     });
 
-    server.config.blesserRoles = foundRoles;
+    server.config.blesserRoles = foundRolesIds;
 
     await server.config.save();
     await logEvent(
       args.client,
       args.message,
-      `${EMOJI_CONFIG_EVENT} \`${args.config}\` set to \`${server.config.blesserRoles.join(', ')}\`.`,
+      `${EMOJI_CONFIG_EVENT} \`${args.config}\` set to \`${foundRolesNames.join(', ')}\`.`,
     );
 
     if (notFoundRoles.length > 0) {
@@ -141,11 +156,19 @@ export const setConfig = async (args: Arguments): Promise<string> => {
         ', ',
       )}`;
     }
+
     return `${EMOJI_JOB_WELL_DONE} Done!`;
   }
 
   if (args.config === 'dropper-roles') {
-    const foundRoles = args.value.split(',').filter(roleName => {
+    const foundRolesIds = args.value
+      .split(',')
+      .filter(roleName => {
+        return args.message.guild.roles.find(role => role.name === roleName.trim());
+      })
+      .map(roleName => args.message.guild.roles.find(role => role.name === roleName.trim()).id);
+
+    const foundRolesNames = args.value.split(',').filter(roleName => {
       return args.message.guild.roles.find(role => role.name === roleName.trim());
     });
 
@@ -153,13 +176,13 @@ export const setConfig = async (args: Arguments): Promise<string> => {
       return !args.message.guild.roles.find(role => role.name === roleName.trim());
     });
 
-    server.config.dropperRoles = foundRoles;
+    server.config.dropperRoles = foundRolesIds;
 
     await server.config.save();
     await logEvent(
       args.client,
       args.message,
-      `${EMOJI_CONFIG_EVENT} \`${args.config}\` set to \`${server.config.dropperRoles.join(', ')}\`.`,
+      `${EMOJI_CONFIG_EVENT} \`${args.config}\` set to \`${foundRolesNames.join(', ')}\`.`,
     );
 
     if (notFoundRoles.length > 0) {
@@ -167,6 +190,7 @@ export const setConfig = async (args: Arguments): Promise<string> => {
         ', ',
       )}`;
     }
+
     return `${EMOJI_JOB_WELL_DONE} Done!`;
   }
 
