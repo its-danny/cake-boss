@@ -4,6 +4,7 @@ import Table from 'cli-table';
 import { canManage } from '../../../../utils/permissions';
 import Server from '../../../../entity/server';
 import { EMOJI_INCORRECT_PERMISSIONS, EMOJI_CAKE } from '../../../../utils/emoji';
+import { getTableBorder } from '../../../../utils/ascii';
 
 interface Arguments {
   [x: string]: unknown;
@@ -27,6 +28,7 @@ export const getConfigList = async (args: Arguments): Promise<string[] | string>
   const table = new Table({
     head: ['Name', 'Description', 'Value', 'Default'],
     style: { head: [], border: [] },
+    chars: getTableBorder(),
   });
 
   table.push(['nickname', 'Nickname', server.config.nickname, 'CAKE BOSS!']);

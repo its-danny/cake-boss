@@ -3,6 +3,7 @@ import Table from 'cli-table';
 import { Client, Message } from 'discord.js';
 import Server from '../../entity/server';
 import { EMOJI_WORKING_HARD } from '../../utils/emoji';
+import { getTableBorder } from '../../utils/ascii';
 
 export interface Arguments {
   [x: string]: unknown;
@@ -36,6 +37,7 @@ export const getLeaderboard = async (args: Arguments): Promise<string> => {
   const table = new Table({
     head: ['', 'Member', 'Earned'],
     style: { head: [], border: [] },
+    chars: getTableBorder(),
   });
 
   sorted.forEach((member, index) => {
