@@ -44,10 +44,31 @@ header {
   text-align: center;
 }
 
+#avatar-wrap {
+  position: relative;
+  margin: 0 auto;
+  width: 150px;
+}
+
 #avatar {
   width: 150px;
   border-radius: 50%;
   border: 5px solid #9ad8cf;
+}
+
+#status {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #333333;
+  border: 3px solid #525252;
+}
+
+#status.online {
+  background-color: #57b761;
 }
 
 #add-to-discord {
@@ -84,7 +105,7 @@ header {
   box-shadow: 0px 3px 5px 0px rgba(0, 0, 0, 0.05);
 }
 
-#leaderboard-content {
+#leaderboard {
   position: absolute;
   top: 25px;
   right: 25px;
@@ -97,11 +118,11 @@ header {
   box-shadow: 0px 3px 5px 0px rgba(0, 0, 0, 0.15);
 }
 
-#leaderboard-content table thead th {
+#leaderboard table thead th {
   border-top: none;
 }
 
-#leaderboard-content table:last-child {
+#leaderboard table:last-child {
   margin-bottom: 0;
 }
 
