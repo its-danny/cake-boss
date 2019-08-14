@@ -5,6 +5,7 @@ import moment from 'moment';
 import { canManage } from '../../../utils/permissions';
 import Server from '../../../entity/server';
 import { EMOJI_INCORRECT_PERMISSIONS, EMOJI_RECORD_NOT_FOUND } from '../../../utils/emoji';
+import { getTableBorder } from '../../../utils/ascii';
 
 interface Arguments {
   [x: string]: unknown;
@@ -31,6 +32,7 @@ export const getShamedList = async (args: Arguments): Promise<string> => {
   const table = new Table({
     head: ['Name', 'Date Shamed'],
     style: { head: [], border: [] },
+    chars: getTableBorder(),
   });
 
   await args.message.guild.fetchMembers();

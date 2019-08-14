@@ -4,6 +4,7 @@ import Table from 'cli-table';
 import { canManage } from '../../../utils/permissions';
 import Server from '../../../entity/server';
 import { EMOJI_ERROR, EMOJI_INCORRECT_PERMISSIONS } from '../../../utils/emoji';
+import { getTableBorder } from '../../../utils/ascii';
 
 interface Arguments {
   [x: string]: unknown;
@@ -34,6 +35,7 @@ export const getPrizeList = async (args: Arguments): Promise<string> => {
   const table = new Table({
     head: ['ID', 'Description', 'Reaction Emoji', 'Price', 'Role to Give'],
     style: { head: [], border: [] },
+    chars: getTableBorder(),
   });
 
   server.prizes.forEach(prize => {

@@ -167,7 +167,15 @@ client.on('message', async (message: Message) => {
 
             if (sentMessage && reactions) {
               Object.keys(reactions).forEach(emoji => {
-                sentMessage!.react(emoji);
+                let react;
+
+                if (/\b:\d{18}/.test(emoji)) {
+                  react = emoji.match(/\d{18}/)![0];
+                } else {
+                  react = emoji;
+                }
+
+                sentMessage!.react(react);
               });
 
               const toWatch = { message: sentMessage, reactions, userId: message.author.id };

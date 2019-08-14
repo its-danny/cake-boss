@@ -5,6 +5,7 @@ import moment from 'moment';
 import Server from '../../entity/server';
 import { canManage } from '../../utils/permissions';
 import { EMOJI_INCORRECT_PERMISSIONS, EMOJI_WORKING_HARD } from '../../utils/emoji';
+import { getTableBorder } from '../../utils/ascii';
 
 export interface Arguments {
   [x: string]: unknown;
@@ -35,6 +36,7 @@ export const getLedger = async (args: Arguments): Promise<string> => {
   const table = new Table({
     head: ['Member', 'Balance', 'Earned', 'Date Added'],
     style: { head: [], border: [] },
+    chars: getTableBorder(),
   });
 
   await args.message.guild.fetchMembers();
