@@ -50,4 +50,12 @@ export default class Server extends BaseEntity {
 
   @OneToMany(() => Drop, drop => drop.server)
   drops!: Drop[];
+
+  totalEarnedByMembers(): number {
+    let totalEarned = 0;
+
+    this.members.forEach(m => (totalEarned += m.earned));
+
+    return totalEarned;
+  }
 }

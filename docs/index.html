@@ -169,6 +169,66 @@
       </div>
     </main>
 
+    <section class="d-none d-md-block">
+      <div id="leaderboard">
+        <transition name="fade">
+          <div id="leaderboard-content" class="d-none">
+            <ul class="nav nav-tabs" id="leaderboard-tabs" role="tablist">
+              <li class="nav-item">
+                <a class="nav-link active" id="top-users-tab" data-toggle="tab" href="#top-users" role="tab" aria-controls="top-users" aria-selected="true">Top Users</a>
+              </li>
+
+              <li class="nav-item">
+                <a class="nav-link" id="top-servers-tab" data-toggle="tab" href="#top-servers" role="tab" aria-controls="top-servers" aria-selected="false">Top Servers</a>
+              </li>
+            </ul>
+
+            <div class="tab-content">
+              <div class="tab-pane active" id="top-users" role="tabpanel" aria-labelledby="top-users-tab">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th scope="col">Rank</th>
+                      <th scope="col">Name</th>
+                      <th scope="col">Total Earned</th>
+                    </tr>
+                  </thead>
+        
+                  <tbody>
+                    <tr v-for="(user, index) in topUsers">
+                      <th scope="row">#{{ index + 1 }}</th>
+                      <td>{{ user.name }}</td>
+                      <td>{{ user.earned }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+      
+              <div class="tab-pane" id="top-servers" role="tabpanel" aria-labelledby="top-servers-tab">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th scope="col">Rank</th>
+                      <th scope="col">Name</th>
+                      <th scope="col">Total Earned</th>
+                    </tr>
+                  </thead>
+          
+                  <tbody>
+                    <tr v-for="(server, index) in topServers">
+                      <th scope="row">#{{ index + 1 }}</th>
+                      <td>{{ server.name }}</td>
+                      <td>{{ server.earned }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </transition>
+      </div>
+    </section>
+
     <footer>
       <a href="https://github.com/dannytatom/cake-boss" target="_blank"><i class="fab fa-github"></i></a>
       <a href="https://discord.gg/2AG9fKt" target="_blank"><i class="fab fa-discord"></i></a>
@@ -178,5 +238,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
     <script src="https://kit.fontawesome.com/002ce2cd9d.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="./index.js"></script>
   </body>
 </html>
