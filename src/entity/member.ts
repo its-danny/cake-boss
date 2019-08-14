@@ -63,7 +63,7 @@ export default class Member extends BaseEntity {
       user = new User();
       user.discordId = discordUserId;
 
-      await user.save();
+      user = await user.save();
     }
 
     let member = await Member.findOne({ where: { discordId: discordMemberId } });
@@ -74,7 +74,7 @@ export default class Member extends BaseEntity {
       member.server = server;
       member.user = user;
 
-      await member.save();
+      member = await member.save();
     }
 
     return member;
