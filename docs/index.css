@@ -1,0 +1,85 @@
+body {
+  background-color: #fff7ef;
+  color: #907f7e;
+}
+
+h1 {
+  margin-top: 15px;
+  font-family: 'Beth Ellen', cursive;
+  font-size: 3rem;
+  color: #57A2A2;
+}
+
+h2 {
+  margin: 0 0 15px 0;
+  font-size: 1.5rem;
+  color: #B09795;
+}
+
+a {
+  color: #B09795;
+}
+
+a:hover {
+  color: #907f7e;
+}
+
+code {
+  color: #333333;
+}
+
+header {
+  background-color: #A7E8DF;
+  background-image: url('./background.png');
+  border-bottom: 3px solid #96d4cb;
+}
+
+#top-content {
+  margin-top: 5rem;
+  margin-bottom: 5rem;
+  text-align: center;
+}
+
+#avatar {
+  width: 150px;
+  border-radius: 50%;
+  border: 5px solid #9ad8cf;
+}
+
+#add-to-discord {
+  margin-top: 15px;
+  background-color: #B09795;
+  border: 0;
+  font-weight: bold;
+}
+
+#add-to-discord:hover {
+  background-color: #907d7b;
+}
+
+#add-to-discord i.fab {
+  margin: 0 10px 0 0;
+}
+
+#what, #commands {
+  margin: 2.5rem 0;
+}
+
+#what {
+  text-align: center;
+}
+
+.command {
+  margin-bottom: 10px;
+  padding: 10px 15px;
+  background-color: #ffffff;
+  border-radius: 10px;
+
+  -webkit-box-shadow: 0px 3px 5px 0px rgba(0, 0, 0, 0.05);
+  -moz-box-shadow: 0px 3px 5px 0px rgba(0, 0, 0, 0.05);
+  box-shadow: 0px 3px 5px 0px rgba(0, 0, 0, 0.05);
+}
+
+footer {
+  text-align: center;
+}
