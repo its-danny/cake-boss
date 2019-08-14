@@ -9,6 +9,7 @@ import fs from 'fs';
 import schedule from 'node-schedule';
 import Koa from 'koa';
 import Router from 'koa-router';
+import IO from 'koa-socket';
 import cors from '@koa/cors';
 import { setupServer } from './utils/server-status';
 import Server from './entity/server';
@@ -67,7 +68,7 @@ client.on('ready', async () => {
     }
   });
 
-  console.log(EMOJI_CAKE);
+  console.log(`${EMOJI_CAKE} Cake Boss online!`);
 });
 
 client.on('guildCreate', async (guild: Guild) => {
@@ -187,6 +188,13 @@ client.on('message', async (message: Message) => {
 
 const api = new Koa();
 const router = new Router();
+const io = new IO();
+
+api.use(cors());
+api.use(router.routes());
+api.use(router.allowedMethods());
+
+io.attach(api);
 
 router.get('/ping', context => {
   context.body = 'ONLINE';
@@ -238,9 +246,19 @@ router.get('/leaderboard', async context => {
   context.body = { topUsers, topServers };
 });
 
-api.use(cors());
-api.use(router.routes());
-api.use(router.allowedMethods());
+io.on('join', async () => {
+  return {
+    servers: await Server.count({ where: { active: true } }),
+    users: await User.count(),
+  };
+});
+
+setInterval(async () => {
+  io.broadcast('live', {
+    servers: await Server.count({ where: { active: true } }),
+    users: await User.count(),
+  });
+}, 3 * 1000);
 
 // Start it all up
 
@@ -250,7 +268,7 @@ createConnection()
     client.login(DISCORD_TOKEN);
 
     const API_PORT: string = process.env.API_PORT as string;
-    api.listen(API_PORT);
+    api.listen(API_PORT, () => console.log('🚀 API online!'));
 
     fs.writeFileSync('./.uptime', moment().utc(), 'utf8');
 
