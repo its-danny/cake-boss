@@ -21,7 +21,13 @@
       <div class="container">
         <div class="row">
           <div id="top-content" class="col-md-8 offset-md-2">
-            <img id="avatar" src="./avatar.jpg" />
+            <div id="avatar-wrap">
+              <img id="avatar" src="./avatar.jpg" />
+              
+              <div id="status-wrap">
+                <div id="status" :class="{ online: isOnline }" data-toggle="tooltip" data-placement="right" :title="isOnline ? 'Online!' : 'Offline'"></div>
+              </div>
+            </div>
 
             <h1>Cake Boss!</h1>
 
@@ -170,9 +176,9 @@
     </main>
 
     <section class="d-none d-md-block">
-      <div id="leaderboard">
+      <div id="leaderboard-wrap">
         <transition name="fade">
-          <div id="leaderboard-content" class="d-none">
+          <div id="leaderboard" class="d-none">
             <ul class="nav nav-tabs" id="leaderboard-tabs" role="tablist">
               <li class="nav-item">
                 <a class="nav-link active" id="top-users-tab" data-toggle="tab" href="#top-users" role="tab" aria-controls="top-users" aria-selected="true">Top Users</a>
