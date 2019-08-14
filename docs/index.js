@@ -1,5 +1,27 @@
-/* global $, Vue, axios */
+/* global $, Vue, axios, io */
 /* eslint-disable no-new */
+
+new Vue({
+  el: '#live-wrap',
+
+  data() {
+    return {
+      servers: 0,
+      users: 0,
+    };
+  },
+
+  mounted() {
+    const socket = io('https://rabitrup.com');
+
+    socket.on('live', response => {
+      this.servers = response.servers;
+      this.users = response.users;
+
+      this.$el.querySelector('#live').classList = '';
+    });
+  },
+});
 
 new Vue({
   el: '#leaderboard-wrap',
@@ -39,7 +61,8 @@ new Vue({
       .then(() => {
         this.isOnline = true;
       })
-      .catch(() => {}).finally(() => {
+      .catch(() => {})
+      .finally(() => {
         $('[data-toggle="tooltip"]').tooltip();
       });
   },
