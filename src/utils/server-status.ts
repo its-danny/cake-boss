@@ -1,14 +1,12 @@
 import Server from '../entity/server';
 import Config from '../entity/config';
 
-export const setupServer = async (guildId: string) => {
+export const setupServer = async (guildId: string): Promise<Server> => {
   const foundServer = await Server.findOne({ where: { discordId: guildId } });
 
   if (foundServer) {
     foundServer.active = true;
-    foundServer.save();
-
-    return;
+    return foundServer.save();
   }
 
   const config = new Config();
@@ -29,4 +27,6 @@ export const setupServer = async (guildId: string) => {
   } catch (error) {
     throw error;
   }
+
+  return server;
 };

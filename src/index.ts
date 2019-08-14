@@ -61,8 +61,8 @@ client.on('ready', async () => {
   console.log(EMOJI_CAKE);
 });
 
-client.on('guildCreate', (guild: Guild) => {
-  setupServer(guild.id);
+client.on('guildCreate', async (guild: Guild) => {
+  await setupServer(guild.id);
 });
 
 client.on('guildDelete', async (guild: Guild) => {
@@ -91,11 +91,10 @@ client.on('message', async (message: Message) => {
     .map((s, i) => (i === 0 ? s.toLowerCase() : s))
     .join(' ');
 
-  const server = await Server.findOne({ where: { discordId: message.guild.id }, relations: ['config'] });
+  let server = await Server.findOne({ where: { discordId: message.guild.id }, relations: ['config'] });
 
   if (!server) {
-    handleError(new Error('Could not find server.'), message);
-    return;
+    server = await setupServer(message.guild.id);
   }
 
   const { commandPrefix, cakeNamePlural } = server.config;
