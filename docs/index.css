@@ -28,6 +28,10 @@ code {
   color: #333333;
 }
 
+hr {
+  background-color: #fff7ef;;
+}
+
 header {
   background-color: #A7E8DF;
   background-image: url('./background.png');
@@ -81,5 +85,6 @@ header {
 }
 
 footer {
+  margin-bottom: 5rem;
   text-align: center;
 }

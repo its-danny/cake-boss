@@ -85,7 +85,7 @@ export const redeemCake = async (args: Arguments): Promise<string> => {
 };
 
 export const command = 'redeem';
-export const describe = 'Redeem your cakes!';
+export const describe = 'Redeem your cakes for prizes!';
 
 export const builder = (yargs: Argv) => yargs;
 

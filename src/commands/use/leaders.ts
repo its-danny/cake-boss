@@ -47,7 +47,7 @@ export const getLeaderboard = async (args: Arguments): Promise<string> => {
 };
 
 export const command = 'leaders';
-export const describe = 'View the leaders';
+export const describe = 'View the server leaderboard';
 
 export const builder = (yargs: Argv) => yargs;
 

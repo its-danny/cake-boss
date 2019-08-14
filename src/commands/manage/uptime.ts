@@ -9,7 +9,7 @@ interface Arguments {
 }
 
 export const command = 'uptime';
-export const describe = 'View uptime';
+export const describe = 'View bot uptime';
 
 export const builder = (yargs: Argv) => yargs;
 

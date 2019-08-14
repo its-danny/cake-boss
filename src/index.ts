@@ -97,7 +97,7 @@ client.on('message', async (message: Message) => {
     server = await setupServer(message.guild.id);
   }
 
-  const { commandPrefix, cakeNamePlural } = server.config;
+  const { commandPrefix } = server.config;
 
   if (message.author.id !== client.user.id && cleanContent.startsWith(`${commandPrefix}`)) {
     try {
@@ -111,9 +111,13 @@ client.on('message', async (message: Message) => {
       parser.parse(
         cleanContent.replace(`${commandPrefix}`, ''),
         { client, message, deleteCaller: false, needsFetch: false, promisedOutput: null, reactions: null },
-        async (error, argv, output) => {
+        async (error, argv) => {
           if (error) {
-            if (error.name !== 'YError') {
+            if (error.name === 'YError') {
+              message.channel.send(
+                `${EMOJI_WORKING_HARD} Looks like you need some help! Check the commands here: <https://dannytatom.github.io/cake-boss/>`,
+              );
+            } else {
               handleError(error, message);
             }
           }
@@ -129,11 +133,9 @@ client.on('message', async (message: Message) => {
           }
 
           if (argv.help) {
-            const helpOutput = output
-              .replace(/(\[command-prefix\] )/gm, commandPrefix)
-              .replace(/cakes/gm, cakeNamePlural);
-
-            message.channel.send(`${EMOJI_WORKING_HARD}\n\n\`\`\`\n${helpOutput}\n\`\`\``);
+            message.channel.send(
+              `${EMOJI_WORKING_HARD} Looks like you need some help! Check the commands here: <https://dannytatom.github.io/cake-boss/>`,
+            );
           }
 
           if (argv.promisedOutput) {
