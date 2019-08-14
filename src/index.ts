@@ -7,16 +7,28 @@ import { createConnection } from 'typeorm';
 import moment from 'moment';
 import fs from 'fs';
 import schedule from 'node-schedule';
+import Koa from 'koa';
+import Router from 'koa-router';
+import cors from '@koa/cors';
 import { setupServer } from './utils/server-status';
 import Server from './entity/server';
 import { EMOJI_JOB_WELL_DONE, EMOJI_WORKING_HARD, EMOJI_THINKING, EMOJI_CAKE, EMOJI_ERROR } from './utils/emoji';
+import User from './entity/user';
 
 dotenv.config({ path: `./.env` });
 
-const NODE_ENV: string = process.env.NODE_ENV as string;
+// Sentry
+
+const SENTRY_DSN: string = process.env.SENTRY_DSN as string;
+Sentry.init({ dsn: SENTRY_DSN });
+
+// Bot
 
 const client = new Discord.Client();
-const parser = yargs
+
+const NODE_ENV: string = process.env.NODE_ENV as string;
+
+const commandParser = yargs
   .scriptName('[command-prefix]')
   .commandDir('commands/manage', { exclude: /\.test\./gm, extensions: [NODE_ENV === 'production' ? 'js' : 'ts'] })
   .commandDir('commands/use', { exclude: /\.test\./gm, extensions: [NODE_ENV === 'production' ? 'js' : 'ts'] })
@@ -24,9 +36,6 @@ const parser = yargs
   .showHelpOnFail(true)
   .wrap(null)
   .help();
-
-const SENTRY_DSN: string = process.env.SENTRY_DSN as string;
-Sentry.init({ dsn: SENTRY_DSN });
 
 interface WatchedMessage {
   message: Message;
@@ -108,7 +117,7 @@ client.on('message', async (message: Message) => {
       // needsFetch:     boolean
       // promisedOutput: Promise<string> | null
       // reactions:      {[key: string]: () => void} | null
-      parser.parse(
+      commandParser.parse(
         cleanContent.replace(`${commandPrefix}`, ''),
         { client, message, deleteCaller: false, needsFetch: false, promisedOutput: null, reactions: null },
         async (error, argv) => {
@@ -174,10 +183,74 @@ client.on('message', async (message: Message) => {
   }
 });
 
+// API
+
+const api = new Koa();
+const router = new Router();
+
+router.get('/ping', context => {
+  context.body = 'ONLINE';
+});
+
+router.get('/leaderboard', async context => {
+  const allUsers = await User.find({ relations: ['members'] });
+  let topUsers: any[] = [];
+
+  if (allUsers) {
+    const top = allUsers
+      .sort((user1, user2) => {
+        return user2.totalEarned() - user1.totalEarned();
+      })
+      .slice(0, 10);
+
+    topUsers = await Promise.all(
+      top.map(async user => {
+        const discordUser = await client.fetchUser(user.discordId);
+
+        if (discordUser) {
+          return { name: `@${discordUser.username}`, earned: user.totalEarned() };
+        }
+      }),
+    );
+  }
+
+  const allServers = await Server.find({ where: { active: true }, relations: ['members'] });
+  let topServers: any[] = [];
+
+  if (allServers) {
+    const top = allServers
+      .sort((server1, server2) => {
+        return server2.totalEarnedByMembers() - server1.totalEarnedByMembers();
+      })
+      .slice(0, 10);
+
+    topServers = await Promise.all(
+      top.map(async server => {
+        const discordServer = client.guilds.get(server.discordId);
+
+        if (discordServer) {
+          return { name: discordServer.name, earned: server.totalEarnedByMembers() };
+        }
+      }),
+    );
+  }
+
+  context.body = { topUsers, topServers };
+});
+
+api.use(cors());
+api.use(router.routes());
+api.use(router.allowedMethods());
+
+// Start it all up
+
 createConnection()
   .then(() => {
     const DISCORD_TOKEN: string = process.env.DISCORD_TOKEN as string;
     client.login(DISCORD_TOKEN);
+
+    const API_PORT: string = process.env.API_PORT as string;
+    api.listen(API_PORT);
 
     fs.writeFileSync('./.uptime', moment().utc(), 'utf8');
 

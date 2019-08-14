@@ -25,4 +25,12 @@ export default class User extends BaseEntity {
 
   @OneToMany(() => Member, member => member.user)
   members!: Member[];
+
+  totalEarned(): number {
+    let totalEarned = 0;
+
+    this.members.forEach(m => (totalEarned += m.earned));
+
+    return totalEarned;
+  }
 }
