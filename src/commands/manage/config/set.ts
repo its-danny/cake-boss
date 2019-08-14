@@ -290,7 +290,7 @@ export const setConfig = async (args: Arguments): Promise<string> => {
 };
 
 export const command = 'set <config> <value>';
-export const describe = 'Set a server config';
+export const describe = 'Set a config';
 
 export const builder = (yargs: Argv) => yargs;
 

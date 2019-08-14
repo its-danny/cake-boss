@@ -20,7 +20,7 @@
     <header>
       <div class="container">
         <div class="row">
-          <div id="top-content" class="col-md-6 offset-md-3">
+          <div id="top-content" class="col-md-8 offset-md-2">
             <img id="avatar" src="./avatar.jpg" />
 
             <h1>Cake Boss!</h1>
@@ -37,7 +37,7 @@
     <main>
       <div class="container">
         <div id="what" class="row">
-          <div class="col-md-6 offset-md-3">
+          <div class="col-md-8 offset-md-2">
             <h2>Say what now?</h2>
 
             <p>
@@ -48,7 +48,7 @@
         </div>
 
         <div id="commands" class="row">
-          <div class="col-md-6 offset-md-3">
+          <div class="col-md-8 offset-md-2">
             <h2>Commands</h2>
 
             <div class="command clearfix">
@@ -68,7 +68,101 @@
 
             <div class="command clearfix">
               <div class="cmd float-left"><code>-redeem</code></div>
-              <div class="desc float-right">Get prizes!</div>
+              <div class="desc float-right">Redeem your cakes for prizes!</div>
+            </div>
+
+            <div class="command clearfix">
+              <div class="cmd float-left"><code>-earned</code></div>
+              <div class="desc float-right">Check how many cakes you've earned over time</div>
+            </div>
+
+            <div class="command clearfix">
+              <div class="cmd float-left"><code>-leaders</code></div>
+              <div class="desc float-right">View the server leaderboard</div>
+            </div>
+
+            <div class="command clearfix">
+              <div class="cmd float-left"><code>-help</code></div>
+              <div class="desc float-right">This page!</div>
+            </div>
+
+            <div class="clearfix">
+              <a class="float-right" data-toggle="collapse" href="#mod-commands" role="button" aria-expanded="false" aria-controls="mod-commands">
+                Are you a mod?
+              </a>
+            </div>
+
+            <div class="collapse" id="mod-commands">
+              <hr />
+
+              <h2>Mod Commands</h2>
+
+              <p><strong>Note:</strong> <code>&lt;this&gt;</code> means required, <code>[this]</code> means optional.</p>
+
+              <div class="command clearfix">
+                <div class="cmd float-left"><code>-config list branding</code></div>
+                <div class="desc float-right">View branding config settings</div>
+              </div>
+
+              <div class="command clearfix">
+                <div class="cmd float-left"><code>-config list system</code></div>
+                <div class="desc float-right">View system config settings</div>
+              </div>
+
+              <div class="command clearfix">
+                <div class="cmd float-left"><code>-config list usage</code></div>
+                <div class="desc float-right">View usage config settings</div>
+              </div>
+
+              <div class="command clearfix">
+                <div class="cmd float-left"><code>-config set &lt;config&gt; &lt;value&gt;</code></div>
+                <div class="desc float-right">Set a config</div>
+              </div>
+
+              <div class="command clearfix">
+                <div class="cmd float-left"><code>-prize list</code></div>
+                <div class="desc float-right">View prize list</div>
+              </div>
+
+              <div class="command clearfix">
+                <div class="cmd float-left"><code>-prize add &lt;description&gt; &lt;reactionEmoji&gt; &lt;price&gt; [role]</code></div>
+                <div class="desc float-right">Add a prize</div>
+              </div>
+
+              <div class="command clearfix">
+                <div class="cmd float-left"><code>-prize edit &lt;id&gt; &lt;description&gt; &lt;reactionEmoji&gt; &lt;price&gt; [role]</code></div>
+                <div class="desc float-right">Edit a prize</div>
+              </div>
+
+              <div class="command clearfix">
+                <div class="cmd float-left"><code>-prize remove &lt;id&gt;</code></div>
+                <div class="desc float-right">Remove a prize</div>
+              </div>
+
+              <div class="command clearfix">
+                <div class="cmd float-left"><code>-shame list</code></div>
+                <div class="desc float-right">List shamed users</div>
+              </div>
+
+              <div class="command clearfix">
+                <div class="cmd float-left"><code>-shame add &lt;user&gt;</code></div>
+                <div class="desc float-right">Shame someone so they can't use cakes</div>
+              </div>
+
+              <div class="command clearfix">
+                <div class="cmd float-left"><code>-shame remove &lt;user&gt;</code></div>
+                <div class="desc float-right">Reluctantly unshame someone</div>
+              </div>
+
+              <div class="command clearfix">
+                <div class="cmd float-left"><code>-link</code></div>
+                <div class="desc float-right">Check out the GitHub</div>
+              </div>
+
+              <div class="command clearfix">
+                <div class="cmd float-left"><code>-uptime</code></div>
+                <div class="desc float-right">View bot uptime</div>
+              </div>
             </div>
           </div>
         </div>

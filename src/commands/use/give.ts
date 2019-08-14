@@ -92,7 +92,7 @@ export const giveCakeToMember = async (args: Arguments): Promise<string> => {
 };
 
 export const command = 'give <member> [amount]';
-export const describe = 'Give someone cakes';
+export const describe = 'Give someone cake!';
 
 export const builder = (yargs: Argv) => yargs;
 

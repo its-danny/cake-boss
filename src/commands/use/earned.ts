@@ -32,7 +32,7 @@ export const getEarned = async (args: Arguments): Promise<string> => {
 };
 
 export const command = 'earned';
-export const describe = `View how many cakes you've earned`;
+export const describe = `Check how many cakes you've earned over time`;
 
 export const builder = (yargs: Argv) => yargs;
 

@@ -32,7 +32,7 @@ export const getBalance = async (args: Arguments): Promise<string> => {
 };
 
 export const command = 'balance';
-export const describe = 'View your balance';
+export const describe = 'Check your cake balance';
 
 export const builder = (yargs: Argv) => yargs;
 
