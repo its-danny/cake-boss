@@ -4,8 +4,4 @@ services:
 before_script:
 - psql -c 'create database cakeboss_test;' -U postgres
 env:
-  - ORM_HOST=127.0.0.1
-  - ORM_PORT=5432
-  - ORM_USER=postgres
-  - ORM_PASS=
-  - ORM_DATABASE=cakeboss
+  - ORM_HOST=127.0.0.1 ORM_PORT=5432 ORM_USER=postgres ORM_PASS= ORM_DATABASE=cakeboss
