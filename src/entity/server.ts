@@ -52,7 +52,7 @@ export default class Server extends BaseEntity {
   drops!: Drop[];
 
   static async findOrCreate(guildId: string): Promise<Server> {
-    const foundServer = await Server.findOne({ where: { discordId: guildId } });
+    const foundServer = await Server.findOne({ where: { discordId: guildId }, relations: ['config'] });
 
     if (foundServer) {
       foundServer.active = true;

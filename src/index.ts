@@ -112,7 +112,7 @@ client.on('message', async (message: Message) => {
   await Member.findOrCreate(server.discordId, message.author.id, message.member.id);
 
   message.mentions.members.forEach(async member => {
-    await Member.findOrCreate(server!.discordId, member.user.id, member.id);
+    await Member.findOrCreate(server.discordId, member.user.id, member.id);
   });
 
   const { commandPrefix } = server.config;
