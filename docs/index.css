@@ -95,12 +95,24 @@ header {
   font-weight: bold;
 }
 
-#what, #commands {
+#what, #how, #commands {
   margin: 2.5rem 0;
 }
 
-#what {
+#what, #how {
   text-align: center;
+}
+
+#what p {
+  margin: 0;
+}
+
+#how ul {
+  margin: 0;
+  padding: 15px;
+  text-align: left;
+  background: #efe7df;
+  border-radius: 10px;
 }
 
 .command {
