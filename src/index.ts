@@ -107,18 +107,19 @@ client.on('message', async (message: Message) => {
 
   const server = await Server.findOrCreate(message.guild.id);
 
-  await message.guild.fetchMembers();
-
-  await Member.findOrCreate(server.discordId, message.author.id, message.member.id);
-
-  message.mentions.members.forEach(async member => {
-    await Member.findOrCreate(server.discordId, member.user.id, member.id);
-  });
-
   const { commandPrefix } = server.config;
 
   if (message.author.id !== client.user.id && cleanContent.startsWith(`${commandPrefix}`)) {
     try {
+      await message.guild.fetchMember(message.author);
+      await Member.findOrCreate(server.discordId, message.author.id, message.member.id);
+
+      for (const member of message.mentions.members) {
+        const mem = member[1];
+        await message.guild.fetchMember(message.author);
+        await Member.findOrCreate(server.discordId, mem.user.id, mem.id);
+      }
+
       // NOTE: I'm not entirely sure how or where to type these,
       // so putting this comment here to remind myself what is what.
       //
