@@ -54,8 +54,10 @@ export const removeCakes = async (args: Arguments): Promise<string> => {
     return `${EMOJI_ERROR} Invalid amount, sorry!`;
   }
 
-  if (targetMember.balance > 0) {
-    targetMember.balance -= 1;
+  if (targetMember.balance < amount) {
+    targetMember.balance = 0;
+  } else {
+    targetMember.balance -= amount;
   }
 
   await targetMember.save();
