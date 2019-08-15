@@ -4,6 +4,9 @@
 
 ![cake status](https://img.shields.io/website/https/rabitrup.com/ping?down_color=red&down_message=offline&label=cake%20status&up_color=brightgreen&up_message=online%21)
 [![Build Status](https://travis-ci.com/dannytatom/cake-boss.svg?branch=master)](https://travis-ci.com/dannytatom/cake-boss)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/m/dannytatom/cake-boss)
+![GitHub last commit](https://img.shields.io/github/last-commit/dannytatom/cake-boss?color=blue)
+![Maintenance](https://img.shields.io/maintenance/yes/2019?color=blue)
 
 ## Features
 
