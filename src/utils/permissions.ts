@@ -22,6 +22,10 @@ export const canBless = async (message: Message): Promise<boolean> => {
     return true;
   }
 
+  if (await canManage(message)) {
+    return true;
+  }
+
   const server = await Server.findOne({ where: { discordId: message.guild.id }, relations: ['config'] });
 
   if (server) {
@@ -33,6 +37,10 @@ export const canBless = async (message: Message): Promise<boolean> => {
 
 export const canDrop = async (message: Message): Promise<boolean> => {
   if (message.member.hasPermission('ADMINISTRATOR')) {
+    return true;
+  }
+
+  if (await canManage(message)) {
     return true;
   }
 
