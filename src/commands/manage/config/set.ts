@@ -1,5 +1,4 @@
 import { Argv } from 'yargs';
-import { Client, Message } from 'discord.js';
 import Server from '../../../entity/server';
 import { canManage } from '../../../utils/permissions';
 import { logEvent } from '../../../utils/logger';
@@ -9,6 +8,7 @@ import {
   EMOJI_CONFIG_EVENT,
   EMOJI_JOB_WELL_DONE,
 } from '../../../utils/emoji';
+import { CommandArguments } from '../../../utils/command-arguments';
 
 type Config =
   | 'command-prefix'
@@ -26,17 +26,12 @@ type Config =
   | 'give-limit'
   | 'give-limit-hour-reset';
 
-interface Arguments {
-  [x: string]: unknown;
-  client: Client;
-  message: Message;
+interface Arguments extends CommandArguments {
   config: Config;
   value: string;
-  needsFetch: boolean;
-  promisedOutput: Promise<string> | null;
 }
 
-export const setConfig = async (args: Arguments): Promise<string> => {
+export const setConfig = async (args: Arguments): Promise<string | void> => {
   if (!(await canManage(args.message))) {
     return `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`;
   }
@@ -46,6 +41,8 @@ export const setConfig = async (args: Arguments): Promise<string> => {
   if (!server) {
     throw new Error('Could not find server.');
   }
+
+  let configSet = false;
 
   if (args.config === 'command-prefix') {
     const prefix = args.value.trim();
@@ -59,7 +56,7 @@ export const setConfig = async (args: Arguments): Promise<string> => {
     await server.config.save();
     await logEvent(args.client, args.message, `${EMOJI_CONFIG_EVENT} \`${args.config}\` set to \`${args.value}\`.`);
 
-    return `${EMOJI_JOB_WELL_DONE} Done!`;
+    configSet = true;
   }
 
   if (args.config === 'quiet-mode') {
@@ -90,7 +87,7 @@ export const setConfig = async (args: Arguments): Promise<string> => {
     await server.config.save();
     await logEvent(args.client, args.message, `${EMOJI_CONFIG_EVENT} \`${args.config}\` set to \`#${channel.name}\`.`);
 
-    return `${EMOJI_JOB_WELL_DONE} Done!`;
+    configSet = true;
   }
 
   if (args.config === 'redeem-channel') {
@@ -106,7 +103,7 @@ export const setConfig = async (args: Arguments): Promise<string> => {
     await server.config.save();
     await logEvent(args.client, args.message, `${EMOJI_CONFIG_EVENT} \`${args.config}\` set to \`#${channel.name}\`.`);
 
-    return `${EMOJI_JOB_WELL_DONE} Done!`;
+    configSet = true;
   }
 
   if (args.config === 'manager-roles') {
@@ -140,7 +137,7 @@ export const setConfig = async (args: Arguments): Promise<string> => {
       )}`;
     }
 
-    return `${EMOJI_JOB_WELL_DONE} Done!`;
+    configSet = true;
   }
 
   if (args.config === 'blesser-roles') {
@@ -174,7 +171,7 @@ export const setConfig = async (args: Arguments): Promise<string> => {
       )}`;
     }
 
-    return `${EMOJI_JOB_WELL_DONE} Done!`;
+    configSet = true;
   }
 
   if (args.config === 'dropper-roles') {
@@ -208,7 +205,7 @@ export const setConfig = async (args: Arguments): Promise<string> => {
       )}`;
     }
 
-    return `${EMOJI_JOB_WELL_DONE} Done!`;
+    configSet = true;
   }
 
   if (args.config === 'nickname') {
@@ -227,7 +224,7 @@ export const setConfig = async (args: Arguments): Promise<string> => {
 
     await logEvent(args.client, args.message, `${EMOJI_CONFIG_EVENT} \`${args.config}\` set to \`${args.value}\`.`);
 
-    return `${EMOJI_JOB_WELL_DONE} Done!`;
+    configSet = true;
   }
 
   if (args.config === 'cake-emoji') {
@@ -236,7 +233,7 @@ export const setConfig = async (args: Arguments): Promise<string> => {
     await server.config.save();
     await logEvent(args.client, args.message, `${EMOJI_CONFIG_EVENT} \`${args.config}\` set to \`${args.value}\`.`);
 
-    return `${EMOJI_JOB_WELL_DONE} Done!`;
+    configSet = true;
   }
 
   if (args.config === 'cake-name-singular') {
@@ -245,7 +242,7 @@ export const setConfig = async (args: Arguments): Promise<string> => {
     await server.config.save();
     await logEvent(args.client, args.message, `${EMOJI_CONFIG_EVENT} \`${args.config}\` set to \`${args.value}\`.`);
 
-    return `${EMOJI_JOB_WELL_DONE} Done!`;
+    configSet = true;
   }
 
   if (args.config === 'cake-name-plural') {
@@ -254,7 +251,7 @@ export const setConfig = async (args: Arguments): Promise<string> => {
     await server.config.save();
     await logEvent(args.client, args.message, `${EMOJI_CONFIG_EVENT} \`${args.config}\` set to \`${args.value}\`.`);
 
-    return `${EMOJI_JOB_WELL_DONE} Done!`;
+    configSet = true;
   }
 
   if (args.config === 'requirement-to-give') {
@@ -269,7 +266,7 @@ export const setConfig = async (args: Arguments): Promise<string> => {
     await server.config.save();
     await logEvent(args.client, args.message, `${EMOJI_CONFIG_EVENT} \`${args.config}\` set to \`${args.value}\`.`);
 
-    return `${EMOJI_JOB_WELL_DONE} Done!`;
+    configSet = true;
   }
 
   if (args.config === 'give-limit') {
@@ -284,7 +281,7 @@ export const setConfig = async (args: Arguments): Promise<string> => {
     await server.config.save();
     await logEvent(args.client, args.message, `${EMOJI_CONFIG_EVENT} \`${args.config}\` set to \`${args.value}\`.`);
 
-    return `${EMOJI_JOB_WELL_DONE} Done!`;
+    configSet = true;
   }
 
   if (args.config === 'give-limit-hour-reset') {
@@ -299,10 +296,18 @@ export const setConfig = async (args: Arguments): Promise<string> => {
     await server.config.save();
     await logEvent(args.client, args.message, `${EMOJI_CONFIG_EVENT} \`${args.config}\` set to \`${args.value}\`.`);
 
-    return `${EMOJI_JOB_WELL_DONE} Done!`;
+    configSet = true;
   }
 
-  return `${EMOJI_ERROR} Not a valid config!`;
+  if (configSet) {
+    if (server.config.quietMode) {
+      args.message.react(EMOJI_JOB_WELL_DONE);
+    } else {
+      return `${EMOJI_JOB_WELL_DONE} Done!`;
+    }
+  } else {
+    return `${EMOJI_ERROR} Not a valid config!`;
+  }
 };
 
 export const command = 'set <config> <value>';
@@ -312,5 +317,6 @@ export const builder = (yargs: Argv) => yargs;
 
 export const handler = (args: Arguments) => {
   args.needsFetch = true;
+  args.careAboutQuietMode = true;
   args.promisedOutput = setConfig(args);
 };
