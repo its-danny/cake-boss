@@ -23,8 +23,6 @@ export const getLeaderboard = async (args: Arguments): Promise<string> => {
     throw new Error('Could not find server.');
   }
 
-  await args.message.guild.fetchMembers();
-
   const sorted = server.members
     .concat()
     .sort((a, b) => b.earned - a.earned)

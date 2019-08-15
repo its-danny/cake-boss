@@ -1,6 +1,7 @@
 import { Argv } from 'yargs';
 import { Client, Message } from 'discord.js';
 import Server from '../../entity/server';
+import Member from '../../entity/member';
 
 export interface Arguments {
   [x: string]: unknown;
@@ -13,17 +14,17 @@ export interface Arguments {
 export const getBalance = async (args: Arguments): Promise<string> => {
   const server = await Server.findOne({
     where: { discordId: args.message.guild.id },
-    relations: ['config', 'members'],
+    relations: ['config'],
   });
 
   if (!server) {
     throw new Error('Could not find server.');
   }
 
-  const member = server.members.find(mem => mem.discordId === args.message.member.id);
+  const member = await Member.findOne({ where: { server, discordId: args.message.member.id } });
 
   if (!member) {
-    return `You ain't got any!`;
+    throw new Error('Could not find member.');
   }
 
   return `${server.config.cakeEmoji} Your current balance is ${member.balance} ${

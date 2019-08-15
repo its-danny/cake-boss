@@ -39,8 +39,6 @@ export const getLedger = async (args: Arguments): Promise<string> => {
     chars: getTableBorder(),
   });
 
-  await args.message.guild.fetchMembers();
-
   server.members.forEach(member => {
     const discordMember = args.message.guild.members.get(member.discordId);
     table.push([

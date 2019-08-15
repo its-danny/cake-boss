@@ -35,19 +35,17 @@ export const removeCakes = async (args: Arguments): Promise<string> => {
     throw new Error('Could not find server.');
   }
 
-  await args.message.guild.fetchMembers();
+  const targetMemberId = args.member.replace(/^<@!?/, '').replace(/>$/, '');
+  const targetDiscordMember = args.message.guild.members.get(targetMemberId);
 
-  const memberId = args.member.replace(/^<@!?/, '').replace(/>$/, '');
-  const discordMember = args.message.guild.members.get(memberId);
-
-  if (!discordMember) {
+  if (!targetDiscordMember) {
     return `${EMOJI_RECORD_NOT_FOUND} Uh oh, I couldn't find them.`;
   }
 
-  const member = await Member.findOne({ where: { discordId: discordMember.id } });
+  const targetMember = await Member.findOne({ where: { discordId: targetDiscordMember.id } });
 
-  if (!member) {
-    return `${EMOJI_RECORD_NOT_FOUND} Uh oh, I couldn't find them.`;
+  if (!targetMember) {
+    throw new Error('Could not find member.');
   }
 
   const amount = args.amount ? args.amount : 1;
@@ -56,18 +54,18 @@ export const removeCakes = async (args: Arguments): Promise<string> => {
     return `${EMOJI_ERROR} Invalid amount, sorry!`;
   }
 
-  if (member.balance > 0) {
-    member.balance -= 1;
+  if (targetMember.balance > 0) {
+    targetMember.balance -= 1;
   }
 
-  await member.save();
+  await targetMember.save();
 
   logEvent(
     args.client,
     args.message,
     `${server.config.cakeEmoji} \`${args.message.author.tag}\` removed ${amount} ${
       amount > 1 ? server.config.cakeNamePlural : server.config.cakeNameSingular
-    } from \`${discordMember.user.tag}\`.`,
+    } from \`${targetDiscordMember.user.tag}\`.`,
   );
 
   return `${EMOJI_JOB_WELL_DONE} Done!`;

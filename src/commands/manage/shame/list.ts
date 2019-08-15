@@ -35,8 +35,6 @@ export const getShamedList = async (args: Arguments): Promise<string> => {
     chars: getTableBorder(),
   });
 
-  await args.message.guild.fetchMembers();
-
   server.shamed.forEach(shamed => {
     const discordMember = args.message.guild.members.get(shamed.member.discordId);
 

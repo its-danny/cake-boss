@@ -11,23 +11,7 @@ describe('commands/use/earned', () => {
     done();
   });
 
-  it(`should let you know if you're not set up yet`, async done => {
-    const server = await createServer();
-
-    const args: Arguments = {
-      client: createClient(),
-      message: await createMessage({ server, serverMembers: [] }),
-      needsFetch: false,
-      promisedOutput: null,
-    };
-
-    const response = await getEarned(args);
-    expect(response).toMatchInlineSnapshot(`"You ain't got any!"`);
-
-    done();
-  });
-
-  it(`should let you know if you're not set up yet`, async done => {
+  it(`should let you how much you've earned over time`, async done => {
     const server = await createServer();
     const member = await createMember({ server, earned: 5 });
 
