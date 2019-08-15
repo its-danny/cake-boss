@@ -13,8 +13,9 @@ import IO from 'koa-socket-2';
 import cors from '@koa/cors';
 import Member from './entity/member';
 import Server from './entity/server';
-import { EMOJI_JOB_WELL_DONE, EMOJI_WORKING_HARD, EMOJI_THINKING, EMOJI_CAKE, EMOJI_ERROR } from './utils/emoji';
 import User from './entity/user';
+import { CommandArguments } from './utils/command-arguments';
+import { EMOJI_JOB_WELL_DONE, EMOJI_WORKING_HARD, EMOJI_THINKING, EMOJI_CAKE, EMOJI_ERROR } from './utils/emoji';
 
 dotenv.config({ path: `./.env` });
 
@@ -119,90 +120,80 @@ client.on('message', async (message: Message) => {
         await Member.findOrCreate(server.discordId, fetchedMember.user.id, fetchedMember.id);
       }
 
-      // NOTE: I'm not entirely sure how or where to type these,
-      // so putting this comment here to remind myself what is what.
-      //
-      // deleteCaller       boolean
-      // needsFetch:        boolean
-      // careAboutQuietMode boolean
-      // promisedOutput:    Promise<string | string[] | void> | null
-      // reactions:         {[key: string]: () => void} | null
-      commandParser.parse(
-        cleanContent.replace(`${commandPrefix}`, ''),
-        {
-          client,
-          message,
-          deleteCaller: false,
-          needsFetch: false,
-          careAboutQuietMode: false,
-          promisedOutput: null,
-          reactions: null,
-        },
-        async (error, argv) => {
-          if (error) {
-            if (error.name === 'YError') {
-              message.channel.send(
-                `${EMOJI_WORKING_HARD} Looks like you need some help! Check the commands here: <https://dannytatom.github.io/cake-boss/>`,
-              );
-            } else {
-              handleError(error, message);
-            }
-          }
+      const context: CommandArguments = {
+        client,
+        message,
+        deleteCaller: false,
+        needsFetch: false,
+        careAboutQuietMode: false,
+        promisedOutput: null,
+        reactions: null,
+      };
 
-          if (argv.deleteCaller) {
-            message.delete();
-          }
-
-          let sentMessage: Message | null = null;
-
-          if (argv.needsFetch && (!server.config.quietMode || !argv.careAboutQuietMode)) {
-            sentMessage = (await message.channel.send(EMOJI_THINKING)) as Message;
-          }
-
-          if (argv.help) {
+      commandParser.parse(cleanContent.replace(`${commandPrefix}`, ''), context, async (error, argv) => {
+        if (error) {
+          if (error.name === 'YError') {
             message.channel.send(
               `${EMOJI_WORKING_HARD} Looks like you need some help! Check the commands here: <https://dannytatom.github.io/cake-boss/>`,
             );
+          } else {
+            handleError(error, message);
+          }
+        }
+
+        if (argv.deleteCaller) {
+          message.delete();
+        }
+
+        let sentMessage: Message | null = null;
+
+        if (argv.needsFetch && (!server.config.quietMode || !argv.careAboutQuietMode)) {
+          sentMessage = (await message.channel.send(EMOJI_THINKING)) as Message;
+        }
+
+        if (argv.help) {
+          message.channel.send(
+            `${EMOJI_WORKING_HARD} Looks like you need some help! Check the commands here: <https://dannytatom.github.io/cake-boss/>`,
+          );
+        }
+
+        if (argv.promisedOutput) {
+          let commandOutput: string[] | string = (await argv.promisedOutput) as string[] | string;
+
+          if (!Array.isArray(commandOutput)) {
+            commandOutput = [commandOutput];
           }
 
-          if (argv.promisedOutput) {
-            let commandOutput: string[] | string = (await argv.promisedOutput) as string[] | string;
-
-            if (!Array.isArray(commandOutput)) {
-              commandOutput = [commandOutput];
+          commandOutput.forEach(async (out, i) => {
+            if (sentMessage && i === 0) {
+              sentMessage.edit(out);
+            } else {
+              sentMessage = (await message.channel.send(out)) as Message;
             }
+          });
 
-            commandOutput.forEach(async (out, i) => {
-              if (sentMessage && i === 0) {
-                sentMessage.edit(out);
+          const reactions = argv.reactions as { [key: string]: () => void } | null;
+
+          if (sentMessage && reactions) {
+            Object.keys(reactions).forEach(emoji => {
+              let react;
+
+              if (/\b:\d{18}/.test(emoji)) {
+                react = emoji.match(/\d{18}/)![0];
               } else {
-                sentMessage = (await message.channel.send(out)) as Message;
+                react = emoji;
               }
+
+              sentMessage!.react(react);
             });
 
-            const reactions = argv.reactions as { [key: string]: () => void } | null;
-
-            if (sentMessage && reactions) {
-              Object.keys(reactions).forEach(emoji => {
-                let react;
-
-                if (/\b:\d{18}/.test(emoji)) {
-                  react = emoji.match(/\d{18}/)![0];
-                } else {
-                  react = emoji;
-                }
-
-                sentMessage!.react(react);
-              });
-
-              const toWatch = { message: sentMessage, reactions, userId: message.author.id };
-              messagesToWatch.push(toWatch);
-              const toWatchIndex = messagesToWatch.indexOf(toWatch);
-              sentMessage.delete(1000 * 10).then(() => messagesToWatch.splice(toWatchIndex, 1));
-            }
+            const toWatch = { message: sentMessage, reactions, userId: message.author.id };
+            messagesToWatch.push(toWatch);
+            const toWatchIndex = messagesToWatch.indexOf(toWatch);
+            sentMessage.delete(1000 * 10).then(() => messagesToWatch.splice(toWatchIndex, 1));
           }
-        },
-      );
+        }
+      });
     } catch (error) {
       handleError(error, message);
     }

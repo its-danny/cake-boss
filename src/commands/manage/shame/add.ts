@@ -1,9 +1,9 @@
 import { Argv } from 'yargs';
-import { Client, Message } from 'discord.js';
 import { canManage } from '../../../utils/permissions';
 import Server from '../../../entity/server';
 import Member from '../../../entity/member';
 import ShamedMember from '../../../entity/shamed-member';
+import { CommandArguments } from '../../../utils/command-arguments';
 import {
   EMOJI_INCORRECT_PERMISSIONS,
   EMOJI_RECORD_NOT_FOUND,
@@ -12,21 +12,16 @@ import {
 } from '../../../utils/emoji';
 import { logEvent } from '../../../utils/logger';
 
-interface Arguments {
-  [x: string]: unknown;
-  client: Client;
-  message: Message;
+interface Arguments extends CommandArguments {
   member: string;
-  needsFetch: boolean;
-  promisedOutput: Promise<string[] | string> | null;
 }
 
-export const shameMember = async (args: Arguments): Promise<string> => {
+export const shameMember = async (args: Arguments): Promise<string | void> => {
   if (!(await canManage(args.message))) {
     return `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`;
   }
 
-  const server = await Server.findOne({ where: { discordId: args.message.guild.id }, relations: ['shamed'] });
+  const server = await Server.findOne({ where: { discordId: args.message.guild.id }, relations: ['shamed', 'config'] });
 
   if (!server) {
     throw new Error('Could not find server.');
@@ -56,7 +51,11 @@ export const shameMember = async (args: Arguments): Promise<string> => {
     `${EMOJI_SHAME} \`@${args.message.author.tag}\` added \`@${discordMember.user.tag}\` to the shame list.`,
   );
 
-  return `${EMOJI_JOB_WELL_DONE} Done!`;
+  if (server.config.quietMode) {
+    args.message.react(EMOJI_JOB_WELL_DONE);
+  } else {
+    return `${EMOJI_JOB_WELL_DONE} Done!`;
+  }
 };
 
 export const command = 'add <member>';
@@ -66,5 +65,6 @@ export const builder = (yargs: Argv) => yargs;
 
 export const handler = (args: Arguments) => {
   args.needsFetch = true;
+  args.careAboutQuietMode = true;
   args.promisedOutput = shameMember(args);
 };

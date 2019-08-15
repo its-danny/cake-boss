@@ -1,21 +1,13 @@
 import { Argv } from 'yargs';
-import { Client, Message } from 'discord.js';
 import Table from 'cli-table';
 import moment from 'moment';
 import { canManage } from '../../../utils/permissions';
 import Server from '../../../entity/server';
 import { EMOJI_INCORRECT_PERMISSIONS, EMOJI_RECORD_NOT_FOUND } from '../../../utils/emoji';
 import { getTableBorder } from '../../../utils/ascii';
+import { CommandArguments } from '../../../utils/command-arguments';
 
-interface Arguments {
-  [x: string]: unknown;
-  client: Client;
-  message: Message;
-  needsFetch: boolean;
-  promisedOutput: Promise<string[] | string> | null;
-}
-
-export const getShamedList = async (args: Arguments): Promise<string> => {
+export const getShamedList = async (args: CommandArguments): Promise<string> => {
   if (!(await canManage(args.message))) {
     return `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`;
   }
@@ -55,7 +47,7 @@ export const describe = 'List shamed users';
 
 export const builder = (yargs: Argv) => yargs;
 
-export const handler = (args: Arguments) => {
+export const handler = (args: CommandArguments) => {
   args.needsFetch = true;
   args.promisedOutput = getShamedList(args);
 };

@@ -1,20 +1,14 @@
 import { Argv } from 'yargs';
-import { Client, Message } from 'discord.js';
 import Server from '../../entity/server';
 import { canBless, isShamed } from '../../utils/permissions';
 import Member from '../../entity/member';
 import { logEvent } from '../../utils/logger';
 import { EMOJI_DONT_DO_THAT, EMOJI_INCORRECT_PERMISSIONS, EMOJI_RECORD_NOT_FOUND } from '../../utils/emoji';
+import { CommandArguments } from '../../utils/command-arguments';
 
-interface Arguments {
-  [x: string]: unknown;
-  client: Client;
-  message: Message;
+interface Arguments extends CommandArguments {
   member: string;
   amount?: number;
-  needsFetch: boolean;
-  careAboutQuietMode: boolean;
-  promisedOutput: Promise<string | void> | null;
 }
 
 export const blessMember = async (args: Arguments): Promise<string | void> => {

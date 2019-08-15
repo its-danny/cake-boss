@@ -1,8 +1,9 @@
 import { getConnection, createConnections } from 'typeorm';
 import moment from 'moment';
-import { getLedger, Arguments } from './ledger';
+import { getLedger } from './ledger';
 import { createServer, createMember, createMessage, createClient } from '../../../test/test-helpers';
 import { EMOJI_CAKE, EMOJI_WORKING_HARD, EMOJI_INCORRECT_PERMISSIONS } from '../../utils/emoji';
+import { CommandArguments } from '../../utils/command-arguments';
 
 describe('commands/use/ledger', () => {
   beforeAll(async done => {
@@ -15,11 +16,13 @@ describe('commands/use/ledger', () => {
   it(`should require permissions`, async done => {
     const server = await createServer();
 
-    const args: Arguments = {
+    const args: CommandArguments = {
       client: createClient(),
       message: await createMessage({ server, serverMembers: [] }),
       needsFetch: false,
+      careAboutQuietMode: false,
       promisedOutput: null,
+      reactions: {},
     };
 
     const response = await getLedger(args);
@@ -31,11 +34,13 @@ describe('commands/use/ledger', () => {
   it(`should let you know if there are no members set up yet`, async done => {
     const server = await createServer();
 
-    const args: Arguments = {
+    const args: CommandArguments = {
       client: createClient(),
       message: await createMessage({ server, serverMembers: [], permission: 'ADMINISTRATOR' }),
       needsFetch: false,
+      careAboutQuietMode: false,
       promisedOutput: null,
+      reactions: {}
     };
 
     const response = await getLedger(args);
@@ -51,11 +56,13 @@ describe('commands/use/ledger', () => {
     const memberTwo = await createMember({ server, earned: 2 });
     const memberThree = await createMember({ server, earned: 3 });
 
-    const args: Arguments = {
+    const args: CommandArguments = {
       client: createClient(),
       message: await createMessage({ server, serverMembers: [], permission: 'ADMINISTRATOR' }),
       needsFetch: false,
+      careAboutQuietMode: false,
       promisedOutput: null,
+      reactions: {}
     };
 
     const response = await getLedger(args);
