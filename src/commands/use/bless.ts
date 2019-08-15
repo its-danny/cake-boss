@@ -62,9 +62,9 @@ export const blessMember = async (args: Arguments): Promise<string> => {
     }\` with ${amount} ${amount > 1 ? server.config.cakeNamePlural : server.config.cakeNameSingular}!`,
   );
 
-  return `${server.config.cakeEmoji} <@${args.message.member.id}> blessed <@${
-    blessedMember.discordId
-  }> with ${amount} ${amount > 1 ? server.config.cakeNamePlural : server.config.cakeNameSingular}!`;
+  return `${server.config.cakeEmoji} They just got ${amount} ${
+    amount > 1 ? server.config.cakeNamePlural : server.config.cakeNameSingular
+  }, <@${args.message.member.id}>!`;
 };
 
 export const command = 'bless <member> [amount]';
