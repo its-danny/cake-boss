@@ -1,6 +1,5 @@
 import { Argv } from 'yargs';
 import Table from 'cli-table';
-import { Client, Message } from 'discord.js';
 import moment from 'moment';
 import Server from '../../entity/server';
 import { canManage } from '../../utils/permissions';

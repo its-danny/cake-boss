@@ -40,7 +40,7 @@ describe('commands/use/ledger', () => {
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = await getLedger(args);
@@ -62,7 +62,7 @@ describe('commands/use/ledger', () => {
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = await getLedger(args);

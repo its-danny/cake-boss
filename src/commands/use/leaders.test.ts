@@ -43,7 +43,7 @@ describe('commands/use/leaders', () => {
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = await getLeaderboard(args);
