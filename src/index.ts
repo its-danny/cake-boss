@@ -9,7 +9,7 @@ import fs from 'fs';
 import schedule from 'node-schedule';
 import Koa from 'koa';
 import Router from 'koa-router';
-import IO from 'koa-socket';
+import IO from 'koa-socket-2';
 import cors from '@koa/cors';
 import { setupServer } from './utils/server-status';
 import Server from './entity/server';
