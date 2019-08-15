@@ -108,11 +108,15 @@ header {
 }
 
 #how ul {
-  margin: 0;
+  margin: 0 0 15px 0;
   padding: 15px;
   text-align: left;
   background: #efe7df;
   border-radius: 10px;
+}
+
+#how ul:last-child {
+  margin: 0;
 }
 
 .command {
