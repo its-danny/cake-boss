@@ -2,6 +2,7 @@
 
 > A discord bot that lets users reward each other cakes for being helpful, and redeem those cakes for prizes.
 
+![cake status](https://img.shields.io/website/https/rabitrup.com/ping?down_color=red&down_message=offline&label=cake%20status&up_color=brightgreen&up_message=online%21)
 [![Build Status](https://travis-ci.com/dannytatom/cake-boss.svg?branch=master)](https://travis-ci.com/dannytatom/cake-boss)
 
 ## Features
