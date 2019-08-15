@@ -12,7 +12,6 @@ import Router from 'koa-router';
 import IO from 'koa-socket-2';
 import cors from '@koa/cors';
 import Member from './entity/member';
-import { setupServer } from './utils/server-status';
 import Server from './entity/server';
 import { EMOJI_JOB_WELL_DONE, EMOJI_WORKING_HARD, EMOJI_THINKING, EMOJI_CAKE, EMOJI_ERROR } from './utils/emoji';
 import User from './entity/user';
@@ -77,7 +76,7 @@ client.on('ready', async () => {
 });
 
 client.on('guildCreate', async (guild: Guild) => {
-  await setupServer(guild.id);
+  await Server.findOrCreate(guild.id);
 });
 
 client.on('guildDelete', async (guild: Guild) => {
