@@ -17,10 +17,6 @@ interface Arguments {
 }
 
 export const giveCakeToMember = async (args: Arguments): Promise<string> => {
-  if (!(await canGive(args.message))) {
-    return `${EMOJI_INCORRECT_PERMISSIONS} You can't do that yet!`;
-  }
-
   const server = await Server.findOne({
     where: { discordId: args.message.guild.id },
     relations: ['config', 'members'],
@@ -52,10 +48,10 @@ export const giveCakeToMember = async (args: Arguments): Promise<string> => {
   }
 
   const receivingMember = await Member.findOrCreate(args.message.guild.id, discordMember.user.id, discordMember.id);
-  const givingMember = await Member.findOne({ where: { discordId: args.message.member.id } });
+  const givingMember = await Member.findOrCreate(args.message.guild.id, args.message.author.id, args.message.member.id);
 
-  if (!givingMember) {
-    return `${EMOJI_RECORD_NOT_FOUND} Uh oh, I couldn't find you.`;
+  if (!(await canGive(args.message))) {
+    return `${EMOJI_INCORRECT_PERMISSIONS} You can't do that yet!`;
   }
 
   let amount = args.amount ? args.amount : 1;
