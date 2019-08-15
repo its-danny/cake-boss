@@ -1,22 +1,17 @@
 import { Argv } from 'yargs';
-import { Client, Message } from 'discord.js';
 import Server from '../../entity/server';
 import { canBless, isShamed } from '../../utils/permissions';
 import Member from '../../entity/member';
 import { logEvent } from '../../utils/logger';
 import { EMOJI_DONT_DO_THAT, EMOJI_INCORRECT_PERMISSIONS, EMOJI_RECORD_NOT_FOUND } from '../../utils/emoji';
+import { CommandArguments } from '../../utils/command-arguments';
 
-interface Arguments {
-  [x: string]: unknown;
-  client: Client;
-  message: Message;
+interface Arguments extends CommandArguments {
   member: string;
   amount?: number;
-  needsFetch: boolean;
-  promisedOutput: Promise<string> | null;
 }
 
-export const blessMember = async (args: Arguments): Promise<string> => {
+export const blessMember = async (args: Arguments): Promise<string | void> => {
   if (!(await canBless(args.message))) {
     return `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`;
   }
@@ -62,9 +57,21 @@ export const blessMember = async (args: Arguments): Promise<string> => {
     }\` with ${amount} ${amount > 1 ? server.config.cakeNamePlural : server.config.cakeNameSingular}!`,
   );
 
-  return `${server.config.cakeEmoji} They just got ${amount} ${
-    amount > 1 ? server.config.cakeNamePlural : server.config.cakeNameSingular
-  }, <@${args.message.member.id}>!`;
+  if (server.config.quietMode) {
+    let react;
+
+    if (/\b:\d{18}/.test(server.config.cakeEmoji)) {
+      react = server.config.cakeEmoji.match(/\d{18}/)![0];
+    } else {
+      react = server.config.cakeEmoji;
+    }
+
+    args.message.react(react);
+  } else {
+    return `${server.config.cakeEmoji} They just got ${amount} ${
+      amount > 1 ? server.config.cakeNamePlural : server.config.cakeNameSingular
+    }, <@${args.message.member.id}>!`;
+  }
 };
 
 export const command = 'bless <member> [amount]';
@@ -74,5 +81,6 @@ export const builder = (yargs: Argv) => yargs;
 
 export const handler = (args: Arguments) => {
   args.needsFetch = true;
+  args.careAboutQuietMode = true;
   args.promisedOutput = blessMember(args);
 };

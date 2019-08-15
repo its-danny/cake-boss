@@ -1,19 +1,11 @@
 import { Argv } from 'yargs';
 import Table from 'cli-table';
-import { Client, Message } from 'discord.js';
 import Server from '../../entity/server';
 import { EMOJI_WORKING_HARD } from '../../utils/emoji';
 import { getTableBorder } from '../../utils/ascii';
+import { CommandArguments } from '../../utils/command-arguments';
 
-export interface Arguments {
-  [x: string]: unknown;
-  client: Client;
-  message: Message;
-  needsFetch: boolean;
-  promisedOutput: Promise<string> | null;
-}
-
-export const getLeaderboard = async (args: Arguments): Promise<string> => {
+export const getLeaderboard = async (args: CommandArguments): Promise<string> => {
   const server = await Server.findOne({
     where: { discordId: args.message.guild.id },
     relations: ['config', 'members'],
@@ -51,7 +43,7 @@ export const describe = 'View the server leaderboard';
 
 export const builder = (yargs: Argv) => yargs;
 
-export const handler = (args: Arguments) => {
+export const handler = (args: CommandArguments) => {
   args.needsFetch = true;
   args.promisedOutput = getLeaderboard(args);
 };

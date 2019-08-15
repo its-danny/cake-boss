@@ -1,5 +1,4 @@
 import { Argv } from 'yargs';
-import { Client, Message } from 'discord.js';
 import Server from '../../entity/server';
 import { canManage } from '../../utils/permissions';
 import Member from '../../entity/member';
@@ -10,15 +9,11 @@ import {
   EMOJI_RECORD_NOT_FOUND,
   EMOJI_JOB_WELL_DONE,
 } from '../../utils/emoji';
+import { CommandArguments } from '../../utils/command-arguments';
 
-export interface Arguments {
-  [x: string]: unknown;
-  client: Client;
-  message: Message;
+export interface Arguments extends CommandArguments {
   member: string;
   amount?: number;
-  needsFetch: boolean;
-  promisedOutput: Promise<string> | null;
 }
 
 export const disappearCakes = async (args: Arguments): Promise<string> => {

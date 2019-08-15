@@ -1,21 +1,13 @@
 import { Argv } from 'yargs';
 import Table from 'cli-table';
-import { Client, Message } from 'discord.js';
 import moment from 'moment';
 import Server from '../../entity/server';
 import { canManage } from '../../utils/permissions';
 import { EMOJI_INCORRECT_PERMISSIONS, EMOJI_WORKING_HARD } from '../../utils/emoji';
 import { getTableBorder } from '../../utils/ascii';
+import { CommandArguments } from '../../utils/command-arguments';
 
-export interface Arguments {
-  [x: string]: unknown;
-  client: Client;
-  message: Message;
-  needsFetch: boolean;
-  promisedOutput: Promise<string> | null;
-}
-
-export const getLedger = async (args: Arguments): Promise<string> => {
+export const getLedger = async (args: CommandArguments): Promise<string> => {
   if (!(await canManage(args.message))) {
     return `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`;
   }
@@ -57,7 +49,7 @@ export const describe = 'View the ledger';
 
 export const builder = (yargs: Argv) => yargs;
 
-export const handler = async (args: Arguments) => {
+export const handler = async (args: CommandArguments) => {
   args.needsFetch = true;
   args.promisedOutput = getLedger(args);
 };

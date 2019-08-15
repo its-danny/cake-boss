@@ -1,21 +1,14 @@
 import { Argv } from 'yargs';
-import { Client, Message, TextChannel } from 'discord.js';
+import { TextChannel } from 'discord.js';
 import Server from '../../entity/server';
 import Drop from '../../entity/drop';
 import { logEvent } from '../../utils/logger';
 import Member from '../../entity/member';
 import { isShamed } from '../../utils/permissions';
 import { EMOJI_DONT_DO_THAT, EMOJI_RECORD_NOT_FOUND, EMOJI_JOB_WELL_DONE } from '../../utils/emoji';
+import { CommandArguments } from '../../utils/command-arguments';
 
-interface Arguments {
-  [x: string]: unknown;
-  client: Client;
-  message: Message;
-  needsFetch: boolean;
-  promisedOutput: Promise<string> | null;
-}
-
-export const takeCake = async (args: Arguments): Promise<string> => {
+export const takeCake = async (args: CommandArguments): Promise<string | void> => {
   const server = await Server.findOne({
     where: { discordId: args.message.guild.id },
     relations: ['config'],
@@ -62,7 +55,19 @@ export const takeCake = async (args: Arguments): Promise<string> => {
     `${server.config.cakeEmoji} \`@${args.message.author.tag}\` took a ${server.config.cakeNameSingular} from \`#${discordChannel.name}\`!`,
   );
 
-  return `${EMOJI_JOB_WELL_DONE} ${server.config.cakeEmoji} You got it, <@${args.message.member.id}>!`;
+  if (server.config.quietMode) {
+    let react;
+
+    if (/\b:\d{18}/.test(server.config.cakeEmoji)) {
+      react = server.config.cakeEmoji.match(/\d{18}/)![0];
+    } else {
+      react = server.config.cakeEmoji;
+    }
+
+    args.message.react(react);
+  } else {
+    return `${EMOJI_JOB_WELL_DONE} ${server.config.cakeEmoji} You got it, <@${args.message.member.id}>!`;
+  }
 };
 
 export const command = 'take';
@@ -70,7 +75,8 @@ export const describe = 'Take a dropped cake';
 
 export const builder = (yargs: Argv) => yargs;
 
-export const handler = (args: Arguments) => {
+export const handler = (args: CommandArguments) => {
   args.needsFetch = true;
+  args.careAboutQuietMode = true;
   args.promisedOutput = takeCake(args);
 };

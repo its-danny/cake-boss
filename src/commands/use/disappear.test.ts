@@ -20,7 +20,9 @@ describe('commands/use/disappear', () => {
       member: '',
       amount: 1,
       needsFetch: false,
+      careAboutQuietMode: false,
       promisedOutput: null,
+      reactions: {},
     };
 
     const response = await disappearCakes(args);
@@ -38,7 +40,9 @@ describe('commands/use/disappear', () => {
       member: `<@12345>`,
       amount: 1,
       needsFetch: false,
+      careAboutQuietMode: false,
       promisedOutput: null,
+      reactions: {},
     };
 
     const response = await disappearCakes(args);
@@ -57,7 +61,9 @@ describe('commands/use/disappear', () => {
       member: `<@${member.discordId}>`,
       amount: 1,
       needsFetch: false,
+      careAboutQuietMode: false,
       promisedOutput: null,
+      reactions: {},
     };
 
     const response = await disappearCakes(args);

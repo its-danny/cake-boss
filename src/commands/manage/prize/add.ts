@@ -1,5 +1,4 @@
 import { Argv } from 'yargs';
-import { Client, Message } from 'discord.js';
 import { canManage } from '../../../utils/permissions';
 import Server from '../../../entity/server';
 import Prize from '../../../entity/prize';
@@ -10,20 +9,16 @@ import {
   EMOJI_JOB_WELL_DONE,
   EMOJI_CONFIG_EVENT,
 } from '../../../utils/emoji';
+import { CommandArguments } from '../../../utils/command-arguments';
 
-interface Arguments {
-  [x: string]: unknown;
-  client: Client;
-  message: Message;
+interface Arguments extends CommandArguments {
   description: string;
   reactionEmoji: string;
   price: number;
   role?: string;
-  needsFetch: boolean;
-  promisedOutput: Promise<string[] | string> | null;
 }
 
-export const addPrize = async (args: Arguments): Promise<string> => {
+export const addPrize = async (args: Arguments): Promise<string | void> => {
   if (!(await canManage(args.message))) {
     return `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`;
   }
@@ -80,7 +75,11 @@ export const addPrize = async (args: Arguments): Promise<string> => {
     `${EMOJI_CONFIG_EVENT} \`@${args.message.author.tag}\` added a new prize: \`${prize.description}\``,
   );
 
-  return `${EMOJI_JOB_WELL_DONE} Done!`;
+  if (server.config.quietMode) {
+    args.message.react(EMOJI_JOB_WELL_DONE);
+  } else {
+    return `${EMOJI_JOB_WELL_DONE} Done!`;
+  }
 };
 
 export const command = 'add <description> <reactionEmoji> <price> [role]';
@@ -90,5 +89,6 @@ export const builder = (yargs: Argv) => yargs;
 
 export const handler = (args: Arguments) => {
   args.needsFetch = true;
+  args.careAboutQuietMode = true;
   args.promisedOutput = addPrize(args);
 };

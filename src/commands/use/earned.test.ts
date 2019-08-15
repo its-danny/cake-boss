@@ -1,7 +1,8 @@
 import { getConnection, createConnections } from 'typeorm';
-import { getEarned, Arguments } from './earned';
+import { getEarned } from './earned';
 import { createServer, createMember, createMessage, createClient } from '../../../test/test-helpers';
 import { EMOJI_CAKE } from '../../utils/emoji';
+import { CommandArguments } from '../../utils/command-arguments';
 
 describe('commands/use/earned', () => {
   beforeAll(async done => {
@@ -15,11 +16,13 @@ describe('commands/use/earned', () => {
     const server = await createServer();
     const member = await createMember({ server, earned: 5 });
 
-    const args: Arguments = {
+    const args: CommandArguments = {
       client: createClient(),
       message: await createMessage({ server, senderId: member.discordId, serverMembers: [] }),
       needsFetch: false,
+      careAboutQuietMode: false,
       promisedOutput: null,
+      reactions: {},
     };
 
     const response = await getEarned(args);

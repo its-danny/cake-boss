@@ -15,11 +15,23 @@ export default class Config extends BaseEntity {
   @Column({ nullable: false, default: '-' })
   commandPrefix!: string;
 
+  @Column({ nullable: false, default: false })
+  quietMode!: boolean;
+
   @Column({ nullable: true, type: String })
   logChannelId!: string | null;
 
   @Column({ nullable: true, type: String })
   redeemChannelId!: string | null;
+
+  @Column('simple-array', { nullable: false, default: '' })
+  managerRoleIds!: string[];
+
+  @Column('simple-array', { nullable: false, default: '' })
+  blesserRoleIds!: string[];
+
+  @Column('simple-array', { nullable: false, default: '' })
+  dropperRoleIds!: string[];
 
   @Column({ nullable: true, type: String, default: 'CAKE BOSS!' })
   nickname!: string | null;
@@ -32,15 +44,6 @@ export default class Config extends BaseEntity {
 
   @Column({ nullable: false, default: 'cakes' })
   cakeNamePlural!: string;
-
-  @Column('simple-array', { nullable: false, default: '' })
-  managerRoleIds!: string[];
-
-  @Column('simple-array', { nullable: false, default: '' })
-  blesserRoleIds!: string[];
-
-  @Column('simple-array', { nullable: false, default: '' })
-  dropperRoleIds!: string[];
 
   @Column({ nullable: false, default: 0 })
   requirementToGive!: number;

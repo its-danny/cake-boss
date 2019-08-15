@@ -1,20 +1,12 @@
 import { Argv } from 'yargs';
-import { Client, Message } from 'discord.js';
 import Table from 'cli-table';
 import { canManage } from '../../../../utils/permissions';
 import Server from '../../../../entity/server';
 import { EMOJI_INCORRECT_PERMISSIONS, EMOJI_CAKE } from '../../../../utils/emoji';
 import { getTableBorder } from '../../../../utils/ascii';
+import { CommandArguments } from '../../../../utils/command-arguments';
 
-interface Arguments {
-  [x: string]: unknown;
-  client: Client;
-  message: Message;
-  needsFetch: boolean;
-  promisedOutput: Promise<string[] | string> | null;
-}
-
-export const getConfigList = async (args: Arguments): Promise<string[] | string> => {
+export const getConfigList = async (args: CommandArguments): Promise<string[] | string> => {
   if (!(await canManage(args.message))) {
     return `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`;
   }
@@ -44,7 +36,7 @@ export const describe = 'View branding config settings';
 
 export const builder = (yargs: Argv) => yargs;
 
-export const handler = (args: Arguments) => {
+export const handler = (args: CommandArguments) => {
   args.needsFetch = true;
   args.promisedOutput = getConfigList(args);
 };

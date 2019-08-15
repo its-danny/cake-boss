@@ -15,6 +15,7 @@
 - Prefix, language, log channel, etc. Don't like cake? Give hot dogs! 🌭
 - Role-based permissions for commands where it makes sense, blacklist for the rest.
 - Full control over how many cakes people can give out, and how often.
+- A quiet mode to make Cake Boss respond with reacts instead of messages whenever possible.
 
 ### Easy to use prizes
 

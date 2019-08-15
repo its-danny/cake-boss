@@ -1,17 +1,9 @@
 import { Argv } from 'yargs';
-import { Client, Message } from 'discord.js';
 import Server from '../../entity/server';
 import Member from '../../entity/member';
+import { CommandArguments } from '../../utils/command-arguments';
 
-export interface Arguments {
-  [x: string]: unknown;
-  client: Client;
-  message: Message;
-  needsFetch: boolean;
-  promisedOutput: Promise<string> | null;
-}
-
-export const getBalance = async (args: Arguments): Promise<string> => {
+export const getBalance = async (args: CommandArguments): Promise<string> => {
   const server = await Server.findOne({
     where: { discordId: args.message.guild.id },
     relations: ['config'],
@@ -37,7 +29,7 @@ export const describe = 'Check your cake balance';
 
 export const builder = (yargs: Argv) => yargs;
 
-export const handler = (args: Arguments) => {
+export const handler = (args: CommandArguments) => {
   args.needsFetch = true;
   args.promisedOutput = getBalance(args);
 };

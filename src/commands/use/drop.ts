@@ -1,5 +1,5 @@
 import { Argv } from 'yargs';
-import { Client, Message, TextChannel } from 'discord.js';
+import { TextChannel } from 'discord.js';
 import { canDrop } from '../../utils/permissions';
 import Server from '../../entity/server';
 import Drop from '../../entity/drop';
@@ -10,15 +10,11 @@ import {
   EMOJI_JOB_WELL_DONE,
   EMOJI_WORKING_HARD,
 } from '../../utils/emoji';
+import { CommandArguments } from '../../utils/command-arguments';
 
-interface Arguments {
-  [x: string]: unknown;
-  client: Client;
-  message: Message;
+interface Arguments extends CommandArguments {
   channel: string;
   amount?: number;
-  needsFetch: boolean;
-  promisedOutput: Promise<string> | null;
 }
 
 export const dropCakes = async (args: Arguments): Promise<string> => {

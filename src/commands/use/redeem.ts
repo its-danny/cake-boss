@@ -1,23 +1,13 @@
 import { Argv } from 'yargs';
-import { Client, Message } from 'discord.js';
 import moment from 'moment';
 import { isShamed } from '../../utils/permissions';
 import Server from '../../entity/server';
 import { logRedeemed } from '../../utils/logger';
 import Member from '../../entity/member';
 import { EMOJI_DONT_DO_THAT, EMOJI_PRIZE_EVENT, EMOJI_ERROR, EMOJI_RECORD_NOT_FOUND } from '../../utils/emoji';
+import { CommandArguments } from '../../utils/command-arguments';
 
-interface Arguments {
-  [x: string]: unknown;
-  client: Client;
-  message: Message;
-  deleteCaller: boolean;
-  needsFetch: boolean;
-  promisedOutput: Promise<string> | null;
-  reactions: { [key: string]: (userId: string) => void } | null;
-}
-
-export const redeemCake = async (args: Arguments): Promise<string> => {
+export const redeemCake = async (args: CommandArguments): Promise<string> => {
   const server = await Server.findOne({
     where: { discordId: args.message.guild.id },
     relations: ['config', 'prizes'],
@@ -89,7 +79,7 @@ export const describe = 'Redeem your cakes for prizes!';
 
 export const builder = (yargs: Argv) => yargs;
 
-export const handler = (args: Arguments) => {
+export const handler = (args: CommandArguments) => {
   args.deleteCaller = true;
   args.needsFetch = true;
   args.promisedOutput = redeemCake(args);
