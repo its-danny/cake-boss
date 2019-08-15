@@ -122,13 +122,22 @@ client.on('message', async (message: Message) => {
       // NOTE: I'm not entirely sure how or where to type these,
       // so putting this comment here to remind myself what is what.
       //
-      // deleteCaller    boolean
-      // needsFetch:     boolean
-      // promisedOutput: Promise<string> | null
-      // reactions:      {[key: string]: () => void} | null
+      // deleteCaller       boolean
+      // needsFetch:        boolean
+      // careAboutQuietMode boolean
+      // promisedOutput:    Promise<string | string[] | void> | null
+      // reactions:         {[key: string]: () => void} | null
       commandParser.parse(
         cleanContent.replace(`${commandPrefix}`, ''),
-        { client, message, deleteCaller: false, needsFetch: false, promisedOutput: null, reactions: null },
+        {
+          client,
+          message,
+          deleteCaller: false,
+          needsFetch: false,
+          careAboutQuietMode: false,
+          promisedOutput: null,
+          reactions: null,
+        },
         async (error, argv) => {
           if (error) {
             if (error.name === 'YError') {
@@ -146,7 +155,7 @@ client.on('message', async (message: Message) => {
 
           let sentMessage: Message | null = null;
 
-          if (argv.needsFetch) {
+          if (argv.needsFetch && (!server.config.quietMode || !argv.careAboutQuietMode)) {
             sentMessage = (await message.channel.send(EMOJI_THINKING)) as Message;
           }
 

@@ -13,10 +13,11 @@ interface Arguments {
   member: string;
   amount?: number;
   needsFetch: boolean;
-  promisedOutput: Promise<string> | null;
+  careAboutQuietMode: boolean;
+  promisedOutput: Promise<string | void> | null;
 }
 
-export const giveCakeToMember = async (args: Arguments): Promise<string> => {
+export const giveCakeToMember = async (args: Arguments): Promise<string | void> => {
   const server = await Server.findOne({
     where: { discordId: args.message.guild.id },
     relations: ['config', 'members'],
@@ -89,9 +90,21 @@ export const giveCakeToMember = async (args: Arguments): Promise<string> => {
     }!`,
   );
 
-  return `${server.config.cakeEmoji} They just got ${amount} ${
-    amount > 1 ? server.config.cakeNamePlural : server.config.cakeNameSingular
-  }, <@${args.message.member.id}>!`;
+  if (server.config.quietMode) {
+    let react;
+
+    if (/\b:\d{18}/.test(server.config.cakeEmoji)) {
+      react = server.config.cakeEmoji.match(/\d{18}/)![0];
+    } else {
+      react = server.config.cakeEmoji;
+    }
+
+    args.message.react(react);
+  } else {
+    return `${server.config.cakeEmoji} They just got ${amount} ${
+      amount > 1 ? server.config.cakeNamePlural : server.config.cakeNameSingular
+    }, <@${args.message.member.id}>!`;
+  }
 };
 
 export const command = 'give <member> [amount]';
@@ -101,5 +114,6 @@ export const builder = (yargs: Argv) => yargs;
 
 export const handler = (args: Arguments) => {
   args.needsFetch = true;
+  args.careAboutQuietMode = true;
   args.promisedOutput = giveCakeToMember(args);
 };

@@ -12,6 +12,7 @@ import {
 
 type Config =
   | 'command-prefix'
+  | 'quiet-mode'
   | 'log-channel'
   | 'redeem-channel'
   | 'manager-roles'
@@ -54,6 +55,21 @@ export const setConfig = async (args: Arguments): Promise<string> => {
     }
 
     server.config.commandPrefix = prefix;
+
+    await server.config.save();
+    await logEvent(args.client, args.message, `${EMOJI_CONFIG_EVENT} \`${args.config}\` set to \`${args.value}\`.`);
+
+    return `${EMOJI_JOB_WELL_DONE} Done!`;
+  }
+
+  if (args.config === 'quiet-mode') {
+    const toggle = args.value.trim();
+
+    if (toggle !== 'true' && toggle !== 'false') {
+      return `${EMOJI_ERROR} It's a true or false question!`;
+    }
+
+    server.config.quietMode = toggle === 'true';
 
     await server.config.save();
     await logEvent(args.client, args.message, `${EMOJI_CONFIG_EVENT} \`${args.config}\` set to \`${args.value}\`.`);

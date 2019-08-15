@@ -33,6 +33,13 @@ export const getConfigList = async (args: Arguments): Promise<string[] | string>
 
   table.push(['command-prefix', `It's the command prefix!`, server.config.commandPrefix, '-']);
 
+  table.push([
+    'quiet-mode',
+    `Cake Boss will respond with reacts instead of messages when possible`,
+    server.config.quietMode,
+    'false',
+  ]);
+
   const logChannel = server.config.logChannelId ? args.message.guild.channels.get(server.config.logChannelId) : null;
 
   table.push(['log-channel', 'Where to log events', logChannel ? `#${logChannel.name}` : '', '']);
