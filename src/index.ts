@@ -21,7 +21,11 @@ dotenv.config({ path: `./.env` });
 // Sentry
 
 const SENTRY_DSN: string = process.env.SENTRY_DSN as string;
-Sentry.init({ dsn: SENTRY_DSN });
+const SENTRY_DISABLED = !SENTRY_DSN || SENTRY_DSN === '';
+
+if (SENTRY_DSN !== '') {
+  Sentry.init({ dsn: SENTRY_DSN });
+}
 
 // Bot
 
@@ -49,7 +53,7 @@ const messagesToWatch: WatchedMessage[] = [];
 const handleError = async (error: Error, message: Message) => {
   message.channel.send(`${EMOJI_ERROR} Uh oh, something broke!`);
 
-  if (NODE_ENV === 'production') {
+  if (NODE_ENV === 'production' && !SENTRY_DISABLED) {
     Sentry.captureException(error);
   } else {
     console.error(error);
@@ -300,7 +304,7 @@ createConnection()
     });
   })
   .catch(error => {
-    if (NODE_ENV === 'production') {
+    if (NODE_ENV === 'production' && !SENTRY_DISABLED) {
       Sentry.captureException(error);
     } else {
       console.error(error);
