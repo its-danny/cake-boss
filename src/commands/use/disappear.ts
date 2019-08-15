@@ -54,12 +54,16 @@ export const disappearCakes = async (args: Arguments): Promise<string> => {
     return `${EMOJI_ERROR} Invalid amount, sorry!`;
   }
 
-  if (targetMember.balance > 0) {
-    targetMember.balance -= 1;
+  if (targetMember.balance < amount) {
+    targetMember.balance = 0;
+  } else {
+    targetMember.balance -= amount;
   }
 
-  if (targetMember.earned > 0) {
-    targetMember.earned -= 1;
+  if (targetMember.earned < amount) {
+    targetMember.earned = 0;
+  } else {
+    targetMember.earned -= amount;
   }
 
   await targetMember.save();
