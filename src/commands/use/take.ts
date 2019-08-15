@@ -43,8 +43,11 @@ export const takeCake = async (args: Arguments): Promise<string> => {
     await drop.save();
   }
 
-  await args.message.guild.fetchMembers();
-  const member = await Member.findOrCreate(args.message.guild.id, args.message.author.id, args.message.member.id);
+  const member = await Member.findOne({ where: { discordId: args.message.member.id } });
+
+  if (!member) {
+    throw new Error('Could not find member.');
+  }
 
   member.earned += 1;
   member.balance += 1;

@@ -32,8 +32,6 @@ export const shameMember = async (args: Arguments): Promise<string> => {
     throw new Error('Could not find server.');
   }
 
-  await args.message.guild.fetchMembers();
-
   const memberId = args.member.replace(/^<@!?/, '').replace(/>$/, '');
   const discordMember = args.message.guild.members.get(memberId);
 
@@ -41,7 +39,12 @@ export const shameMember = async (args: Arguments): Promise<string> => {
     return `${EMOJI_RECORD_NOT_FOUND} Uh oh, I couldn't find them.`;
   }
 
-  const member = await Member.findOrCreate(args.message.guild.id, discordMember.user.id, discordMember.id);
+  const member = await Member.findOne({ where: { discordId: discordMember.id } });
+
+  if (!member) {
+    throw new Error('Could not find member.');
+  }
+
   const shamedMember = await ShamedMember.findOne({
     where: { server, member },
     relations: ['server', 'member'],

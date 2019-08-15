@@ -11,23 +11,7 @@ describe('commands/use/balance', () => {
     done();
   });
 
-  it(`should let you know if you're not set up yet`, async done => {
-    const server = await createServer();
-
-    const args: Arguments = {
-      client: createClient(),
-      message: await createMessage({ server, serverMembers: [] }),
-      needsFetch: false,
-      promisedOutput: null,
-    };
-
-    const response = await getBalance(args);
-    expect(response).toMatchInlineSnapshot(`"You ain't got any!"`);
-
-    done();
-  });
-
-  it(`should let you know if you're not set up yet`, async done => {
+  it(`should give you your balance`, async done => {
     const server = await createServer();
     const member = await createMember({ server, balance: 3 });
 

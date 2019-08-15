@@ -11,6 +11,7 @@ import Koa from 'koa';
 import Router from 'koa-router';
 import IO from 'koa-socket-2';
 import cors from '@koa/cors';
+import Member from './entity/member';
 import { setupServer } from './utils/server-status';
 import Server from './entity/server';
 import { EMOJI_JOB_WELL_DONE, EMOJI_WORKING_HARD, EMOJI_THINKING, EMOJI_CAKE, EMOJI_ERROR } from './utils/emoji';
@@ -105,11 +106,15 @@ client.on('message', async (message: Message) => {
     .map((s, i) => (i === 0 ? s.toLowerCase() : s))
     .join(' ');
 
-  let server = await Server.findOne({ where: { discordId: message.guild.id }, relations: ['config'] });
+  const server = await Server.findOrCreate(message.guild.id);
 
-  if (!server) {
-    server = await setupServer(message.guild.id);
-  }
+  await message.guild.fetchMembers();
+
+  await Member.findOrCreate(server.discordId, message.author.id, message.member.id);
+
+  message.mentions.members.forEach(async member => {
+    await Member.findOrCreate(server!.discordId, member.user.id, member.id);
+  });
 
   const { commandPrefix } = server.config;
 
