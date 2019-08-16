@@ -141,6 +141,7 @@
               <h2>Mod Commands</h2>
 
               <p><strong>Note:</strong> <code>&lt;this&gt;</code> means required, <code>[this]</code> means optional.</p>
+              <p><a href="#" data-toggle="modal" data-target="#config">View config options</a></p>
 
               <div class="command clearfix">
                 <div class="cmd float-left"><code>-bless &lt;member&gt; [amount]</code></div>
@@ -241,6 +242,129 @@
         </div>
       </div>
     </main>
+
+    <div class="modal fade" id="config" tabindex="-1" role="dialog" aria-labelledby="configLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="configLabel">Config Options</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+
+          <div class="modal-body">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th scope="col" width="200">Name</th>
+                  <th scope="col">Description</th>
+                  <th scope="col" width="150">Default</th>
+                </tr>
+              </thead>
+    
+              <tbody>
+                <tr>
+                  <td><code>nickname</code></td>
+                  <td>Nickname</td>
+                  <td>CAKE BOSS!</td>
+                </tr>
+
+                <tr>
+                  <td><code>cake-emoji</code></td>
+                  <td>Emoji to use for cakes</td>
+                  <td>🍰</td>
+                </tr>
+
+                <tr>
+                  <td><code>cake-name-singular</code></td>
+                  <td>Name to use for cake (singular)</td>
+                  <td>cake</td>
+                </tr>
+
+                <tr>
+                  <td><code>cake-name-plural</code></td>
+                  <td>Name to use for cake (plural)</td>
+                  <td>cakes</td>
+                </tr>
+
+                <tr>
+                  <td><code>command-prefix</code></td>
+                  <td>It's the command prefix!</td>
+                  <td><code>-</code></td>
+                </tr>
+
+                <tr>
+                  <td><code>quiet-mode</code></td>
+                  <td>Cake Boss will respond with reacts instead of messages when possible</td>
+                  <td><code>false</code></td>
+                </tr>
+
+                <tr>
+                  <td><code>log-channel</code></td>
+                  <td>Where to log events</td>
+                  <td></td>
+                </tr>
+
+                <tr>
+                  <td><code>log-with-link</code></td>
+                  <td>Include link to message that caused the event</td>
+                  <td><code>false</code></td>
+                </tr>
+
+                <tr>
+                  <td><code>redeem-channel</code></td>
+                  <td>Where to log prize redeem requests</td>
+                  <td></td>
+                </tr>
+
+                <tr>
+                  <td><code>manager-roles</code></td>
+                  <td>Roles allowed to manage Cake Boss (includes blessing and dropping, comma-separated)</td>
+                  <td></td>
+                </tr>
+
+                <tr>
+                  <td><code>blesser-roles</code></td>
+                  <td>Roles allowed to bless others with cake (comma-separated)</td>
+                  <td></td>
+                </tr>
+
+                <tr>
+                  <td><code>dropper-roles</code></td>
+                  <td>Roles allowed to drop cakes in channels (comma-separated)</td>
+                  <td></td>
+                </tr>
+
+                <tr>
+                  <td><code>no-giving</code></td>
+                  <td>Only allow managers, blessers, and droppers to give cake</td>
+                  <td><code>false</code></td>
+                </tr>
+
+                <tr>
+                  <td><code>requirement-to-give</code></td>
+                  <td>How much cake someone has to earn before giving</td>
+                  <td>0</td>
+                </tr>
+
+                <tr>
+                  <td><code>give-limit</code></td>
+                  <td>How many cakes someone can give in a cycle (min: 1)</td>
+                  <td>5</td>
+                </tr>
+
+                <tr>
+                  <td><code>give-limit-hour-reset</code></td>
+                  <td>How many hours are in a cycle (min: 1)</td>
+                  <td>1</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <section class="d-none d-md-block">
       <div id="leaderboard-wrap">
