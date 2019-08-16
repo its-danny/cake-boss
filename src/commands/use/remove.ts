@@ -16,7 +16,7 @@ export interface Arguments extends CommandArguments {
   amount?: number;
 }
 
-export const removeCakes = async (args: Arguments): Promise<string> => {
+export const removeCakes = async (args: Arguments): Promise<string | void> => {
   if (!(await canManage(args.message))) {
     return `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`;
   }
@@ -65,7 +65,11 @@ export const removeCakes = async (args: Arguments): Promise<string> => {
     } from \`${targetDiscordMember.user.tag}\`.`,
   );
 
-  return `${EMOJI_JOB_WELL_DONE} Done!`;
+  if (server.config.quietMode) {
+    args.message.react(EMOJI_JOB_WELL_DONE);
+  } else {
+    return `${EMOJI_JOB_WELL_DONE} Done!`;
+  }
 };
 
 export const command = 'remove <member> [amount]';
