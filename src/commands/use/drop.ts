@@ -64,9 +64,10 @@ export const dropCakes = async (args: Arguments): Promise<string | void> => {
 
   if (server.config.quietMode) {
     args.message.react(EMOJI_JOB_WELL_DONE);
-  } else {
-    return `${EMOJI_JOB_WELL_DONE} Done!`;
+
+    return undefined;
   }
+  return `${EMOJI_JOB_WELL_DONE} Done!`;
 };
 
 export const command = 'drop <channel> [amount]';

@@ -2,7 +2,7 @@ import { Argv } from 'yargs';
 import Table from 'cli-table';
 import Server from '../../entity/server';
 import { EMOJI_WORKING_HARD } from '../../utils/emoji';
-import { getTableBorder } from '../../utils/ascii';
+import getTableBorder from '../../utils/get-table-border';
 import { CommandArguments } from '../../utils/command-arguments';
 
 export const getLeaderboard = async (args: CommandArguments): Promise<string> => {

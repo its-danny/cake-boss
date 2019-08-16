@@ -1,7 +1,13 @@
 import { createConnection, getConnection } from 'typeorm';
 import { giveCakeToMember, Arguments } from './give';
 import { createServer, createMember, createMessage, createClient } from '../../../test/test-helpers';
-import { EMOJI_INCORRECT_PERMISSIONS, EMOJI_RECORD_NOT_FOUND, EMOJI_CAKE, EMOJI_DONT_DO_THAT, EMOJI_WORKING_HARD } from '../../utils/emoji';
+import {
+  EMOJI_INCORRECT_PERMISSIONS,
+  EMOJI_RECORD_NOT_FOUND,
+  EMOJI_CAKE,
+  EMOJI_DONT_DO_THAT,
+  EMOJI_WORKING_HARD,
+} from '../../utils/emoji';
 import Config from '../../entity/config';
 import Drop from '../../entity/drop';
 import Member from '../../entity/member';
@@ -51,7 +57,7 @@ describe('commands/use/give', () => {
     expect(response).toBe(`${EMOJI_WORKING_HARD} You can't give ${server.config.cakeNamePlural}!`);
 
     done();
-  })
+  });
 
   it(`should stop you if you're shamed`, async done => {
     const server = await createServer();

@@ -56,18 +56,19 @@ export const takeCake = async (args: CommandArguments): Promise<string | void> =
   );
 
   if (server.config.quietMode) {
-    let react;
+    let react: string;
 
     if (/\b:\d{18}/.test(server.config.cakeEmoji)) {
-      react = server.config.cakeEmoji.match(/\d{18}/)![0];
+      [react] = server.config.cakeEmoji.match(/\d{18}/)!;
     } else {
       react = server.config.cakeEmoji;
     }
 
     args.message.react(react);
-  } else {
-    return `${EMOJI_JOB_WELL_DONE} ${server.config.cakeEmoji} You got it, <@${args.message.member.id}>!`;
+
+    return undefined;
   }
+  return `${EMOJI_JOB_WELL_DONE} ${server.config.cakeEmoji} You got it, <@${args.message.member.id}>!`;
 };
 
 export const command = 'take';
