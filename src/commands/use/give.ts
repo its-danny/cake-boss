@@ -3,7 +3,7 @@ import Server from '../../entity/server';
 import { canGive, isShamed } from '../../utils/permissions';
 import Member from '../../entity/member';
 import { logEvent } from '../../utils/logger';
-import { EMOJI_DONT_DO_THAT, EMOJI_INCORRECT_PERMISSIONS, EMOJI_RECORD_NOT_FOUND } from '../../utils/emoji';
+import { EMOJI_DONT_DO_THAT, EMOJI_INCORRECT_PERMISSIONS, EMOJI_RECORD_NOT_FOUND, EMOJI_WORKING_HARD } from '../../utils/emoji';
 import { CommandArguments } from '../../utils/command-arguments';
 
 export interface Arguments extends CommandArguments {
@@ -19,6 +19,10 @@ export const giveCakeToMember = async (args: Arguments): Promise<string | void> 
 
   if (!server) {
     throw new Error('Could not find server.');
+  }
+
+  if (server.config.noGiving) {
+    return `${EMOJI_WORKING_HARD} You can't give ${server.config.cakeNamePlural}!`;
   }
 
   if (await isShamed(args.message.guild.id, args.message.member.id)) {

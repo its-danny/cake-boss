@@ -23,6 +23,8 @@ export const getConfigList = async (args: CommandArguments): Promise<string[] | 
     chars: getTableBorder(),
   });
 
+  table.push([ 'no-giving', 'Only allow managers, blessers, and droppers to give cake', server.config.noGiving, false ])
+
   table.push([
     'requirement-to-give',
     'How much cake someone has to earn before giving',

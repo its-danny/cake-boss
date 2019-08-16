@@ -6,8 +6,17 @@ import User from '../src/entity/user';
 import Member from '../src/entity/member';
 import ShamedMember from '../src/entity/shamed-member';
 
-export const createServer = async (): Promise<Server> => {
+export interface ServerOptions {
+  noGiving?: boolean
+}
+
+export const createServer = async (opts?: ServerOptions): Promise<Server> => {
   const config = new Config();
+
+  if (opts && opts.noGiving) {
+    config.noGiving = opts.noGiving
+  }
+
   await config.save();
 
   const server = new Server();

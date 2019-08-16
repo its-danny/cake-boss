@@ -48,6 +48,9 @@ export default class Config extends BaseEntity {
   @Column({ nullable: false, default: 'cakes' })
   cakeNamePlural!: string;
 
+  @Column({ nullable: false, default: false })
+  noGiving!: boolean;
+
   @Column({ nullable: false, default: 0 })
   requirementToGive!: number;
 
