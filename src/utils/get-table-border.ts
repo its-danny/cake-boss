@@ -1,4 +1,4 @@
-export const getTableBorder = () => {
+export default () => {
   return {
     top: '',
     'top-mid': '',

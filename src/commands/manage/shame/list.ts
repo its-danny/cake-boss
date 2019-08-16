@@ -4,7 +4,7 @@ import moment from 'moment';
 import { canManage } from '../../../utils/permissions';
 import Server from '../../../entity/server';
 import { EMOJI_INCORRECT_PERMISSIONS, EMOJI_RECORD_NOT_FOUND } from '../../../utils/emoji';
-import { getTableBorder } from '../../../utils/ascii';
+import getTableBorder from '../../../utils/get-table-border';
 import { CommandArguments } from '../../../utils/command-arguments';
 
 export const getShamedList = async (args: CommandArguments): Promise<string> => {

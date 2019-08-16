@@ -115,8 +115,11 @@ client.on('message', async (message: Message) => {
       const fetchedAuthorMember = await message.guild.fetchMember(message.author);
       await Member.findOrCreate(server.discordId, message.author.id, fetchedAuthorMember.id);
 
+      // eslint-disable-next-line no-restricted-syntax
       for (const member of message.mentions.members) {
+        // eslint-disable-next-line no-await-in-loop
         const fetchedMember = await message.guild.fetchMember(member[1]);
+        // eslint-disable-next-line no-await-in-loop
         await Member.findOrCreate(server.discordId, fetchedMember.user.id, fetchedMember.id);
       }
 
@@ -176,10 +179,10 @@ client.on('message', async (message: Message) => {
 
           if (sentMessage && reactions) {
             Object.keys(reactions).forEach(emoji => {
-              let react;
+              let react: string;
 
               if (/\b:\d{18}/.test(emoji)) {
-                react = emoji.match(/\d{18}/)![0];
+                [react] = emoji.match(/\d{18}/)!;
               } else {
                 react = emoji;
               }
@@ -213,6 +216,7 @@ api.use(router.allowedMethods());
 io.attach(api);
 
 router.get('/ping', context => {
+  // eslint-disable-next-line no-param-reassign
   context.body = 'ONLINE';
 });
 
@@ -234,6 +238,8 @@ router.get('/leaderboard', async context => {
         if (discordUser) {
           return { name: `@${discordUser.username}`, earned: user.totalEarned() };
         }
+
+        return undefined;
       }),
     );
   }
@@ -255,10 +261,13 @@ router.get('/leaderboard', async context => {
         if (discordServer) {
           return { name: discordServer.name, earned: server.totalEarnedByMembers() };
         }
+
+        return undefined;
       }),
     );
   }
 
+  // eslint-disable-next-line no-param-reassign
   context.body = { topUsers, topServers };
 });
 
@@ -295,12 +304,15 @@ createConnection()
       const servers = await Server.find({ relations: ['config', 'members'] });
 
       servers.forEach(async server => {
+        // eslint-disable-next-line no-param-reassign
         server.timeSinceLastReset += 1;
 
         if (server.timeSinceLastReset >= server.config.giveLimitHourReset) {
+          // eslint-disable-next-line no-param-reassign
           server.timeSinceLastReset = 0;
 
           server.members.forEach(async member => {
+            // eslint-disable-next-line no-param-reassign
             member.givenSinceReset = 0;
             await member.save();
           });

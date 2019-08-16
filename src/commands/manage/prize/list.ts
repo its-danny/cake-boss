@@ -3,7 +3,7 @@ import Table from 'cli-table';
 import { canManage } from '../../../utils/permissions';
 import Server from '../../../entity/server';
 import { EMOJI_ERROR, EMOJI_INCORRECT_PERMISSIONS } from '../../../utils/emoji';
-import { getTableBorder } from '../../../utils/ascii';
+import getTableBorder from '../../../utils/get-table-border';
 import { CommandArguments } from '../../../utils/command-arguments';
 
 export const getPrizeList = async (args: CommandArguments): Promise<string> => {

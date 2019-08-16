@@ -7,14 +7,14 @@ import Member from '../src/entity/member';
 import ShamedMember from '../src/entity/shamed-member';
 
 export interface ServerOptions {
-  noGiving?: boolean
+  noGiving?: boolean;
 }
 
 export const createServer = async (opts?: ServerOptions): Promise<Server> => {
   const config = new Config();
 
   if (opts && opts.noGiving) {
-    config.noGiving = opts.noGiving
+    config.noGiving = opts.noGiving;
   }
 
   await config.save();

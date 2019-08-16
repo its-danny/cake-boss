@@ -58,20 +58,21 @@ export const blessMember = async (args: Arguments): Promise<string | void> => {
   );
 
   if (server.config.quietMode) {
-    let react;
+    let react: string;
 
     if (/\b:\d{18}/.test(server.config.cakeEmoji)) {
-      react = server.config.cakeEmoji.match(/\d{18}/)![0];
+      [react] = server.config.cakeEmoji.match(/\d{18}/)!;
     } else {
       react = server.config.cakeEmoji;
     }
 
     args.message.react(react);
-  } else {
-    return `${server.config.cakeEmoji} They just got ${amount} ${
-      amount > 1 ? server.config.cakeNamePlural : server.config.cakeNameSingular
-    }, <@${args.message.member.id}>!`;
+
+    return undefined;
   }
+  return `${server.config.cakeEmoji} They just got ${amount} ${
+    amount > 1 ? server.config.cakeNamePlural : server.config.cakeNameSingular
+  }, <@${args.message.member.id}>!`;
 };
 
 export const command = 'bless <member> [amount]';

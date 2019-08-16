@@ -61,6 +61,8 @@ export const getLedger = async (args: CommandArguments): Promise<string | void> 
         }
       });
     });
+
+    return undefined;
   } catch (error) {
     throw new Error(error);
   }

@@ -84,7 +84,9 @@ export default class Server extends BaseEntity {
   totalEarnedByMembers(): number {
     let totalEarned = 0;
 
-    this.members.forEach(m => (totalEarned += m.earned));
+    this.members.forEach(m => {
+      totalEarned += m.earned;
+    });
 
     return totalEarned;
   }

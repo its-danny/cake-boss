@@ -3,7 +3,7 @@ import Table from 'cli-table';
 import { canManage } from '../../../../utils/permissions';
 import Server from '../../../../entity/server';
 import { EMOJI_INCORRECT_PERMISSIONS } from '../../../../utils/emoji';
-import { getTableBorder } from '../../../../utils/ascii';
+import getTableBorder from '../../../../utils/get-table-border';
 import { CommandArguments } from '../../../../utils/command-arguments';
 
 export const getConfigList = async (args: CommandArguments): Promise<string[] | string> => {
@@ -23,7 +23,7 @@ export const getConfigList = async (args: CommandArguments): Promise<string[] | 
     chars: getTableBorder(),
   });
 
-  table.push([ 'no-giving', 'Only allow managers, blessers, and droppers to give cake', server.config.noGiving, false ])
+  table.push(['no-giving', 'Only allow managers, blessers, and droppers to give cake', server.config.noGiving, false]);
 
   table.push([
     'requirement-to-give',

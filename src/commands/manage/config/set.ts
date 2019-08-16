@@ -392,12 +392,12 @@ export const setConfig = async (args: Arguments): Promise<string | void> => {
   if (configSet) {
     if (server.config.quietMode) {
       args.message.react(EMOJI_JOB_WELL_DONE);
-    } else {
-      return `${EMOJI_JOB_WELL_DONE} Done!`;
+
+      return undefined;
     }
-  } else {
-    return `${EMOJI_ERROR} Not a valid config!`;
+    return `${EMOJI_JOB_WELL_DONE} Done!`;
   }
+  return `${EMOJI_ERROR} Not a valid config!`;
 };
 
 export const command = 'set <config> <value>';

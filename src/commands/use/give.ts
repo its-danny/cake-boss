@@ -3,7 +3,12 @@ import Server from '../../entity/server';
 import { canGive, isShamed } from '../../utils/permissions';
 import Member from '../../entity/member';
 import { logEvent } from '../../utils/logger';
-import { EMOJI_DONT_DO_THAT, EMOJI_INCORRECT_PERMISSIONS, EMOJI_RECORD_NOT_FOUND, EMOJI_WORKING_HARD } from '../../utils/emoji';
+import {
+  EMOJI_DONT_DO_THAT,
+  EMOJI_INCORRECT_PERMISSIONS,
+  EMOJI_RECORD_NOT_FOUND,
+  EMOJI_WORKING_HARD,
+} from '../../utils/emoji';
 import { CommandArguments } from '../../utils/command-arguments';
 
 export interface Arguments extends CommandArguments {
@@ -89,20 +94,21 @@ export const giveCakeToMember = async (args: Arguments): Promise<string | void> 
   );
 
   if (server.config.quietMode) {
-    let react;
+    let react: string;
 
     if (/\b:\d{18}/.test(server.config.cakeEmoji)) {
-      react = server.config.cakeEmoji.match(/\d{18}/)![0];
+      [react] = server.config.cakeEmoji.match(/\d{18}/)!;
     } else {
       react = server.config.cakeEmoji;
     }
 
     args.message.react(react);
-  } else {
-    return `${server.config.cakeEmoji} They just got ${amount} ${
-      amount > 1 ? server.config.cakeNamePlural : server.config.cakeNameSingular
-    }, <@${args.message.member.id}>!`;
+
+    return undefined;
   }
+  return `${server.config.cakeEmoji} They just got ${amount} ${
+    amount > 1 ? server.config.cakeNamePlural : server.config.cakeNameSingular
+  }, <@${args.message.member.id}>!`;
 };
 
 export const command = 'give <member> [amount]';

@@ -4,7 +4,7 @@ import { canDrop } from '../../utils/permissions';
 import Server from '../../entity/server';
 import { EMOJI_INCORRECT_PERMISSIONS } from '../../utils/emoji';
 import { CommandArguments } from '../../utils/command-arguments';
-import { getTableBorder } from '../../utils/ascii';
+import getTableBorder from '../../utils/get-table-border';
 
 export const getDropList = async (args: CommandArguments): Promise<string> => {
   if (!(await canDrop(args.message))) {
@@ -32,7 +32,7 @@ export const getDropList = async (args: CommandArguments): Promise<string> => {
     const channel = args.message.guild.channels.get(drop.channelDiscordId);
 
     if (channel) {
-      if (dropped.hasOwnProperty(channel.name)) {
+      if (Object.prototype.hasOwnProperty.call(dropped, channel.name)) {
         dropped[channel.name] += drop.amount;
       } else {
         dropped[channel.name] = drop.amount;
