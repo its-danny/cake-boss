@@ -38,7 +38,7 @@ describe('commands/use/balance', () => {
 
     const args: CommandArguments = {
       client: createClient(),
-      message: await createMessage({ server, senderId: member.discordId, serverMembers: [] }),
+      message: await createMessage({ server, senderId: member.discordId }),
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,

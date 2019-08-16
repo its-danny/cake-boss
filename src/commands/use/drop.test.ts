@@ -1,7 +1,7 @@
 import { createConnection, getConnection } from 'typeorm';
-import { blessMember, Arguments } from './bless';
-import { createServer, createMember, createMessage, createClient } from '../../../test/test-helpers';
-import { EMOJI_INCORRECT_PERMISSIONS, EMOJI_RECORD_NOT_FOUND, EMOJI_CAKE } from '../../utils/emoji';
+import { dropCakes, Arguments } from './drop';
+import { createServer, createMessage, createClient, createChannel } from '../../../test/test-helpers';
+import { EMOJI_INCORRECT_PERMISSIONS, EMOJI_JOB_WELL_DONE } from '../../utils/emoji';
 import Config from '../../entity/config';
 import Drop from '../../entity/drop';
 import Member from '../../entity/member';
@@ -10,7 +10,7 @@ import Prize from '../../entity/prize';
 import ShamedMember from '../../entity/shamed-member';
 import User from '../../entity/user';
 
-describe('commands/use/bless', () => {
+describe('commands/use/drop', () => {
   beforeEach(async done => {
     await createConnection({
       type: 'sqlite',
@@ -37,7 +37,7 @@ describe('commands/use/bless', () => {
     const args: Arguments = {
       client: createClient(),
       message: await createMessage({ server }),
-      member: '',
+      channel: '<#12345>',
       amount: 1,
       needsFetch: false,
       careAboutQuietMode: false,
@@ -45,19 +45,20 @@ describe('commands/use/bless', () => {
       reactions: {},
     };
 
-    const response = await blessMember(args);
+    const response = await dropCakes(args);
     expect(response).toBe(`${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`);
 
     done();
   });
 
-  it(`should require a valid member`, async done => {
+  it(`should drop cakes`, async done => {
     const server = await createServer();
+    const channel = createChannel();
 
     const args: Arguments = {
       client: createClient(),
-      message: await createMessage({ server, permission: 'ADMINISTRATOR' }),
-      member: `<@12345>`,
+      message: await createMessage({ server, serverChannels: [channel], permission: 'ADMINISTRATOR' }),
+      channel: `<#${channel.id}>`,
       amount: 1,
       needsFetch: false,
       careAboutQuietMode: false,
@@ -65,33 +66,12 @@ describe('commands/use/bless', () => {
       reactions: {},
     };
 
-    const response = await blessMember(args);
-    expect(response).toBe(`${EMOJI_RECORD_NOT_FOUND} Uh oh, I couldn't find them.`);
+    const response = await dropCakes(args);
+    expect(response).toBe(`${EMOJI_JOB_WELL_DONE} Done!`);
 
-    done();
-  });
-
-  it('should give them cake', async done => {
-    const server = await createServer();
-    const member = await createMember({ server });
-
-    const args: Arguments = {
-      client: createClient(),
-      message: await createMessage({ server, serverMembers: [member], permission: 'ADMINISTRATOR' }),
-      member: `<@${member.discordId}>`,
-      amount: 3,
-      needsFetch: false,
-      careAboutQuietMode: false,
-      promisedOutput: null,
-      reactions: {},
-    };
-
-    const response = await blessMember(args);
-    expect(response).toBe(`${EMOJI_CAKE} They just got 3 cakes, <@${args.message.member.id}>!`);
-
-    await member.reload();
-    expect(member.balance).toBe(3);
-    expect(member.earned).toBe(3);
+    const drop = await Drop.findOne({ where: { server, channelDiscordId: channel.id } });
+    expect(drop).toBeDefined();
+    expect(drop!.amount).toBe(1);
 
     done();
   });

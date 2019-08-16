@@ -12,7 +12,7 @@ import {
 } from '../../utils/emoji';
 import { CommandArguments } from '../../utils/command-arguments';
 
-interface Arguments extends CommandArguments {
+export interface Arguments extends CommandArguments {
   channel: string;
   amount?: number;
 }

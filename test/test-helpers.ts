@@ -1,5 +1,5 @@
 import faker from 'faker';
-import { Message, Guild, GuildMember, Client } from 'discord.js';
+import { Message, Guild, GuildMember, Client, TextChannel } from 'discord.js';
 import Config from '../src/entity/config';
 import Server from '../src/entity/server';
 import User from '../src/entity/user';
@@ -77,7 +77,9 @@ export const createClient = (): Client => {
 
 export interface MessageOptions {
   server: Server;
-  serverMembers: Member[];
+  channel?: any;
+  serverMembers?: Member[];
+  serverChannels?: any[];
   senderId?: string;
   permission?: string;
 }
@@ -89,17 +91,40 @@ export const createMessage = async (opts: MessageOptions): Promise<Message> => {
 
       members: {
         get(id: string) {
-          const found = opts.serverMembers.find(m => m.discordId === id);
+          if (opts.serverMembers) {
+            const found = opts.serverMembers.find(m => m.discordId === id);
 
-          if (found) {
-            return {
-              id: found.discordId,
+            if (found) {
+              return {
+                id: found.discordId,
 
-              user: {
-                tag: `${found.discordId}#1234`,
-              },
-            };
+                user: {
+                  tag: `${found.discordId}#1234`,
+                },
+              };
+            }
+            return null;
           }
+          return null;
+        },
+      },
+
+      channels: {
+        get(id: string) {
+          if (opts.serverChannels) {
+            const found = opts.serverChannels.find(channel => channel.id === id);
+
+            if (found) {
+              return {
+                id: found.id,
+                name: found.name,
+
+                send() {},
+              };
+            }
+            return null;
+          }
+          return null;
         },
       },
 
@@ -110,6 +135,8 @@ export const createMessage = async (opts: MessageOptions): Promise<Message> => {
       tag: `${faker.random.uuid()}#1234`,
     },
 
+    channel: opts.channel ? opts.channel : null,
+
     member: ({
       id: opts.senderId ? opts.senderId : faker.random.uuid(),
       roles: [],
@@ -118,8 +145,16 @@ export const createMessage = async (opts: MessageOptions): Promise<Message> => {
         if (opts.permission) {
           return permission === opts.permission;
         }
+
         return false;
       },
     } as unknown) as GuildMember,
   } as Message;
+};
+
+export const createChannel = (name?: string): TextChannel => {
+  return {
+    id: faker.random.uuid(),
+    name: name || faker.internet.domainName(),
+  } as TextChannel;
 };

@@ -37,7 +37,7 @@ describe('commands/use/leaders', () => {
 
     const args: CommandArguments = {
       client: createClient(),
-      message: await createMessage({ server, serverMembers: [] }),
+      message: await createMessage({ server }),
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
@@ -59,7 +59,7 @@ describe('commands/use/leaders', () => {
 
     const args: CommandArguments = {
       client: createClient(),
-      message: await createMessage({ server, serverMembers: [] }),
+      message: await createMessage({ server }),
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,

@@ -36,7 +36,7 @@ describe('commands/use/remove', () => {
 
     const args: Arguments = {
       client: createClient(),
-      message: await createMessage({ server, serverMembers: [] }),
+      message: await createMessage({ server }),
       member: '',
       amount: 1,
       needsFetch: false,
@@ -56,7 +56,7 @@ describe('commands/use/remove', () => {
 
     const args: Arguments = {
       client: createClient(),
-      message: await createMessage({ server, serverMembers: [], permission: 'ADMINISTRATOR' }),
+      message: await createMessage({ server, permission: 'ADMINISTRATOR' }),
       member: `<@12345>`,
       amount: 1,
       needsFetch: false,
