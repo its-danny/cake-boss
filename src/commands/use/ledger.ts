@@ -25,7 +25,7 @@ export const getLedger = async (args: CommandArguments): Promise<string | void> 
     return `${EMOJI_WORKING_HARD} Nobody has ${server.config.cakeNamePlural} yet!`;
   }
 
-  const fields = ['Name/ID', 'Balance', 'Earned', 'Date Added']
+  const fields = ['Name/ID', 'Balance', 'Earned', 'Date Added'];
   const data: any = [];
 
   server.members.forEach(member => {
@@ -33,36 +33,36 @@ export const getLedger = async (args: CommandArguments): Promise<string | void> 
 
     data.push({
       'Name/ID': discordMember ? discordMember.displayName : member.discordId,
-      'Balance': member.balance,
-      'Earned': member.earned,
+      Balance: member.balance,
+      Earned: member.earned,
       'Date Added': moment(member.createdAt).format('MMMM Do YYYY'),
     });
   });
 
   try {
-    const csv = parse(data, { fields })
-    const filePath = process.cwd() + `/tmp/`
-    const fileName = `ledger-${server.discordId}-${moment().unix()}.csv`
+    const csv = parse(data, { fields });
+    const filePath = `${process.cwd()}/tmp/`;
+    const fileName = `ledger-${server.discordId}-${moment().unix()}.csv`;
 
     if (!fs.existsSync(filePath)) {
-      fs.mkdirSync(filePath)
+      fs.mkdirSync(filePath);
     }
 
-    fs.writeFile(filePath + fileName, csv, (error) => {
+    fs.writeFile(filePath + fileName, csv, error => {
       if (error) {
-        throw error
+        throw error;
       }
 
-      args.message.channel.send(`${EMOJI_WORKING_HARD} Of course!`, { files: [ filePath + fileName ] })
+      args.message.channel.send(`${EMOJI_WORKING_HARD} Of course!`, { files: [filePath + fileName] });
 
-      fs.unlink(filePath + fileName, (error) => {
+      fs.unlink(filePath + fileName, error => {
         if (error) {
-          throw error
+          throw error;
         }
-      })
-    })
+      });
+    });
   } catch (error) {
-    throw new Error(error)
+    throw new Error(error);
   }
 };
 
