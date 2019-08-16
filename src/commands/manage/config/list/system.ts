@@ -50,7 +50,7 @@ export const getConfigList = async (args: CommandArguments): Promise<string[] | 
 
   table.push([
     'manager-roles',
-    'Roles allowed to manage Cake Boss (comma-separated)',
+    'Roles allowed to manage Cake Boss (includes blessing and dropping, comma-separated)',
 
     server.config.managerRoleIds
       .map(roleId => {
