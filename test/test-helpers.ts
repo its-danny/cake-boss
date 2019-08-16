@@ -4,6 +4,7 @@ import Config from '../src/entity/config';
 import Server from '../src/entity/server';
 import User from '../src/entity/user';
 import Member from '../src/entity/member';
+import ShamedMember from '../src/entity/shamed-member';
 
 export const createServer = async (): Promise<Server> => {
   const config = new Config();
@@ -28,6 +29,7 @@ export interface MemberOptions {
   discordId?: string;
   balance?: number;
   earned?: number;
+  shamed?: boolean
 }
 
 export const createMember = async (opts: MemberOptions): Promise<Member> => {
@@ -49,6 +51,16 @@ export const createMember = async (opts: MemberOptions): Promise<Member> => {
 
   if (opts.earned) {
     member.earned = opts.earned;
+  }
+
+  if (opts.shamed) {
+    await member.save();
+    
+    const shamedMember = new ShamedMember();
+    shamedMember.server = opts.server;
+    shamedMember.member = member;
+
+    await shamedMember.save();
   }
 
   return member.save();

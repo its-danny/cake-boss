@@ -6,7 +6,7 @@ import { logEvent } from '../../utils/logger';
 import { EMOJI_DONT_DO_THAT, EMOJI_INCORRECT_PERMISSIONS, EMOJI_RECORD_NOT_FOUND } from '../../utils/emoji';
 import { CommandArguments } from '../../utils/command-arguments';
 
-interface Arguments extends CommandArguments {
+export interface Arguments extends CommandArguments {
   member: string;
   amount?: number;
 }
