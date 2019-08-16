@@ -12,7 +12,13 @@ export const logEvent = async (client: Client, message: Message, string: string)
     const channel: TextChannel = client.channels.get(server.config.logChannelId) as TextChannel;
 
     if (channel) {
-      channel.send(`${string}`);
+      let eventMessage = string;
+
+      if (server.config.logWithLink) {
+        eventMessage += `\n${message.url}`;
+      }
+
+      channel.send(`${eventMessage}`);
     }
   }
 };

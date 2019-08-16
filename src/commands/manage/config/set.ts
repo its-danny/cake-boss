@@ -14,6 +14,7 @@ type Config =
   | 'command-prefix'
   | 'quiet-mode'
   | 'log-channel'
+  | 'log-with-link'
   | 'redeem-channel'
   | 'manager-roles'
   | 'blesser-roles'
@@ -54,7 +55,11 @@ export const setConfig = async (args: Arguments): Promise<string | void> => {
     server.config.commandPrefix = prefix;
 
     await server.config.save();
-    await logEvent(args.client, args.message, `${EMOJI_CONFIG_EVENT} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`);
+    await logEvent(
+      args.client,
+      args.message,
+      `${EMOJI_CONFIG_EVENT} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`,
+    );
 
     configSet = true;
   }
@@ -69,7 +74,11 @@ export const setConfig = async (args: Arguments): Promise<string | void> => {
     server.config.quietMode = toggle === 'true';
 
     await server.config.save();
-    await logEvent(args.client, args.message, `${EMOJI_CONFIG_EVENT} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`);
+    await logEvent(
+      args.client,
+      args.message,
+      `${EMOJI_CONFIG_EVENT} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`,
+    );
 
     return `${EMOJI_JOB_WELL_DONE} Done!`;
   }
@@ -85,7 +94,30 @@ export const setConfig = async (args: Arguments): Promise<string | void> => {
     server.config.logChannelId = channelId;
 
     await server.config.save();
-    await logEvent(args.client, args.message, `${EMOJI_CONFIG_EVENT} \`${args.message.author.tag}\` set \`${args.config}\` to \`#${channel.name}\`.`);
+    await logEvent(
+      args.client,
+      args.message,
+      `${EMOJI_CONFIG_EVENT} \`${args.message.author.tag}\` set \`${args.config}\` to \`#${channel.name}\`.`,
+    );
+
+    configSet = true;
+  }
+
+  if (args.config === 'log-with-link') {
+    const toggle = args.value.trim();
+
+    if (toggle !== 'true' && toggle !== 'false') {
+      return `${EMOJI_ERROR} It's a true or false question!`;
+    }
+
+    server.config.logWithLink = toggle === 'true';
+
+    await server.config.save();
+    await logEvent(
+      args.client,
+      args.message,
+      `${EMOJI_CONFIG_EVENT} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`,
+    );
 
     configSet = true;
   }
@@ -101,7 +133,11 @@ export const setConfig = async (args: Arguments): Promise<string | void> => {
     server.config.redeemChannelId = channelId;
 
     await server.config.save();
-    await logEvent(args.client, args.message, `${EMOJI_CONFIG_EVENT} \`${args.message.author.tag}\` set \`${args.config}\` to \`#${channel.name}\`.`);
+    await logEvent(
+      args.client,
+      args.message,
+      `${EMOJI_CONFIG_EVENT} \`${args.message.author.tag}\` set \`${args.config}\` to \`#${channel.name}\`.`,
+    );
 
     configSet = true;
   }
@@ -128,7 +164,9 @@ export const setConfig = async (args: Arguments): Promise<string | void> => {
     await logEvent(
       args.client,
       args.message,
-      `${EMOJI_CONFIG_EVENT} \`${args.message.author.tag}\` set \`${args.config}\` to \`${foundRolesNames.join(', ')}\`.`,
+      `${EMOJI_CONFIG_EVENT} \`${args.message.author.tag}\` set \`${args.config}\` to \`${foundRolesNames.join(
+        ', ',
+      )}\`.`,
     );
 
     if (notFoundRoles.length > 0) {
@@ -162,7 +200,9 @@ export const setConfig = async (args: Arguments): Promise<string | void> => {
     await logEvent(
       args.client,
       args.message,
-      `${EMOJI_CONFIG_EVENT} \`${args.message.author.tag}\` set \`${args.config}\` to \`${foundRolesNames.join(', ')}\`.`,
+      `${EMOJI_CONFIG_EVENT} \`${args.message.author.tag}\` set \`${args.config}\` to \`${foundRolesNames.join(
+        ', ',
+      )}\`.`,
     );
 
     if (notFoundRoles.length > 0) {
@@ -196,7 +236,9 @@ export const setConfig = async (args: Arguments): Promise<string | void> => {
     await logEvent(
       args.client,
       args.message,
-      `${EMOJI_CONFIG_EVENT} \`${args.message.author.tag}\` set \`${args.config}\` to \`${foundRolesNames.join(', ')}\`.`,
+      `${EMOJI_CONFIG_EVENT} \`${args.message.author.tag}\` set \`${args.config}\` to \`${foundRolesNames.join(
+        ', ',
+      )}\`.`,
     );
 
     if (notFoundRoles.length > 0) {
@@ -222,7 +264,11 @@ export const setConfig = async (args: Arguments): Promise<string | void> => {
       member.setNickname(server.config.nickname);
     }
 
-    await logEvent(args.client, args.message, `${EMOJI_CONFIG_EVENT} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`);
+    await logEvent(
+      args.client,
+      args.message,
+      `${EMOJI_CONFIG_EVENT} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`,
+    );
 
     configSet = true;
   }
@@ -231,7 +277,11 @@ export const setConfig = async (args: Arguments): Promise<string | void> => {
     server.config.cakeEmoji = args.value;
 
     await server.config.save();
-    await logEvent(args.client, args.message, `${EMOJI_CONFIG_EVENT} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`);
+    await logEvent(
+      args.client,
+      args.message,
+      `${EMOJI_CONFIG_EVENT} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`,
+    );
 
     configSet = true;
   }
@@ -240,7 +290,11 @@ export const setConfig = async (args: Arguments): Promise<string | void> => {
     server.config.cakeNameSingular = args.value;
 
     await server.config.save();
-    await logEvent(args.client, args.message, `${EMOJI_CONFIG_EVENT} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`);
+    await logEvent(
+      args.client,
+      args.message,
+      `${EMOJI_CONFIG_EVENT} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`,
+    );
 
     configSet = true;
   }
@@ -249,7 +303,11 @@ export const setConfig = async (args: Arguments): Promise<string | void> => {
     server.config.cakeNamePlural = args.value;
 
     await server.config.save();
-    await logEvent(args.client, args.message, `${EMOJI_CONFIG_EVENT} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`);
+    await logEvent(
+      args.client,
+      args.message,
+      `${EMOJI_CONFIG_EVENT} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`,
+    );
 
     configSet = true;
   }
@@ -264,7 +322,11 @@ export const setConfig = async (args: Arguments): Promise<string | void> => {
     server.config.requirementToGive = minimum;
 
     await server.config.save();
-    await logEvent(args.client, args.message, `${EMOJI_CONFIG_EVENT} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`);
+    await logEvent(
+      args.client,
+      args.message,
+      `${EMOJI_CONFIG_EVENT} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`,
+    );
 
     configSet = true;
   }
@@ -279,7 +341,11 @@ export const setConfig = async (args: Arguments): Promise<string | void> => {
     server.config.giveLimit = limit;
 
     await server.config.save();
-    await logEvent(args.client, args.message, `${EMOJI_CONFIG_EVENT} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`);
+    await logEvent(
+      args.client,
+      args.message,
+      `${EMOJI_CONFIG_EVENT} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`,
+    );
 
     configSet = true;
   }
@@ -294,7 +360,11 @@ export const setConfig = async (args: Arguments): Promise<string | void> => {
     server.config.giveLimitHourReset = reset;
 
     await server.config.save();
-    await logEvent(args.client, args.message, `${EMOJI_CONFIG_EVENT} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`);
+    await logEvent(
+      args.client,
+      args.message,
+      `${EMOJI_CONFIG_EVENT} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`,
+    );
 
     configSet = true;
   }
