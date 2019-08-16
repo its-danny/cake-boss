@@ -24,7 +24,7 @@ dotenv.config({ path: `./.env` });
 const SENTRY_DSN: string = process.env.SENTRY_DSN as string;
 const SENTRY_DISABLED = !SENTRY_DSN || SENTRY_DSN === '';
 
-if (SENTRY_DSN !== '') {
+if (!SENTRY_DISABLED) {
   Sentry.init({ dsn: SENTRY_DSN });
 }
 
@@ -284,7 +284,10 @@ createConnection()
     client.login(DISCORD_TOKEN);
 
     const API_PORT: string = process.env.API_PORT as string;
-    api.listen(API_PORT, () => console.log('🚀 API online!'));
+
+    if (API_PORT && API_PORT !== '') {
+      api.listen(API_PORT, () => console.log('🚀 API online!'));
+    }
 
     fs.writeFileSync('./.uptime', moment().utc(), 'utf8');
 
