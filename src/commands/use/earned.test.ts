@@ -46,7 +46,7 @@ describe('commands/use/earned', () => {
     };
 
     const response = await getEarned(args);
-    expect(response).toMatchInlineSnapshot(`"${EMOJI_CAKE} You've earned a total of 5 cakes!"`);
+    expect(response).toBe(`${EMOJI_CAKE} You've earned a total of 5 cakes!`);
 
     done();
   });

@@ -46,7 +46,7 @@ describe('commands/use/disappear', () => {
     };
 
     const response = await disappearCakes(args);
-    expect(response).toMatchInlineSnapshot(`"${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!"`);
+    expect(response).toBe(`${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`);
 
     done();
   });
@@ -66,7 +66,7 @@ describe('commands/use/disappear', () => {
     };
 
     const response = await disappearCakes(args);
-    expect(response).toMatchInlineSnapshot(`"${EMOJI_RECORD_NOT_FOUND} Uh oh, I couldn't find them."`);
+    expect(response).toBe(`${EMOJI_RECORD_NOT_FOUND} Uh oh, I couldn't find them.`);
 
     done();
   });
@@ -87,11 +87,11 @@ describe('commands/use/disappear', () => {
     };
 
     const response = await disappearCakes(args);
-    expect(response).toMatchInlineSnapshot(`"${EMOJI_JOB_WELL_DONE} Done!"`);
+    expect(response).toBe(`${EMOJI_JOB_WELL_DONE} Done!`);
 
     await member.reload();
-    expect(member.balance).toMatchInlineSnapshot(`4`);
-    expect(member.earned).toMatchInlineSnapshot(`9`);
+    expect(member.balance).toBe(4);
+    expect(member.earned).toBe(9);
 
     done();
   });

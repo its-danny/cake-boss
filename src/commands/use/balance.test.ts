@@ -46,7 +46,7 @@ describe('commands/use/balance', () => {
     };
 
     const response = await getBalance(args);
-    expect(response).toMatchInlineSnapshot(`"${EMOJI_CAKE} Your current balance is 3 cakes!"`);
+    expect(response).toBe(`${EMOJI_CAKE} Your current balance is 3 cakes!`);
 
     done();
   });

@@ -45,7 +45,7 @@ describe('commands/use/leaders', () => {
     };
 
     const response = await getLeaderboard(args);
-    expect(response).toMatchInlineSnapshot(`"${EMOJI_WORKING_HARD} There are no leaders yet!"`);
+    expect(response).toBe(`${EMOJI_WORKING_HARD} There are no leaders yet!`);
 
     done();
   });
