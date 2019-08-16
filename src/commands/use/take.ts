@@ -52,7 +52,7 @@ export const takeCake = async (args: CommandArguments): Promise<string | void> =
   logEvent(
     args.client,
     args.message,
-    `${server.config.cakeEmoji} \`@${args.message.author.tag}\` took a ${server.config.cakeNameSingular} from \`#${discordChannel.name}\`!`,
+    `${server.config.cakeEmoji} \`${args.message.author.tag}\` took a ${server.config.cakeNameSingular} from \`#${discordChannel.name}\`!`,
   );
 
   if (server.config.quietMode) {

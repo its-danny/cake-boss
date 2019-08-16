@@ -72,7 +72,7 @@ export const addPrize = async (args: Arguments): Promise<string | void> => {
   logEvent(
     args.client,
     args.message,
-    `${EMOJI_CONFIG_EVENT} \`@${args.message.author.tag}\` added a new prize: \`${prize.description}\``,
+    `${EMOJI_CONFIG_EVENT} \`${args.message.author.tag}\` added a new prize: \`${prize.description}\``,
   );
 
   if (server.config.quietMode) {

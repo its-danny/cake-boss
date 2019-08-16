@@ -52,7 +52,7 @@ export const shameMember = async (args: Arguments): Promise<string | void> => {
   logEvent(
     args.client,
     args.message,
-    `${EMOJI_SHAME} \`@${args.message.author.tag}\` removed \`@${discordMember.user.tag}\` from the shame list.`,
+    `${EMOJI_SHAME} \`${args.message.author.tag}\` removed \`${discordMember.user.tag}\` from the shame list.`,
   );
 
   if (server.config.quietMode) {
