@@ -1,13 +1,33 @@
-import { getConnection, createConnections } from 'typeorm';
+import { createConnection, getConnection } from 'typeorm';
 import { getLeaderboard } from './leaders';
 import { createServer, createMember, createMessage, createClient } from '../../../test/test-helpers';
 import { EMOJI_CAKE, EMOJI_WORKING_HARD } from '../../utils/emoji';
 import { CommandArguments } from '../../utils/command-arguments';
+import Config from '../../entity/config';
+import Drop from '../../entity/drop';
+import Member from '../../entity/member';
+import Server from '../../entity/server';
+import Prize from '../../entity/prize';
+import ShamedMember from '../../entity/shamed-member';
+import User from '../../entity/user';
 
 describe('commands/use/leaders', () => {
-  beforeAll(async done => {
-    await createConnections();
-    await getConnection('test');
+  beforeEach(async done => {
+    await createConnection({
+      type: 'sqlite',
+      database: ':memory:',
+      dropSchema: true,
+      entities: [Config, Drop, Member, Prize, Server, ShamedMember, User],
+      synchronize: true,
+      logging: false,
+    });
+
+    done();
+  });
+
+  afterEach(async done => {
+    const conn = getConnection();
+    await conn.close();
 
     done();
   });
