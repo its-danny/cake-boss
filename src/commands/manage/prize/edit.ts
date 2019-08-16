@@ -76,7 +76,7 @@ export const editPrize = async (args: Arguments): Promise<string | void> => {
   logEvent(
     args.client,
     args.message,
-    `${EMOJI_CONFIG_EVENT} \`@${args.message.author.tag}\` edited prize: \`${prize.description}\``,
+    `${EMOJI_CONFIG_EVENT} \`${args.message.author.tag}\` edited prize: \`${prize.description}\``,
   );
 
   if (server.config.quietMode) {

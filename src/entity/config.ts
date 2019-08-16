@@ -21,6 +21,9 @@ export default class Config extends BaseEntity {
   @Column({ nullable: true, type: String })
   logChannelId!: string | null;
 
+  @Column({ nullable: false, default: false })
+  logWithLink!: boolean;
+
   @Column({ nullable: true, type: String })
   redeemChannelId!: string | null;
 

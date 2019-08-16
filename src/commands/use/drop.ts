@@ -51,7 +51,7 @@ export const dropCakes = async (args: Arguments): Promise<string | void> => {
   logEvent(
     args.client,
     args.message,
-    `${server.config.cakeEmoji} \`@${args.message.author.tag}\` dropped ${amount} ${
+    `${server.config.cakeEmoji} \`${args.message.author.tag}\` dropped ${amount} ${
       amount > 1 ? server.config.cakeNamePlural : server.config.cakeNameSingular
     } in \`#${discordChannel.name}\`!`,
   );

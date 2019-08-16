@@ -35,6 +35,7 @@ export const getConfigList = async (args: CommandArguments): Promise<string[] | 
   const logChannel = server.config.logChannelId ? args.message.guild.channels.get(server.config.logChannelId) : null;
 
   table.push(['log-channel', 'Where to log events', logChannel ? `#${logChannel.name}` : '', '']);
+  table.push(['log-with-link', 'Include link to message that caused the event', server.config.logWithLink, false]);
 
   const redeemChannel = server.config.redeemChannelId
     ? args.message.guild.channels.get(server.config.redeemChannelId)
