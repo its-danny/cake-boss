@@ -17,7 +17,7 @@ interface Arguments extends CommandArguments {
   amount?: number;
 }
 
-export const dropCakes = async (args: Arguments): Promise<string> => {
+export const dropCakes = async (args: Arguments): Promise<string | void> => {
   if (!(await canDrop(args.message))) {
     return `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`;
   }
@@ -62,7 +62,11 @@ export const dropCakes = async (args: Arguments): Promise<string> => {
     } just dropped! \`${server.config.commandPrefix}take\` it!`,
   );
 
-  return `${EMOJI_JOB_WELL_DONE} Done!`;
+  if (server.config.quietMode) {
+    args.message.react(EMOJI_JOB_WELL_DONE);
+  } else {
+    return `${EMOJI_JOB_WELL_DONE} Done!`;
+  }
 };
 
 export const command = 'drop <channel> [amount]';
@@ -72,5 +76,6 @@ export const builder = (yargs: Argv) => yargs;
 
 export const handler = (args: Arguments) => {
   args.needsFetch = true;
+  args.careAboutQuietMode = true;
   args.promisedOutput = dropCakes(args);
 };
