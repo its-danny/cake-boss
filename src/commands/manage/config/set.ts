@@ -23,6 +23,7 @@ type Config =
   | 'cake-emoji'
   | 'cake-name-singular'
   | 'cake-name-plural'
+  | 'no-giving'
   | 'requirement-to-give'
   | 'give-limit'
   | 'give-limit-hour-reset';
@@ -301,6 +302,25 @@ export const setConfig = async (args: Arguments): Promise<string | void> => {
 
   if (args.config === 'cake-name-plural') {
     server.config.cakeNamePlural = args.value;
+
+    await server.config.save();
+    await logEvent(
+      args.client,
+      args.message,
+      `${EMOJI_CONFIG_EVENT} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`,
+    );
+
+    configSet = true;
+  }
+
+  if (args.config === 'no-giving') {
+    const toggle = args.value.trim();
+
+    if (toggle !== 'true' && toggle !== 'false') {
+      return `${EMOJI_ERROR} It's a true or false question!`;
+    }
+
+    server.config.noGiving = toggle === 'true';
 
     await server.config.save();
     await logEvent(

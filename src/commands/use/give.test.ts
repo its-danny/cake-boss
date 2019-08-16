@@ -1,7 +1,7 @@
 import { createConnection, getConnection } from 'typeorm';
 import { giveCakeToMember, Arguments } from './give';
 import { createServer, createMember, createMessage, createClient } from '../../../test/test-helpers';
-import { EMOJI_INCORRECT_PERMISSIONS, EMOJI_RECORD_NOT_FOUND, EMOJI_CAKE, EMOJI_DONT_DO_THAT } from '../../utils/emoji';
+import { EMOJI_INCORRECT_PERMISSIONS, EMOJI_RECORD_NOT_FOUND, EMOJI_CAKE, EMOJI_DONT_DO_THAT, EMOJI_WORKING_HARD } from '../../utils/emoji';
 import Config from '../../entity/config';
 import Drop from '../../entity/drop';
 import Member from '../../entity/member';
@@ -30,6 +30,28 @@ describe('commands/use/give', () => {
 
     done();
   });
+
+  it(`should stop you if no-giving is enabled`, async done => {
+    const server = await createServer({ noGiving: true });
+    const sender = await createMember({ server });
+    const receiver = await createMember({ server });
+
+    const args: Arguments = {
+      client: createClient(),
+      message: await createMessage({ server, serverMembers: [sender, receiver], senderId: sender.discordId }),
+      member: `<@${receiver.discordId}>`,
+      amount: 1,
+      needsFetch: false,
+      careAboutQuietMode: false,
+      promisedOutput: null,
+      reactions: {},
+    };
+
+    const response = await giveCakeToMember(args);
+    expect(response).toBe(`${EMOJI_WORKING_HARD} You can't give ${server.config.cakeNamePlural}!`);
+
+    done();
+  })
 
   it(`should stop you if you're shamed`, async done => {
     const server = await createServer();
