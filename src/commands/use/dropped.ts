@@ -6,12 +6,7 @@ import { EMOJI_INCORRECT_PERMISSIONS } from '../../utils/emoji';
 import { CommandArguments } from '../../utils/command-arguments';
 import { getTableBorder } from '../../utils/ascii';
 
-interface Arguments extends CommandArguments {
-  channel: string;
-  amount?: number;
-}
-
-export const getDropList = async (args: Arguments): Promise<string> => {
+export const getDropList = async (args: CommandArguments): Promise<string> => {
   if (!(await canDrop(args.message))) {
     return `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`;
   }
@@ -57,7 +52,7 @@ export const describe = 'View dropped cakes';
 
 export const builder = (yargs: Argv) => yargs;
 
-export const handler = (args: Arguments) => {
+export const handler = (args: CommandArguments) => {
   args.needsFetch = true;
   args.promisedOutput = getDropList(args);
 };

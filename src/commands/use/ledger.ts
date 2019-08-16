@@ -48,16 +48,16 @@ export const getLedger = async (args: CommandArguments): Promise<string | void> 
       fs.mkdirSync(filePath);
     }
 
-    fs.writeFile(filePath + fileName, csv, async error => {
-      if (error) {
-        throw error;
+    fs.writeFile(filePath + fileName, csv, async writeError => {
+      if (writeError) {
+        throw writeError;
       }
 
       await args.message.channel.send(`${EMOJI_WORKING_HARD} Of course!`, { files: [filePath + fileName] });
 
-      fs.unlink(filePath + fileName, error => {
-        if (error) {
-          throw error;
+      fs.unlink(filePath + fileName, unlinkError => {
+        if (unlinkError) {
+          throw unlinkError;
         }
       });
     });

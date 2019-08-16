@@ -1,8 +1,1 @@
 language: node_js
-services:
-  - postgresql
-before_script:
-- psql -c 'create database cakeboss;' -U postgres
-- psql -c 'create database cakeboss_test;' -U postgres
-env:
-  - ORM_HOST=127.0.0.1 ORM_PORT=5432 ORM_USER=postgres ORM_PASS= ORM_DATABASE=cakeboss

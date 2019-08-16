@@ -1,7 +1,7 @@
 import { createConnection, getConnection } from 'typeorm';
-import { removeCakes, Arguments } from './remove';
+import { blessMember, Arguments } from './bless';
 import { createServer, createMember, createMessage, createClient } from '../../../test/test-helpers';
-import { EMOJI_INCORRECT_PERMISSIONS, EMOJI_RECORD_NOT_FOUND, EMOJI_JOB_WELL_DONE } from '../../utils/emoji';
+import { EMOJI_INCORRECT_PERMISSIONS, EMOJI_RECORD_NOT_FOUND, EMOJI_CAKE } from '../../utils/emoji';
 import Config from '../../entity/config';
 import Drop from '../../entity/drop';
 import Member from '../../entity/member';
@@ -10,7 +10,7 @@ import Prize from '../../entity/prize';
 import ShamedMember from '../../entity/shamed-member';
 import User from '../../entity/user';
 
-describe('commands/use/remove', () => {
+describe('commands/use/bless', () => {
   beforeEach(async done => {
     await createConnection({
       type: 'sqlite',
@@ -45,7 +45,7 @@ describe('commands/use/remove', () => {
       reactions: {},
     };
 
-    const response = await removeCakes(args);
+    const response = await blessMember(args);
     expect(response).toBe(`${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`);
 
     done();
@@ -65,32 +65,33 @@ describe('commands/use/remove', () => {
       reactions: {},
     };
 
-    const response = await removeCakes(args);
+    const response = await blessMember(args);
     expect(response).toBe(`${EMOJI_RECORD_NOT_FOUND} Uh oh, I couldn't find them.`);
 
     done();
   });
 
-  it(`should remove from balance`, async done => {
+  it('should give them cake', async done => {
     const server = await createServer();
-    const member = await createMember({ server, balance: 5 });
+    const member = await createMember({ server });
 
     const args: Arguments = {
       client: createClient(),
       message: await createMessage({ server, serverMembers: [member], permission: 'ADMINISTRATOR' }),
       member: `<@${member.discordId}>`,
-      amount: 1,
+      amount: 3,
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
       reactions: {},
     };
 
-    const response = await removeCakes(args);
-    expect(response).toBe(`${EMOJI_JOB_WELL_DONE} Done!`);
+    const response = await blessMember(args);
+    expect(response).toBe(`${EMOJI_CAKE} They just got 3 cakes, <@${args.message.member.id}>!`);
 
     await member.reload();
-    expect(member.balance).toBe(4);
+    expect(member.balance).toBe(3);
+    expect(member.earned).toBe(3);
 
     done();
   });

@@ -1,12 +1,32 @@
-import { getConnection, createConnections } from 'typeorm';
+import { createConnection, getConnection } from 'typeorm';
 import { disappearCakes, Arguments } from './disappear';
 import { createServer, createMember, createMessage, createClient } from '../../../test/test-helpers';
 import { EMOJI_INCORRECT_PERMISSIONS, EMOJI_RECORD_NOT_FOUND, EMOJI_JOB_WELL_DONE } from '../../utils/emoji';
+import Config from '../../entity/config';
+import Drop from '../../entity/drop';
+import Member from '../../entity/member';
+import Server from '../../entity/server';
+import Prize from '../../entity/prize';
+import ShamedMember from '../../entity/shamed-member';
+import User from '../../entity/user';
 
 describe('commands/use/disappear', () => {
-  beforeAll(async done => {
-    await createConnections();
-    await getConnection('test');
+  beforeEach(async done => {
+    await createConnection({
+      type: 'sqlite',
+      database: ':memory:',
+      dropSchema: true,
+      entities: [Config, Drop, Member, Prize, Server, ShamedMember, User],
+      synchronize: true,
+      logging: false,
+    });
+
+    done();
+  });
+
+  afterEach(async done => {
+    const conn = getConnection();
+    await conn.close();
 
     done();
   });
@@ -16,7 +36,7 @@ describe('commands/use/disappear', () => {
 
     const args: Arguments = {
       client: createClient(),
-      message: await createMessage({ server, serverMembers: [] }),
+      message: await createMessage({ server }),
       member: '',
       amount: 1,
       needsFetch: false,
@@ -26,7 +46,7 @@ describe('commands/use/disappear', () => {
     };
 
     const response = await disappearCakes(args);
-    expect(response).toMatchInlineSnapshot(`"${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!"`);
+    expect(response).toBe(`${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`);
 
     done();
   });
@@ -36,7 +56,7 @@ describe('commands/use/disappear', () => {
 
     const args: Arguments = {
       client: createClient(),
-      message: await createMessage({ server, serverMembers: [], permission: 'ADMINISTRATOR' }),
+      message: await createMessage({ server, permission: 'ADMINISTRATOR' }),
       member: `<@12345>`,
       amount: 1,
       needsFetch: false,
@@ -46,7 +66,7 @@ describe('commands/use/disappear', () => {
     };
 
     const response = await disappearCakes(args);
-    expect(response).toMatchInlineSnapshot(`"${EMOJI_RECORD_NOT_FOUND} Uh oh, I couldn't find them."`);
+    expect(response).toBe(`${EMOJI_RECORD_NOT_FOUND} Uh oh, I couldn't find them.`);
 
     done();
   });
@@ -67,11 +87,11 @@ describe('commands/use/disappear', () => {
     };
 
     const response = await disappearCakes(args);
-    expect(response).toMatchInlineSnapshot(`"${EMOJI_JOB_WELL_DONE} Done!"`);
+    expect(response).toBe(`${EMOJI_JOB_WELL_DONE} Done!`);
 
     await member.reload();
-    expect(member.balance).toMatchInlineSnapshot(`4`);
-    expect(member.earned).toMatchInlineSnapshot(`9`);
+    expect(member.balance).toBe(4);
+    expect(member.earned).toBe(9);
 
     done();
   });
