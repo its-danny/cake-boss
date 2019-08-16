@@ -73,7 +73,7 @@ describe('commands/use/bless', () => {
 
   it('should give them cake', async done => {
     const server = await createServer();
-    const member = await createMember({ server })
+    const member = await createMember({ server });
 
     const args: Arguments = {
       client: createClient(),
@@ -84,7 +84,7 @@ describe('commands/use/bless', () => {
       careAboutQuietMode: false,
       promisedOutput: null,
       reactions: {},
-    }
+    };
 
     const response = await blessMember(args);
     expect(response).toBe(`${EMOJI_CAKE} They just got 3 cakes, <@${args.message.member.id}>!`);
@@ -94,5 +94,5 @@ describe('commands/use/bless', () => {
     expect(member.earned).toBe(3);
 
     done();
-  })
+  });
 });

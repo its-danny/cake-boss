@@ -29,7 +29,8 @@ export interface MemberOptions {
   discordId?: string;
   balance?: number;
   earned?: number;
-  shamed?: boolean
+  givenSinceReset?: number;
+  shamed?: boolean;
 }
 
 export const createMember = async (opts: MemberOptions): Promise<Member> => {
@@ -53,9 +54,13 @@ export const createMember = async (opts: MemberOptions): Promise<Member> => {
     member.earned = opts.earned;
   }
 
+  if (opts.givenSinceReset) {
+    member.givenSinceReset = opts.givenSinceReset;
+  }
+
   if (opts.shamed) {
     await member.save();
-    
+
     const shamedMember = new ShamedMember();
     shamedMember.server = opts.server;
     shamedMember.member = member;

@@ -34,7 +34,7 @@ describe('commands/use/give', () => {
   it(`should stop you if you're shamed`, async done => {
     const server = await createServer();
     const sender = await createMember({ server, shamed: true });
-    const receiver = await createMember({ server })
+    const receiver = await createMember({ server });
 
     const args: Arguments = {
       client: createClient(),
@@ -48,7 +48,9 @@ describe('commands/use/give', () => {
     };
 
     const response = await giveCakeToMember(args);
-    expect(response).toBe(`${EMOJI_DONT_DO_THAT} You have been **shamed** and can not give ${server.config.cakeNamePlural}!`);
+    expect(response).toBe(
+      `${EMOJI_DONT_DO_THAT} You have been **shamed** and can not give ${server.config.cakeNamePlural}!`,
+    );
 
     done();
   });
@@ -98,7 +100,7 @@ describe('commands/use/give', () => {
   it(`should stop you if they're shamed`, async done => {
     const server = await createServer();
     const sender = await createMember({ server });
-    const receiver = await createMember({ server, shamed: true  })
+    const receiver = await createMember({ server, shamed: true });
 
     const args: Arguments = {
       client: createClient(),
@@ -112,7 +114,31 @@ describe('commands/use/give', () => {
     };
 
     const response = await giveCakeToMember(args);
-    expect(response).toBe(`${EMOJI_DONT_DO_THAT} They have been **shamed** and can not get ${server.config.cakeNamePlural}!`);
+    expect(response).toBe(
+      `${EMOJI_DONT_DO_THAT} They have been **shamed** and can not get ${server.config.cakeNamePlural}!`,
+    );
+
+    done();
+  });
+
+  it(`shoulds top you if you've hit your limit`, async done => {
+    const server = await createServer();
+    const sender = await createMember({ server, givenSinceReset: 5 });
+    const receiver = await createMember({ server });
+
+    const args: Arguments = {
+      client: createClient(),
+      message: await createMessage({ server, serverMembers: [sender, receiver], senderId: sender.discordId }),
+      member: `<@${receiver.discordId}>`,
+      amount: 1,
+      needsFetch: false,
+      careAboutQuietMode: false,
+      promisedOutput: null,
+      reactions: {},
+    };
+
+    const response = await giveCakeToMember(args);
+    expect(response).toBe(`${EMOJI_INCORRECT_PERMISSIONS} You can't do that yet!`);
 
     done();
   });
