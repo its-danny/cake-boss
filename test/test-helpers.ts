@@ -1,5 +1,5 @@
 import faker from 'faker';
-import { Message, Guild, GuildMember, Client, TextChannel } from 'discord.js';
+import { Message, Guild, GuildMember, Client, TextChannel, Role } from 'discord.js';
 import Config from '../src/entity/config';
 import Server from '../src/entity/server';
 import User from '../src/entity/user';
@@ -89,6 +89,7 @@ export interface MessageOptions {
   channel?: any;
   serverMembers?: Member[];
   serverChannels?: any[];
+  serverRoles?: Role[];
   senderId?: string;
   permission?: string;
 }
@@ -136,6 +137,8 @@ export const createMessage = async (opts: MessageOptions): Promise<Message> => {
           return null;
         },
       },
+
+      roles: opts.serverRoles ? opts.serverRoles : [],
 
       fetchMembers() {},
     } as unknown) as Guild,
