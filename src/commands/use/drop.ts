@@ -10,6 +10,7 @@ import {
   EMOJI_RECORD_NOT_FOUND,
   EMOJI_JOB_WELL_DONE,
   EMOJI_WORKING_HARD,
+  EMOJI_ERROR,
 } from '../../utils/emoji';
 import { CommandArguments } from '../../utils/command-arguments';
 
@@ -40,6 +41,10 @@ export const dropCakes = async (args: Arguments): Promise<string | void> => {
   }
 
   const amount = args.amount ? args.amount : 1;
+
+  if (!Number.isInteger(amount) && amount <= 0) {
+    return `${EMOJI_ERROR} Invalid amount, sorry!`;
+  }
 
   const drop = new Drop();
   drop.channelDiscordId = discordChannel.id;
