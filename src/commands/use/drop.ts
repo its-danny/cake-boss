@@ -1,5 +1,6 @@
 import { Argv } from 'yargs';
 import { TextChannel } from 'discord.js';
+import { sample, isEmpty } from 'lodash';
 import { canDrop } from '../../utils/permissions';
 import Server from '../../entity/server';
 import Drop from '../../entity/drop';
@@ -59,7 +60,9 @@ export const dropCakes = async (args: Arguments): Promise<string | void> => {
   discordChannel.send(
     `${EMOJI_WORKING_HARD} ${server.config.cakeEmoji} ${amount} ${
       amount > 1 ? server.config.cakeNamePlural : server.config.cakeNameSingular
-    } just dropped! \`${server.config.commandPrefix}take\` it!`,
+    } just dropped! \`${server.config.commandPrefix}take\` it!\n${
+      !isEmpty(server.config.dropGifs) ? sample(server.config.dropGifs) : ''
+    }`,
   );
 
   if (server.config.quietMode) {

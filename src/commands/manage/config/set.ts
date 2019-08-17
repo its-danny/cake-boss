@@ -2,34 +2,12 @@ import { Argv } from 'yargs';
 import Server from '../../../entity/server';
 import { canManage } from '../../../utils/permissions';
 import { logEvent } from '../../../utils/logger';
-import {
-  EMOJI_ERROR,
-  EMOJI_INCORRECT_PERMISSIONS,
-  EMOJI_CONFIG_EVENT,
-  EMOJI_JOB_WELL_DONE,
-} from '../../../utils/emoji';
+import { EMOJI_ERROR, EMOJI_INCORRECT_PERMISSIONS, EMOJI_CONFIG, EMOJI_JOB_WELL_DONE } from '../../../utils/emoji';
 import { CommandArguments } from '../../../utils/command-arguments';
-
-type Config =
-  | 'command-prefix'
-  | 'quiet-mode'
-  | 'log-channel'
-  | 'log-with-link'
-  | 'redeem-channel'
-  | 'manager-roles'
-  | 'blesser-roles'
-  | 'dropper-roles'
-  | 'nickname'
-  | 'cake-emoji'
-  | 'cake-name-singular'
-  | 'cake-name-plural'
-  | 'no-giving'
-  | 'requirement-to-give'
-  | 'give-limit'
-  | 'give-limit-hour-reset';
+import { ConfigCommand } from '../../../entity/config';
 
 interface Arguments extends CommandArguments {
-  config: Config;
+  config: ConfigCommand;
   value: string;
 }
 
@@ -59,7 +37,7 @@ export const setConfig = async (args: Arguments): Promise<string | void> => {
     await logEvent(
       args.client,
       args.message,
-      `${EMOJI_CONFIG_EVENT} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`,
+      `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`,
     );
 
     configSet = true;
@@ -78,30 +56,43 @@ export const setConfig = async (args: Arguments): Promise<string | void> => {
     await logEvent(
       args.client,
       args.message,
-      `${EMOJI_CONFIG_EVENT} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`,
+      `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`,
     );
 
     return `${EMOJI_JOB_WELL_DONE} Done!`;
   }
 
   if (args.config === 'log-channel') {
-    const channelId = args.value.replace(/^<#/, '').replace(/>$/, '');
-    const channel = args.message.guild.channels.get(channelId);
+    if (args.value === 'none') {
+      server.config.logChannelId = null;
 
-    if (!channel) {
-      return `${EMOJI_ERROR} Not a valid channel!`;
+      await server.config.save();
+      await logEvent(
+        args.client,
+        args.message,
+        `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`none\`.`,
+      );
+
+      configSet = true;
+    } else {
+      const channelId = args.value.replace(/^<#/, '').replace(/>$/, '');
+      const channel = args.message.guild.channels.get(channelId);
+
+      if (!channel) {
+        return `${EMOJI_ERROR} Not a valid channel!`;
+      }
+
+      server.config.logChannelId = channelId;
+
+      await server.config.save();
+      await logEvent(
+        args.client,
+        args.message,
+        `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`#${channel.name}\`.`,
+      );
+
+      configSet = true;
     }
-
-    server.config.logChannelId = channelId;
-
-    await server.config.save();
-    await logEvent(
-      args.client,
-      args.message,
-      `${EMOJI_CONFIG_EVENT} \`${args.message.author.tag}\` set \`${args.config}\` to \`#${channel.name}\`.`,
-    );
-
-    configSet = true;
   }
 
   if (args.config === 'log-with-link') {
@@ -117,138 +108,184 @@ export const setConfig = async (args: Arguments): Promise<string | void> => {
     await logEvent(
       args.client,
       args.message,
-      `${EMOJI_CONFIG_EVENT} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`,
+      `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`,
     );
 
     configSet = true;
   }
 
   if (args.config === 'redeem-channel') {
-    const channelId = args.value.replace(/^<#/, '').replace(/>$/, '');
-    const channel = args.message.guild.channels.get(channelId);
+    if (args.value === 'none') {
+      server.config.redeemChannelId = null;
 
-    if (!channel) {
-      return `${EMOJI_ERROR} Not a valid channel!`;
+      await server.config.save();
+      await logEvent(
+        args.client,
+        args.message,
+        `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`none\`.`,
+      );
+
+      configSet = true;
+    } else {
+      const channelId = args.value.replace(/^<#/, '').replace(/>$/, '');
+      const channel = args.message.guild.channels.get(channelId);
+
+      if (!channel) {
+        return `${EMOJI_ERROR} Not a valid channel!`;
+      }
+
+      server.config.redeemChannelId = channelId;
+
+      await server.config.save();
+      await logEvent(
+        args.client,
+        args.message,
+        `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`#${channel.name}\`.`,
+      );
+
+      configSet = true;
     }
-
-    server.config.redeemChannelId = channelId;
-
-    await server.config.save();
-    await logEvent(
-      args.client,
-      args.message,
-      `${EMOJI_CONFIG_EVENT} \`${args.message.author.tag}\` set \`${args.config}\` to \`#${channel.name}\`.`,
-    );
-
-    configSet = true;
   }
 
   if (args.config === 'manager-roles') {
-    const foundRolesIds = args.value
-      .split(',')
-      .filter(roleName => {
+    if (args.value === 'none') {
+      server.config.managerRoleIds = [];
+
+      await server.config.save();
+      await logEvent(
+        args.client,
+        args.message,
+        `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`none\`.`,
+      );
+
+      configSet = true;
+    } else {
+      const foundRolesIds = args.value
+        .split(',')
+        .filter(roleName => {
+          return args.message.guild.roles.find(role => role.name === roleName.trim());
+        })
+        .map(roleName => args.message.guild.roles.find(role => role.name === roleName.trim()).id);
+
+      const foundRolesNames = args.value.split(',').filter(roleName => {
         return args.message.guild.roles.find(role => role.name === roleName.trim());
-      })
-      .map(roleName => args.message.guild.roles.find(role => role.name === roleName.trim()).id);
+      });
 
-    const foundRolesNames = args.value.split(',').filter(roleName => {
-      return args.message.guild.roles.find(role => role.name === roleName.trim());
-    });
+      const notFoundRoles = args.value.split(',').filter(roleName => {
+        return !args.message.guild.roles.find(role => role.name === roleName.trim());
+      });
 
-    const notFoundRoles = args.value.split(',').filter(roleName => {
-      return !args.message.guild.roles.find(role => role.name === roleName.trim());
-    });
+      server.config.managerRoleIds = foundRolesIds;
 
-    server.config.managerRoleIds = foundRolesIds;
+      await server.config.save();
+      await logEvent(
+        args.client,
+        args.message,
+        `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${foundRolesNames.join(', ')}\`.`,
+      );
 
-    await server.config.save();
-    await logEvent(
-      args.client,
-      args.message,
-      `${EMOJI_CONFIG_EVENT} \`${args.message.author.tag}\` set \`${args.config}\` to \`${foundRolesNames.join(
-        ', ',
-      )}\`.`,
-    );
+      if (notFoundRoles.length > 0) {
+        return `${EMOJI_JOB_WELL_DONE} Done! The following roles were skipped for not existing: ${notFoundRoles.join(
+          ', ',
+        )}`;
+      }
 
-    if (notFoundRoles.length > 0) {
-      return `${EMOJI_JOB_WELL_DONE} Done! The following roles were skipped for not existing: ${notFoundRoles.join(
-        ', ',
-      )}`;
+      configSet = true;
     }
-
-    configSet = true;
   }
 
   if (args.config === 'blesser-roles') {
-    const foundRolesIds = args.value
-      .split(',')
-      .filter(roleName => {
+    if (args.value === 'none') {
+      server.config.blesserRoleIds = [];
+
+      await server.config.save();
+      await logEvent(
+        args.client,
+        args.message,
+        `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`none\`.`,
+      );
+
+      configSet = true;
+    } else {
+      const foundRolesIds = args.value
+        .split(',')
+        .filter(roleName => {
+          return args.message.guild.roles.find(role => role.name === roleName.trim());
+        })
+        .map(roleName => args.message.guild.roles.find(role => role.name === roleName.trim()).id);
+
+      const foundRolesNames = args.value.split(',').filter(roleName => {
         return args.message.guild.roles.find(role => role.name === roleName.trim());
-      })
-      .map(roleName => args.message.guild.roles.find(role => role.name === roleName.trim()).id);
+      });
 
-    const foundRolesNames = args.value.split(',').filter(roleName => {
-      return args.message.guild.roles.find(role => role.name === roleName.trim());
-    });
+      const notFoundRoles = args.value.split(',').filter(roleName => {
+        return !args.message.guild.roles.find(role => role.name === roleName.trim());
+      });
 
-    const notFoundRoles = args.value.split(',').filter(roleName => {
-      return !args.message.guild.roles.find(role => role.name === roleName.trim());
-    });
+      server.config.blesserRoleIds = foundRolesIds;
 
-    server.config.blesserRoleIds = foundRolesIds;
+      await server.config.save();
+      await logEvent(
+        args.client,
+        args.message,
+        `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${foundRolesNames.join(', ')}\`.`,
+      );
 
-    await server.config.save();
-    await logEvent(
-      args.client,
-      args.message,
-      `${EMOJI_CONFIG_EVENT} \`${args.message.author.tag}\` set \`${args.config}\` to \`${foundRolesNames.join(
-        ', ',
-      )}\`.`,
-    );
+      if (notFoundRoles.length > 0) {
+        return `${EMOJI_JOB_WELL_DONE} Done! The following roles were skipped for not existing: ${notFoundRoles.join(
+          ', ',
+        )}`;
+      }
 
-    if (notFoundRoles.length > 0) {
-      return `${EMOJI_JOB_WELL_DONE} Done! The following roles were skipped for not existing: ${notFoundRoles.join(
-        ', ',
-      )}`;
+      configSet = true;
     }
-
-    configSet = true;
   }
 
   if (args.config === 'dropper-roles') {
-    const foundRolesIds = args.value
-      .split(',')
-      .filter(roleName => {
+    if (args.value === 'none') {
+      server.config.dropperRoleIds = [];
+
+      await server.config.save();
+      await logEvent(
+        args.client,
+        args.message,
+        `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`none\`.`,
+      );
+
+      configSet = true;
+    } else {
+      const foundRolesIds = args.value
+        .split(',')
+        .filter(roleName => {
+          return args.message.guild.roles.find(role => role.name === roleName.trim());
+        })
+        .map(roleName => args.message.guild.roles.find(role => role.name === roleName.trim()).id);
+
+      const foundRolesNames = args.value.split(',').filter(roleName => {
         return args.message.guild.roles.find(role => role.name === roleName.trim());
-      })
-      .map(roleName => args.message.guild.roles.find(role => role.name === roleName.trim()).id);
+      });
 
-    const foundRolesNames = args.value.split(',').filter(roleName => {
-      return args.message.guild.roles.find(role => role.name === roleName.trim());
-    });
+      const notFoundRoles = args.value.split(',').filter(roleName => {
+        return !args.message.guild.roles.find(role => role.name === roleName.trim());
+      });
 
-    const notFoundRoles = args.value.split(',').filter(roleName => {
-      return !args.message.guild.roles.find(role => role.name === roleName.trim());
-    });
+      server.config.dropperRoleIds = foundRolesIds;
 
-    server.config.dropperRoleIds = foundRolesIds;
+      await server.config.save();
+      await logEvent(
+        args.client,
+        args.message,
+        `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${foundRolesNames.join(', ')}\`.`,
+      );
 
-    await server.config.save();
-    await logEvent(
-      args.client,
-      args.message,
-      `${EMOJI_CONFIG_EVENT} \`${args.message.author.tag}\` set \`${args.config}\` to \`${foundRolesNames.join(
-        ', ',
-      )}\`.`,
-    );
+      if (notFoundRoles.length > 0) {
+        return `${EMOJI_JOB_WELL_DONE} Done! The following roles were skipped for not existing: ${notFoundRoles.join(
+          ', ',
+        )}`;
+      }
 
-    if (notFoundRoles.length > 0) {
-      return `${EMOJI_JOB_WELL_DONE} Done! The following roles were skipped for not existing: ${notFoundRoles.join(
-        ', ',
-      )}`;
+      configSet = true;
     }
-
-    configSet = true;
   }
 
   if (args.config === 'nickname') {
@@ -268,7 +305,7 @@ export const setConfig = async (args: Arguments): Promise<string | void> => {
     await logEvent(
       args.client,
       args.message,
-      `${EMOJI_CONFIG_EVENT} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`,
+      `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`,
     );
 
     configSet = true;
@@ -281,7 +318,7 @@ export const setConfig = async (args: Arguments): Promise<string | void> => {
     await logEvent(
       args.client,
       args.message,
-      `${EMOJI_CONFIG_EVENT} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`,
+      `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`,
     );
 
     configSet = true;
@@ -294,7 +331,7 @@ export const setConfig = async (args: Arguments): Promise<string | void> => {
     await logEvent(
       args.client,
       args.message,
-      `${EMOJI_CONFIG_EVENT} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`,
+      `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`,
     );
 
     configSet = true;
@@ -307,7 +344,28 @@ export const setConfig = async (args: Arguments): Promise<string | void> => {
     await logEvent(
       args.client,
       args.message,
-      `${EMOJI_CONFIG_EVENT} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`,
+      `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`,
+    );
+
+    configSet = true;
+  }
+
+  if (args.config === 'drop-gifs') {
+    if (args.value === 'none') {
+      server.config.dropGifs = [];
+    } else {
+      const gifs = args.value.split(',').map(g => g.trim());
+      server.config.dropGifs = gifs;
+    }
+
+    await server.config.save();
+
+    await logEvent(
+      args.client,
+      args.message,
+      `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value
+        .split(',')
+        .join(', ')}\`.`,
     );
 
     configSet = true;
@@ -326,7 +384,7 @@ export const setConfig = async (args: Arguments): Promise<string | void> => {
     await logEvent(
       args.client,
       args.message,
-      `${EMOJI_CONFIG_EVENT} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`,
+      `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`,
     );
 
     configSet = true;
@@ -345,7 +403,7 @@ export const setConfig = async (args: Arguments): Promise<string | void> => {
     await logEvent(
       args.client,
       args.message,
-      `${EMOJI_CONFIG_EVENT} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`,
+      `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`,
     );
 
     configSet = true;
@@ -364,7 +422,7 @@ export const setConfig = async (args: Arguments): Promise<string | void> => {
     await logEvent(
       args.client,
       args.message,
-      `${EMOJI_CONFIG_EVENT} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`,
+      `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`,
     );
 
     configSet = true;
@@ -383,7 +441,7 @@ export const setConfig = async (args: Arguments): Promise<string | void> => {
     await logEvent(
       args.client,
       args.message,
-      `${EMOJI_CONFIG_EVENT} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`,
+      `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`,
     );
 
     configSet = true;
@@ -401,7 +459,7 @@ export const setConfig = async (args: Arguments): Promise<string | void> => {
 };
 
 export const command = 'set <config> <value>';
-export const describe = 'Set a config';
+export const describe = 'Set a config option';
 
 export const builder = (yargs: Argv) => yargs;
 
