@@ -11,6 +11,8 @@ interface Arguments extends CommandArguments {
   value: string;
 }
 
+export const ERROR_MESSAGE = `Incorrect arguments, sorry! Maybe you need the docs? <https://dannytatom.github.io/cake-boss/>`;
+
 export const setConfig = async (args: Arguments): Promise<string | void> => {
   if (!(await canManage(args.message))) {
     return `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`;
@@ -25,426 +27,289 @@ export const setConfig = async (args: Arguments): Promise<string | void> => {
   let configSet = false;
 
   if (args.config === 'command-prefix') {
-    const prefix = args.value.trim();
-
-    if (prefix === '') {
-      return `${EMOJI_ERROR} Invalid prefix, sorry!`;
-    }
-
-    server.config.commandPrefix = prefix;
-
-    await server.config.save();
-    await logEvent(
-      args.client,
-      args.message,
-      `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`,
-    );
-
-    configSet = true;
-  }
-
-  if (args.config === 'quiet-mode') {
-    const toggle = args.value.trim();
-
-    if (toggle !== 'true' && toggle !== 'false') {
-      return `${EMOJI_ERROR} It's a true or false question!`;
-    }
-
-    server.config.quietMode = toggle === 'true';
-
-    await server.config.save();
-    await logEvent(
-      args.client,
-      args.message,
-      `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`,
-    );
-
-    return `${EMOJI_JOB_WELL_DONE} Done!`;
-  }
-
-  if (args.config === 'log-channel') {
-    if (args.value === 'none') {
-      server.config.logChannelId = null;
-
+    if (server.config.setCommandPrefix(args.value)) {
       await server.config.save();
+
       await logEvent(
         args.client,
         args.message,
-        `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`none\`.`,
+        `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`,
       );
 
       configSet = true;
     } else {
-      const channelId = args.value.replace(/^<#/, '').replace(/>$/, '');
-      const channel = args.message.guild.channels.get(channelId);
+      return `${EMOJI_ERROR} ${ERROR_MESSAGE}`;
+    }
+  }
 
-      if (!channel) {
-        return `${EMOJI_ERROR} Not a valid channel!`;
-      }
-
-      server.config.logChannelId = channelId;
-
+  if (args.config === 'quiet-mode') {
+    if (server.config.setQuietMode(args.value)) {
       await server.config.save();
+
       await logEvent(
         args.client,
         args.message,
-        `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`#${channel.name}\`.`,
+        `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`,
+      );
+
+      return `${EMOJI_JOB_WELL_DONE} Done!`;
+    }
+    return `${EMOJI_ERROR} ${ERROR_MESSAGE}`;
+  }
+
+  if (args.config === 'log-channel') {
+    if (server.config.setLogChannel(args.value, args.message.guild)) {
+      await server.config.save();
+
+      const channel = args.message.guild.channels.get(args.value.replace(/^<#/, '').replace(/>$/, ''));
+
+      await logEvent(
+        args.client,
+        args.message,
+        `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${
+          channel ? `#${channel.name}` : 'none'
+        }\`.`,
       );
 
       configSet = true;
+    } else {
+      return `${EMOJI_ERROR} ${ERROR_MESSAGE}`;
     }
   }
 
   if (args.config === 'log-with-link') {
-    const toggle = args.value.trim();
-
-    if (toggle !== 'true' && toggle !== 'false') {
-      return `${EMOJI_ERROR} It's a true or false question!`;
-    }
-
-    server.config.logWithLink = toggle === 'true';
-
-    await server.config.save();
-    await logEvent(
-      args.client,
-      args.message,
-      `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`,
-    );
-
-    configSet = true;
-  }
-
-  if (args.config === 'redeem-channel') {
-    if (args.value === 'none') {
-      server.config.redeemChannelId = null;
-
+    if (server.config.setLogWithLink(args.value)) {
       await server.config.save();
+
       await logEvent(
         args.client,
         args.message,
-        `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`none\`.`,
+        `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`,
       );
 
       configSet = true;
     } else {
-      const channelId = args.value.replace(/^<#/, '').replace(/>$/, '');
-      const channel = args.message.guild.channels.get(channelId);
+      return `${EMOJI_ERROR} ${ERROR_MESSAGE}`;
+    }
+  }
 
-      if (!channel) {
-        return `${EMOJI_ERROR} Not a valid channel!`;
-      }
-
-      server.config.redeemChannelId = channelId;
-
+  if (args.config === 'redeem-channel') {
+    if (server.config.setRedeemChannel(args.value, args.message.guild)) {
       await server.config.save();
+
+      const channel = args.message.guild.channels.get(args.value.replace(/^<#/, '').replace(/>$/, ''));
+
       await logEvent(
         args.client,
         args.message,
-        `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`#${channel.name}\`.`,
+        `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${
+          channel ? `#${channel.name}` : 'none'
+        }\`.`,
       );
 
       configSet = true;
+    } else {
+      return `${EMOJI_ERROR} ${ERROR_MESSAGE}`;
     }
   }
 
   if (args.config === 'manager-roles') {
-    if (args.value === 'none') {
-      server.config.managerRoleIds = [];
-
+    if (server.config.setRoles(args.value, args.config, args.message.guild)) {
       await server.config.save();
+
       await logEvent(
         args.client,
         args.message,
-        `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`none\`.`,
+        `${EMOJI_CONFIG} \`${args.message.author.tag}\` updated \`${args.config}\`.`,
       );
 
       configSet = true;
     } else {
-      const foundRolesIds = args.value
-        .split(',')
-        .filter(roleName => {
-          return args.message.guild.roles.find(role => role.name === roleName.trim());
-        })
-        .map(roleName => args.message.guild.roles.find(role => role.name === roleName.trim()).id);
-
-      const foundRolesNames = args.value.split(',').filter(roleName => {
-        return args.message.guild.roles.find(role => role.name === roleName.trim());
-      });
-
-      const notFoundRoles = args.value.split(',').filter(roleName => {
-        return !args.message.guild.roles.find(role => role.name === roleName.trim());
-      });
-
-      server.config.managerRoleIds = foundRolesIds;
-
-      await server.config.save();
-      await logEvent(
-        args.client,
-        args.message,
-        `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${foundRolesNames.join(', ')}\`.`,
-      );
-
-      if (notFoundRoles.length > 0) {
-        return `${EMOJI_JOB_WELL_DONE} Done! The following roles were skipped for not existing: ${notFoundRoles.join(
-          ', ',
-        )}`;
-      }
-
-      configSet = true;
+      return `${EMOJI_ERROR} ${ERROR_MESSAGE}`;
     }
   }
 
   if (args.config === 'blesser-roles') {
-    if (args.value === 'none') {
-      server.config.blesserRoleIds = [];
-
+    if (server.config.setRoles(args.value, args.config, args.message.guild)) {
       await server.config.save();
+
       await logEvent(
         args.client,
         args.message,
-        `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`none\`.`,
+        `${EMOJI_CONFIG} \`${args.message.author.tag}\` updated \`${args.config}\`.`,
       );
 
       configSet = true;
     } else {
-      const foundRolesIds = args.value
-        .split(',')
-        .filter(roleName => {
-          return args.message.guild.roles.find(role => role.name === roleName.trim());
-        })
-        .map(roleName => args.message.guild.roles.find(role => role.name === roleName.trim()).id);
-
-      const foundRolesNames = args.value.split(',').filter(roleName => {
-        return args.message.guild.roles.find(role => role.name === roleName.trim());
-      });
-
-      const notFoundRoles = args.value.split(',').filter(roleName => {
-        return !args.message.guild.roles.find(role => role.name === roleName.trim());
-      });
-
-      server.config.blesserRoleIds = foundRolesIds;
-
-      await server.config.save();
-      await logEvent(
-        args.client,
-        args.message,
-        `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${foundRolesNames.join(', ')}\`.`,
-      );
-
-      if (notFoundRoles.length > 0) {
-        return `${EMOJI_JOB_WELL_DONE} Done! The following roles were skipped for not existing: ${notFoundRoles.join(
-          ', ',
-        )}`;
-      }
-
-      configSet = true;
+      return `${EMOJI_ERROR} ${ERROR_MESSAGE}`;
     }
   }
 
   if (args.config === 'dropper-roles') {
-    if (args.value === 'none') {
-      server.config.dropperRoleIds = [];
-
+    if (server.config.setRoles(args.value, args.config, args.message.guild)) {
       await server.config.save();
+
       await logEvent(
         args.client,
         args.message,
-        `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`none\`.`,
+        `${EMOJI_CONFIG} \`${args.message.author.tag}\` updated \`${args.config}\`.`,
       );
 
       configSet = true;
     } else {
-      const foundRolesIds = args.value
-        .split(',')
-        .filter(roleName => {
-          return args.message.guild.roles.find(role => role.name === roleName.trim());
-        })
-        .map(roleName => args.message.guild.roles.find(role => role.name === roleName.trim()).id);
-
-      const foundRolesNames = args.value.split(',').filter(roleName => {
-        return args.message.guild.roles.find(role => role.name === roleName.trim());
-      });
-
-      const notFoundRoles = args.value.split(',').filter(roleName => {
-        return !args.message.guild.roles.find(role => role.name === roleName.trim());
-      });
-
-      server.config.dropperRoleIds = foundRolesIds;
-
-      await server.config.save();
-      await logEvent(
-        args.client,
-        args.message,
-        `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${foundRolesNames.join(', ')}\`.`,
-      );
-
-      if (notFoundRoles.length > 0) {
-        return `${EMOJI_JOB_WELL_DONE} Done! The following roles were skipped for not existing: ${notFoundRoles.join(
-          ', ',
-        )}`;
-      }
-
-      configSet = true;
+      return `${EMOJI_ERROR} ${ERROR_MESSAGE}`;
     }
   }
 
   if (args.config === 'nickname') {
-    if (args.value.trim() === '') {
-      return `${EMOJI_ERROR} That's not a nickname!`;
+    if (server.config.setNickname(args.value)) {
+      await server.config.save();
+
+      const member = args.message.guild.members.get(args.client.user.id);
+
+      if (server && member) {
+        member.setNickname(server.config.nickname);
+      }
+
+      await logEvent(
+        args.client,
+        args.message,
+        `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`,
+      );
+
+      configSet = true;
+    } else {
+      return `${EMOJI_ERROR} ${ERROR_MESSAGE}`;
     }
-
-    server.config.nickname = args.value;
-    await server.config.save();
-
-    const member = args.message.guild.members.get(args.client.user.id);
-
-    if (server && member) {
-      member.setNickname(server.config.nickname);
-    }
-
-    await logEvent(
-      args.client,
-      args.message,
-      `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`,
-    );
-
-    configSet = true;
   }
 
   if (args.config === 'cake-emoji') {
-    server.config.cakeEmoji = args.value;
+    if (server.config.setCakeEmoji(args.value)) {
+      await server.config.save();
 
-    await server.config.save();
-    await logEvent(
-      args.client,
-      args.message,
-      `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`,
-    );
+      await logEvent(
+        args.client,
+        args.message,
+        `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`,
+      );
 
-    configSet = true;
+      configSet = true;
+    } else {
+      return `${EMOJI_ERROR} ${ERROR_MESSAGE}`;
+    }
   }
 
   if (args.config === 'cake-name-singular') {
-    server.config.cakeNameSingular = args.value;
+    if (server.config.setCakeName(args.value, 'singular')) {
+      await server.config.save();
 
-    await server.config.save();
-    await logEvent(
-      args.client,
-      args.message,
-      `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`,
-    );
+      await logEvent(
+        args.client,
+        args.message,
+        `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`,
+      );
 
-    configSet = true;
+      configSet = true;
+    } else {
+      return `${EMOJI_ERROR} ${ERROR_MESSAGE}`;
+    }
   }
 
   if (args.config === 'cake-name-plural') {
-    server.config.cakeNamePlural = args.value;
+    if (server.config.setCakeName(args.value, 'plural')) {
+      await server.config.save();
 
-    await server.config.save();
-    await logEvent(
-      args.client,
-      args.message,
-      `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`,
-    );
+      await logEvent(
+        args.client,
+        args.message,
+        `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`,
+      );
 
-    configSet = true;
+      configSet = true;
+    } else {
+      return `${EMOJI_ERROR} ${ERROR_MESSAGE}`;
+    }
   }
 
   if (args.config === 'drop-gifs') {
-    if (args.value === 'none') {
-      server.config.dropGifs = [];
+    if (server.config.setDropGifs(args.value)) {
+      await server.config.save();
+
+      await logEvent(
+        args.client,
+        args.message,
+        `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value
+          .split(',')
+          .join(', ')}\`.`,
+      );
+
+      configSet = true;
     } else {
-      const gifs = args.value.split(',').map(g => g.trim());
-      server.config.dropGifs = gifs;
+      return `${EMOJI_ERROR} ${ERROR_MESSAGE}`;
     }
-
-    await server.config.save();
-
-    await logEvent(
-      args.client,
-      args.message,
-      `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value
-        .split(',')
-        .join(', ')}\`.`,
-    );
-
-    configSet = true;
   }
 
   if (args.config === 'no-giving') {
-    const toggle = args.value.trim();
+    if (server.config.setNoGiving(args.value)) {
+      await server.config.save();
+      await logEvent(
+        args.client,
+        args.message,
+        `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`,
+      );
 
-    if (toggle !== 'true' && toggle !== 'false') {
-      return `${EMOJI_ERROR} It's a true or false question!`;
+      configSet = true;
+    } else {
+      return `${EMOJI_ERROR} ${ERROR_MESSAGE}`;
     }
-
-    server.config.noGiving = toggle === 'true';
-
-    await server.config.save();
-    await logEvent(
-      args.client,
-      args.message,
-      `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`,
-    );
-
-    configSet = true;
   }
 
   if (args.config === 'requirement-to-give') {
-    const minimum = parseInt(args.value, 10);
+    if (server.config.setRequirementToGive(args.value)) {
+      await server.config.save();
 
-    if (!Number.isInteger(minimum) || minimum < 0) {
-      return `${EMOJI_ERROR} Invalid requirement, sorry! Must be a positive number!`;
+      await logEvent(
+        args.client,
+        args.message,
+        `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`,
+      );
+
+      configSet = true;
+    } else {
+      return `${EMOJI_ERROR} ${ERROR_MESSAGE}`;
     }
-
-    server.config.requirementToGive = minimum;
-
-    await server.config.save();
-    await logEvent(
-      args.client,
-      args.message,
-      `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`,
-    );
-
-    configSet = true;
   }
 
   if (args.config === 'give-limit') {
-    const limit = parseInt(args.value, 10);
+    if (server.config.setGiveLimit(args.value)) {
+      await server.config.save();
 
-    if (!Number.isInteger(limit) || limit < 1) {
-      return `${EMOJI_ERROR} Invalid limit, sorry! Must be 1 or more.`;
+      await logEvent(
+        args.client,
+        args.message,
+        `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`,
+      );
+
+      configSet = true;
+    } else {
+      return `${EMOJI_ERROR} ${ERROR_MESSAGE}`;
     }
-
-    server.config.giveLimit = limit;
-
-    await server.config.save();
-    await logEvent(
-      args.client,
-      args.message,
-      `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`,
-    );
-
-    configSet = true;
   }
 
   if (args.config === 'give-limit-hour-reset') {
-    const reset = parseInt(args.value, 10);
+    if (server.config.setGiveLimitHourReset(args.value)) {
+      await server.config.save();
 
-    if (!Number.isInteger(reset) || reset < 1) {
-      return `${EMOJI_ERROR} Invalid hour, sorry! Must be 1 or more.`;
+      await logEvent(
+        args.client,
+        args.message,
+        `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`,
+      );
+
+      configSet = true;
+    } else {
+      return `${EMOJI_ERROR} ${ERROR_MESSAGE}`;
     }
-
-    server.config.giveLimitHourReset = reset;
-
-    await server.config.save();
-    await logEvent(
-      args.client,
-      args.message,
-      `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`,
-    );
-
-    configSet = true;
   }
 
   if (configSet) {
