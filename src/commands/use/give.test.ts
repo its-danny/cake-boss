@@ -149,7 +149,7 @@ describe('commands/use/give', () => {
     done();
   });
 
-  it(`shoulds top you if you've hit your limit`, async done => {
+  it(`should top you if you've hit your limit`, async done => {
     const server = await createServer();
     const sender = await createMember({ server, givenSinceReset: 5 });
     const receiver = await createMember({ server });
