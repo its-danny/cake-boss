@@ -20,7 +20,7 @@ export const getValue = async (args: Arguments): Promise<string> => {
     throw new Error('Could not find server.');
   }
 
-  const value = server.config.getValue(args.message, args.config);
+  const value = server.config.getValue(args.config, args.message.guild);
 
   if (value) {
     return `${EMOJI_CONFIG} \`${args.config}\` is currently set to \`${value.value}\`, the default is \`${value.default}\`.`;

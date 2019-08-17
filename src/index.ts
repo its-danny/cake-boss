@@ -62,13 +62,13 @@ const handleError = async (error: Error, message: Message) => {
 };
 
 client.on('ready', async () => {
-  client.user.setActivity(`in the kitchen! 😅`);
+  client.user.setActivity(`in the kitchen! ${EMOJI_WORKING_HARD}`);
 
   client.guilds.forEach(async guild => {
     const server = await Server.findOne({ where: { discordId: guild.id }, relations: ['config'] });
     const member = guild.members.get(client.user.id);
 
-    if (server && server.config.nickname && member) {
+    if (server && member) {
       member.setNickname(server.config.nickname);
     }
   });

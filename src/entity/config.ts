@@ -1,5 +1,5 @@
 import { Entity, BaseEntity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
-import { Message } from 'discord.js';
+import { Guild } from 'discord.js';
 import { toSentenceSerial } from 'underscore.string';
 import { chain, isEmpty } from 'lodash';
 import { EMOJI_CAKE } from '../utils/emoji';
@@ -22,6 +22,9 @@ export type ConfigCommand =
   | 'requirement-to-give'
   | 'give-limit'
   | 'give-limit-hour-reset';
+
+type roleTypes = 'manager-roles' | 'blesser-roles' | 'dropper-roles';
+type cakeNameType = 'singular' | 'plural';
 
 @Entity()
 export default class Config extends BaseEntity {
@@ -58,8 +61,8 @@ export default class Config extends BaseEntity {
   @Column('simple-array', { nullable: false, default: '' })
   dropperRoleIds!: string[];
 
-  @Column({ nullable: true, type: String, default: 'CAKE BOSS!' })
-  nickname!: string | null;
+  @Column({ nullable: false, default: 'CAKE BOSS!' })
+  nickname!: string;
 
   @Column({ nullable: false, default: EMOJI_CAKE })
   cakeEmoji!: string;
@@ -85,13 +88,221 @@ export default class Config extends BaseEntity {
   @Column({ nullable: false, default: 1 })
   giveLimitHourReset!: number;
 
-  getValue(message: Message, config: ConfigCommand): { [key: string]: string } | void {
-    const logChannel = this.logChannelId ? message.guild.channels.get(this.logChannelId) : null;
-    const redeemChannel = this.redeemChannelId ? message.guild.channels.get(this.redeemChannelId) : null;
+  setCommandPrefix(prefix: string): boolean {
+    if (prefix === '') {
+      return false;
+    }
+
+    this.commandPrefix = prefix;
+
+    return true;
+  }
+
+  setQuietMode(toggle: string): boolean {
+    if (toggle !== 'true' && toggle !== 'false') {
+      return false;
+    }
+
+    this.quietMode = toggle === 'true';
+
+    return true;
+  }
+
+  setLogChannel(channelString: string, guild: Guild): boolean {
+    if (channelString === 'none') {
+      this.logChannelId = null;
+
+      return true;
+    }
+
+    const channelId = channelString.replace(/^<#/, '').replace(/>$/, '');
+    const channel = guild.channels.get(channelId);
+
+    if (!channel) {
+      return false;
+    }
+
+    this.logChannelId = channelId;
+
+    return true;
+  }
+
+  setLogWithLink(toggle: string): boolean {
+    if (toggle !== 'true' && toggle !== 'false') {
+      return false;
+    }
+
+    this.logWithLink = toggle === 'true';
+
+    return true;
+  }
+
+  setRedeemChannel(channelString: string, guild: Guild): boolean {
+    if (channelString === 'none') {
+      this.redeemChannelId = null;
+
+      return true;
+    }
+
+    const channelId = channelString.replace(/^<#/, '').replace(/>$/, '');
+    const channel = guild.channels.get(channelId);
+
+    if (!channel) {
+      return false;
+    }
+
+    this.redeemChannelId = channelId;
+
+    return true;
+  }
+
+  setRoles(roles: string, type: roleTypes, guild: Guild): boolean {
+    if (roles === 'none') {
+      switch (type) {
+        case 'manager-roles':
+          this.managerRoleIds = [];
+          break;
+        case 'blesser-roles':
+          this.blesserRoleIds = [];
+          break;
+        case 'dropper-roles':
+          this.dropperRoleIds = [];
+          break;
+        default:
+      }
+
+      return true;
+    }
+
+    const foundRolesIds = roles
+      .split(',')
+      .map(g => g.trim())
+      .filter(roleName => {
+        return guild.roles.find(role => role.name === roleName.trim());
+      })
+      .map(roleName => guild.roles.find(role => role.name === roleName.trim()).id);
+
+    if (foundRolesIds.length > 0) {
+      switch (type) {
+        case 'manager-roles':
+          this.managerRoleIds = foundRolesIds;
+          break;
+        case 'blesser-roles':
+          this.blesserRoleIds = foundRolesIds;
+          break;
+        case 'dropper-roles':
+          this.dropperRoleIds = foundRolesIds;
+          break;
+        default:
+      }
+    } else {
+      return false;
+    }
+
+    return true;
+  }
+
+  setNickname(nickname: string): boolean {
+    if (nickname === '') {
+      return false;
+    }
+
+    this.nickname = nickname;
+
+    return true;
+  }
+
+  setCakeEmoji(emoji: string): boolean {
+    if (emoji === '') {
+      return false;
+    }
+
+    this.cakeEmoji = emoji;
+
+    return true;
+  }
+
+  setCakeName(name: string, type: cakeNameType): boolean {
+    if (name === '') {
+      return false;
+    }
+
+    if (type === 'singular') {
+      this.cakeNameSingular = name;
+    } else if (type === 'plural') {
+      this.cakeNamePlural = name;
+    } else {
+      return false;
+    }
+
+    return true;
+  }
+
+  setDropGifs(gifs: string): boolean {
+    if (gifs === 'none') {
+      this.dropGifs = [];
+
+      return true;
+    }
+
+    this.dropGifs = gifs.split(',').map(g => g.trim());
+
+    return true;
+  }
+
+  setNoGiving(toggle: string): boolean {
+    if (toggle !== 'true' && toggle !== 'false') {
+      return false;
+    }
+
+    this.noGiving = toggle === 'true';
+
+    return true;
+  }
+
+  setRequirementToGive(minimum: string): boolean {
+    const number = parseInt(minimum, 10);
+
+    if (!Number.isInteger(number) || number < 0) {
+      return false;
+    }
+
+    this.requirementToGive = number;
+
+    return true;
+  }
+
+  setGiveLimit(limit: string): boolean {
+    const number = parseInt(limit, 10);
+
+    if (!Number.isInteger(number) || number < 1) {
+      return false;
+    }
+
+    this.giveLimit = number;
+
+    return true;
+  }
+
+  setGiveLimitHourReset(limit: string): boolean {
+    const number = parseInt(limit, 10);
+
+    if (!Number.isInteger(number) || number < 1) {
+      return false;
+    }
+
+    this.giveLimitHourReset = number;
+
+    return true;
+  }
+
+  getValue(config: ConfigCommand, guild: Guild): { [key: string]: string } | void {
+    const logChannel = this.logChannelId ? guild.channels.get(this.logChannelId) : null;
+    const redeemChannel = this.redeemChannelId ? guild.channels.get(this.redeemChannelId) : null;
 
     const managerRoles: string[] = chain(this.managerRoleIds)
       .map(roleId => {
-        const role = message.guild.roles.get(roleId);
+        const role = guild.roles.get(roleId);
 
         if (role) {
           return role.name;
@@ -104,7 +315,7 @@ export default class Config extends BaseEntity {
 
     const blesserRoles: string[] = chain(this.blesserRoleIds)
       .map(roleId => {
-        const role = message.guild.roles.get(roleId);
+        const role = guild.roles.get(roleId);
 
         if (role) {
           return role.name;
@@ -117,7 +328,7 @@ export default class Config extends BaseEntity {
 
     const dropperRoles: string[] = chain(this.dropperRoleIds)
       .map(roleId => {
-        const role = message.guild.roles.get(roleId);
+        const role = guild.roles.get(roleId);
 
         if (role) {
           return role.name;
