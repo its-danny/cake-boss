@@ -63,23 +63,36 @@ export const setConfig = async (args: Arguments): Promise<string | void> => {
   }
 
   if (args.config === 'log-channel') {
-    const channelId = args.value.replace(/^<#/, '').replace(/>$/, '');
-    const channel = args.message.guild.channels.get(channelId);
+    if (args.value === 'none') {
+      server.config.logChannelId = null;
 
-    if (!channel) {
-      return `${EMOJI_ERROR} Not a valid channel!`;
+      await server.config.save();
+      await logEvent(
+        args.client,
+        args.message,
+        `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`none\`.`,
+      );
+
+      configSet = true;
+    } else {
+      const channelId = args.value.replace(/^<#/, '').replace(/>$/, '');
+      const channel = args.message.guild.channels.get(channelId);
+
+      if (!channel) {
+        return `${EMOJI_ERROR} Not a valid channel!`;
+      }
+
+      server.config.logChannelId = channelId;
+
+      await server.config.save();
+      await logEvent(
+        args.client,
+        args.message,
+        `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`#${channel.name}\`.`,
+      );
+
+      configSet = true;
     }
-
-    server.config.logChannelId = channelId;
-
-    await server.config.save();
-    await logEvent(
-      args.client,
-      args.message,
-      `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`#${channel.name}\`.`,
-    );
-
-    configSet = true;
   }
 
   if (args.config === 'log-with-link') {
@@ -102,125 +115,177 @@ export const setConfig = async (args: Arguments): Promise<string | void> => {
   }
 
   if (args.config === 'redeem-channel') {
-    const channelId = args.value.replace(/^<#/, '').replace(/>$/, '');
-    const channel = args.message.guild.channels.get(channelId);
+    if (args.value === 'none') {
+      server.config.redeemChannelId = null;
 
-    if (!channel) {
-      return `${EMOJI_ERROR} Not a valid channel!`;
+      await server.config.save();
+      await logEvent(
+        args.client,
+        args.message,
+        `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`none\`.`,
+      );
+
+      configSet = true;
+    } else {
+      const channelId = args.value.replace(/^<#/, '').replace(/>$/, '');
+      const channel = args.message.guild.channels.get(channelId);
+
+      if (!channel) {
+        return `${EMOJI_ERROR} Not a valid channel!`;
+      }
+
+      server.config.redeemChannelId = channelId;
+
+      await server.config.save();
+      await logEvent(
+        args.client,
+        args.message,
+        `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`#${channel.name}\`.`,
+      );
+
+      configSet = true;
     }
-
-    server.config.redeemChannelId = channelId;
-
-    await server.config.save();
-    await logEvent(
-      args.client,
-      args.message,
-      `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`#${channel.name}\`.`,
-    );
-
-    configSet = true;
   }
 
   if (args.config === 'manager-roles') {
-    const foundRolesIds = args.value
-      .split(',')
-      .filter(roleName => {
+    if (args.value === 'none') {
+      server.config.managerRoleIds = [];
+
+      await server.config.save();
+      await logEvent(
+        args.client,
+        args.message,
+        `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`none\`.`,
+      );
+
+      configSet = true;
+    } else {
+      const foundRolesIds = args.value
+        .split(',')
+        .filter(roleName => {
+          return args.message.guild.roles.find(role => role.name === roleName.trim());
+        })
+        .map(roleName => args.message.guild.roles.find(role => role.name === roleName.trim()).id);
+
+      const foundRolesNames = args.value.split(',').filter(roleName => {
         return args.message.guild.roles.find(role => role.name === roleName.trim());
-      })
-      .map(roleName => args.message.guild.roles.find(role => role.name === roleName.trim()).id);
+      });
 
-    const foundRolesNames = args.value.split(',').filter(roleName => {
-      return args.message.guild.roles.find(role => role.name === roleName.trim());
-    });
+      const notFoundRoles = args.value.split(',').filter(roleName => {
+        return !args.message.guild.roles.find(role => role.name === roleName.trim());
+      });
 
-    const notFoundRoles = args.value.split(',').filter(roleName => {
-      return !args.message.guild.roles.find(role => role.name === roleName.trim());
-    });
+      server.config.managerRoleIds = foundRolesIds;
 
-    server.config.managerRoleIds = foundRolesIds;
+      await server.config.save();
+      await logEvent(
+        args.client,
+        args.message,
+        `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${foundRolesNames.join(', ')}\`.`,
+      );
 
-    await server.config.save();
-    await logEvent(
-      args.client,
-      args.message,
-      `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${foundRolesNames.join(', ')}\`.`,
-    );
+      if (notFoundRoles.length > 0) {
+        return `${EMOJI_JOB_WELL_DONE} Done! The following roles were skipped for not existing: ${notFoundRoles.join(
+          ', ',
+        )}`;
+      }
 
-    if (notFoundRoles.length > 0) {
-      return `${EMOJI_JOB_WELL_DONE} Done! The following roles were skipped for not existing: ${notFoundRoles.join(
-        ', ',
-      )}`;
+      configSet = true;
     }
-
-    configSet = true;
   }
 
   if (args.config === 'blesser-roles') {
-    const foundRolesIds = args.value
-      .split(',')
-      .filter(roleName => {
+    if (args.value === 'none') {
+      server.config.blesserRoleIds = [];
+
+      await server.config.save();
+      await logEvent(
+        args.client,
+        args.message,
+        `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`none\`.`,
+      );
+
+      configSet = true;
+    } else {
+      const foundRolesIds = args.value
+        .split(',')
+        .filter(roleName => {
+          return args.message.guild.roles.find(role => role.name === roleName.trim());
+        })
+        .map(roleName => args.message.guild.roles.find(role => role.name === roleName.trim()).id);
+
+      const foundRolesNames = args.value.split(',').filter(roleName => {
         return args.message.guild.roles.find(role => role.name === roleName.trim());
-      })
-      .map(roleName => args.message.guild.roles.find(role => role.name === roleName.trim()).id);
+      });
 
-    const foundRolesNames = args.value.split(',').filter(roleName => {
-      return args.message.guild.roles.find(role => role.name === roleName.trim());
-    });
+      const notFoundRoles = args.value.split(',').filter(roleName => {
+        return !args.message.guild.roles.find(role => role.name === roleName.trim());
+      });
 
-    const notFoundRoles = args.value.split(',').filter(roleName => {
-      return !args.message.guild.roles.find(role => role.name === roleName.trim());
-    });
+      server.config.blesserRoleIds = foundRolesIds;
 
-    server.config.blesserRoleIds = foundRolesIds;
+      await server.config.save();
+      await logEvent(
+        args.client,
+        args.message,
+        `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${foundRolesNames.join(', ')}\`.`,
+      );
 
-    await server.config.save();
-    await logEvent(
-      args.client,
-      args.message,
-      `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${foundRolesNames.join(', ')}\`.`,
-    );
+      if (notFoundRoles.length > 0) {
+        return `${EMOJI_JOB_WELL_DONE} Done! The following roles were skipped for not existing: ${notFoundRoles.join(
+          ', ',
+        )}`;
+      }
 
-    if (notFoundRoles.length > 0) {
-      return `${EMOJI_JOB_WELL_DONE} Done! The following roles were skipped for not existing: ${notFoundRoles.join(
-        ', ',
-      )}`;
+      configSet = true;
     }
-
-    configSet = true;
   }
 
   if (args.config === 'dropper-roles') {
-    const foundRolesIds = args.value
-      .split(',')
-      .filter(roleName => {
+    if (args.value === 'none') {
+      server.config.dropperRoleIds = [];
+
+      await server.config.save();
+      await logEvent(
+        args.client,
+        args.message,
+        `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`none\`.`,
+      );
+
+      configSet = true;
+    } else {
+      const foundRolesIds = args.value
+        .split(',')
+        .filter(roleName => {
+          return args.message.guild.roles.find(role => role.name === roleName.trim());
+        })
+        .map(roleName => args.message.guild.roles.find(role => role.name === roleName.trim()).id);
+
+      const foundRolesNames = args.value.split(',').filter(roleName => {
         return args.message.guild.roles.find(role => role.name === roleName.trim());
-      })
-      .map(roleName => args.message.guild.roles.find(role => role.name === roleName.trim()).id);
+      });
 
-    const foundRolesNames = args.value.split(',').filter(roleName => {
-      return args.message.guild.roles.find(role => role.name === roleName.trim());
-    });
+      const notFoundRoles = args.value.split(',').filter(roleName => {
+        return !args.message.guild.roles.find(role => role.name === roleName.trim());
+      });
 
-    const notFoundRoles = args.value.split(',').filter(roleName => {
-      return !args.message.guild.roles.find(role => role.name === roleName.trim());
-    });
+      server.config.dropperRoleIds = foundRolesIds;
 
-    server.config.dropperRoleIds = foundRolesIds;
+      await server.config.save();
+      await logEvent(
+        args.client,
+        args.message,
+        `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${foundRolesNames.join(', ')}\`.`,
+      );
 
-    await server.config.save();
-    await logEvent(
-      args.client,
-      args.message,
-      `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${foundRolesNames.join(', ')}\`.`,
-    );
+      if (notFoundRoles.length > 0) {
+        return `${EMOJI_JOB_WELL_DONE} Done! The following roles were skipped for not existing: ${notFoundRoles.join(
+          ', ',
+        )}`;
+      }
 
-    if (notFoundRoles.length > 0) {
-      return `${EMOJI_JOB_WELL_DONE} Done! The following roles were skipped for not existing: ${notFoundRoles.join(
-        ', ',
-      )}`;
+      configSet = true;
     }
-
-    configSet = true;
   }
 
   if (args.config === 'nickname') {

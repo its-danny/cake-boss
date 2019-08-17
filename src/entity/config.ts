@@ -1,6 +1,7 @@
 import { Entity, BaseEntity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { Message } from 'discord.js';
 import { toSentenceSerial } from 'underscore.string';
+import { chain, isEmpty } from 'lodash';
 import { EMOJI_CAKE } from '../utils/emoji';
 
 export type ConfigCommand =
@@ -88,23 +89,62 @@ export default class Config extends BaseEntity {
     const logChannel = this.logChannelId ? message.guild.channels.get(this.logChannelId) : null;
     const redeemChannel = this.redeemChannelId ? message.guild.channels.get(this.redeemChannelId) : null;
 
+    const managerRoles: string[] = chain(this.managerRoleIds)
+      .map(roleId => {
+        const role = message.guild.roles.get(roleId);
+
+        if (role) {
+          return role.name;
+        }
+
+        return undefined;
+      })
+      .compact()
+      .value();
+
+    const blesserRoles: string[] = chain(this.blesserRoleIds)
+      .map(roleId => {
+        const role = message.guild.roles.get(roleId);
+
+        if (role) {
+          return role.name;
+        }
+
+        return undefined;
+      })
+      .compact()
+      .value();
+
+    const dropperRoles: string[] = chain(this.dropperRoleIds)
+      .map(roleId => {
+        const role = message.guild.roles.get(roleId);
+
+        if (role) {
+          return role.name;
+        }
+
+        return undefined;
+      })
+      .compact()
+      .value();
+
     switch (config) {
       case 'command-prefix':
         return { default: '-', value: this.commandPrefix };
       case 'quiet-mode':
         return { default: 'false', value: `${this.quietMode}` };
       case 'log-channel':
-        return { default: '', value: logChannel ? `#${logChannel.name}` : '' };
+        return { default: 'none', value: logChannel ? `#${logChannel.name}` : 'none' };
       case 'log-with-link':
         return { default: 'false', value: `${this.logWithLink}` };
       case 'redeem-channel':
-        return { default: '', value: redeemChannel ? `#${redeemChannel.name}` : '' };
+        return { default: 'none', value: redeemChannel ? `#${redeemChannel.name}` : 'none' };
       case 'manager-roles':
-        return { default: '', value: toSentenceSerial(this.managerRoleIds) };
+        return { default: 'none', value: isEmpty(managerRoles) ? 'none' : toSentenceSerial(managerRoles) };
       case 'blesser-roles':
-        return { default: '', value: toSentenceSerial(this.blesserRoleIds) };
+        return { default: 'none', value: isEmpty(blesserRoles) ? 'none' : toSentenceSerial(blesserRoles) };
       case 'dropper-roles':
-        return { default: '', value: toSentenceSerial(this.dropperRoleIds) };
+        return { default: 'none', value: isEmpty(dropperRoles) ? 'none' : toSentenceSerial(dropperRoles) };
       case 'nickname':
         return { default: 'CAKE BOSS!', value: this.nickname || '' };
       case 'cake-emoji':
@@ -114,7 +154,7 @@ export default class Config extends BaseEntity {
       case 'cake-name-plural':
         return { default: 'cakes', value: this.cakeNamePlural };
       case 'drop-gifs':
-        return { deafult: '', value: toSentenceSerial(this.dropGifs) };
+        return { default: 'none', value: isEmpty(this.dropGifs) ? 'none' : toSentenceSerial(this.dropGifs) };
       case 'no-giving':
         return { default: 'false', value: `${this.noGiving}` };
       case 'requirement-to-give':

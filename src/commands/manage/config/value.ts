@@ -23,10 +23,9 @@ export const getValue = async (args: Arguments): Promise<string> => {
   const value = server.config.getValue(args.message, args.config);
 
   if (value) {
-    return `${EMOJI_CONFIG} \`${args.config}\` is currently set to \`${value.value}\`, the default is \`${
-      value.default === '' ? 'none' : ''
-    }\`.`;
+    return `${EMOJI_CONFIG} \`${args.config}\` is currently set to \`${value.value}\`, the default is \`${value.default}\`.`;
   }
+
   return `${EMOJI_ERROR} Not a valid config!`;
 };
 
