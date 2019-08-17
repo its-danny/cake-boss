@@ -4,12 +4,7 @@ import Server from '../../../entity/server';
 import Prize from '../../../entity/prize';
 import { logEvent } from '../../../utils/logger';
 import { CommandArguments } from '../../../utils/command-arguments';
-import {
-  EMOJI_ERROR,
-  EMOJI_JOB_WELL_DONE,
-  EMOJI_INCORRECT_PERMISSIONS,
-  EMOJI_CONFIG_EVENT,
-} from '../../../utils/emoji';
+import { EMOJI_ERROR, EMOJI_JOB_WELL_DONE, EMOJI_INCORRECT_PERMISSIONS, EMOJI_CONFIG } from '../../../utils/emoji';
 
 interface Arguments extends CommandArguments {
   id: number;
@@ -41,7 +36,7 @@ export const removePrize = async (args: Arguments): Promise<string | void> => {
   logEvent(
     args.client,
     args.message,
-    `${EMOJI_CONFIG_EVENT} \`${args.message.author.tag}\` removed a prize: \`${prize.description}\``,
+    `${EMOJI_CONFIG} \`${args.message.author.tag}\` removed a prize: \`${prize.description}\``,
   );
 
   if (server.config.quietMode) {

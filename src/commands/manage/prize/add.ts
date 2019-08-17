@@ -3,12 +3,7 @@ import { canManage } from '../../../utils/permissions';
 import Server from '../../../entity/server';
 import Prize from '../../../entity/prize';
 import { logEvent } from '../../../utils/logger';
-import {
-  EMOJI_ERROR,
-  EMOJI_INCORRECT_PERMISSIONS,
-  EMOJI_JOB_WELL_DONE,
-  EMOJI_CONFIG_EVENT,
-} from '../../../utils/emoji';
+import { EMOJI_ERROR, EMOJI_INCORRECT_PERMISSIONS, EMOJI_JOB_WELL_DONE, EMOJI_CONFIG } from '../../../utils/emoji';
 import { CommandArguments } from '../../../utils/command-arguments';
 
 interface Arguments extends CommandArguments {
@@ -72,7 +67,7 @@ export const addPrize = async (args: Arguments): Promise<string | void> => {
   logEvent(
     args.client,
     args.message,
-    `${EMOJI_CONFIG_EVENT} \`${args.message.author.tag}\` added a new prize: \`${prize.description}\``,
+    `${EMOJI_CONFIG} \`${args.message.author.tag}\` added a new prize: \`${prize.description}\``,
   );
 
   if (server.config.quietMode) {
