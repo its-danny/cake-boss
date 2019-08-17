@@ -23,6 +23,7 @@ type Config =
   | 'cake-emoji'
   | 'cake-name-singular'
   | 'cake-name-plural'
+  | 'drop-gifs'
   | 'no-giving'
   | 'requirement-to-give'
   | 'give-limit'
@@ -308,6 +309,27 @@ export const setConfig = async (args: Arguments): Promise<string | void> => {
       args.client,
       args.message,
       `${EMOJI_CONFIG_EVENT} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`,
+    );
+
+    configSet = true;
+  }
+
+  if (args.config === 'drop-gifs') {
+    if (args.value === 'none') {
+      server.config.dropGifs = [];
+    } else {
+      const gifs = args.value.split(',').map(g => g.trim());
+      server.config.dropGifs = gifs;
+    }
+
+    await server.config.save();
+
+    await logEvent(
+      args.client,
+      args.message,
+      `${EMOJI_CONFIG_EVENT} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value
+        .split(',')
+        .join(', ')}\`.`,
     );
 
     configSet = true;

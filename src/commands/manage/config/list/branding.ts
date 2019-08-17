@@ -27,6 +27,12 @@ export const getConfigList = async (args: CommandArguments): Promise<string[] | 
   table.push(['cake-emoji', 'Emoji to use for cakes', server.config.cakeEmoji, EMOJI_CAKE]);
   table.push(['cake-name-singular', 'Name to use for cake (singular)', server.config.cakeNameSingular, 'cake']);
   table.push(['cake-name-plural', 'Name to use for cake (plural)', server.config.cakeNamePlural, 'cakes']);
+  table.push([
+    'drop-gifs',
+    'List of GIfs to randomly choose from and post when a cake is dropped',
+    server.config.dropGifs.join('\n'),
+    '',
+  ]);
 
   return `${server.config.cakeEmoji} **Branding Config**\n\n\`\`\`\n${table.toString()}\n\`\`\``;
 };
