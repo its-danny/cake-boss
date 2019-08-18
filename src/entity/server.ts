@@ -45,7 +45,7 @@ export default class Server extends BaseEntity {
   @OneToMany(() => ShamedMember, shamedMember => shamedMember.server)
   shamed!: ShamedMember[];
 
-  @OneToMany(() => Prize, prize => prize.server)
+  @OneToMany(() => Prize, prize => prize.server, { eager: true })
   prizes!: Prize[];
 
   @OneToMany(() => Drop, drop => drop.server)
