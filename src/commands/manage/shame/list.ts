@@ -4,7 +4,13 @@ import moment from 'moment';
 import { getConnection } from 'typeorm';
 import { canManage } from '../../../utils/permissions';
 import Server from '../../../entity/server';
-import { EMOJI_INCORRECT_PERMISSIONS, EMOJI_RECORD_NOT_FOUND, EMOJI_ERROR, EMOJI_SHAME } from '../../../utils/emoji';
+import {
+  EMOJI_INCORRECT_PERMISSIONS,
+  EMOJI_RECORD_NOT_FOUND,
+  EMOJI_ERROR,
+  EMOJI_SHAME,
+  EMOJI_WORKING_HARD,
+} from '../../../utils/emoji';
 import getTableBorder from '../../../utils/get-table-border';
 import { CommandArguments } from '../../../utils/command-arguments';
 import ShamedMember from '../../../entity/shamed-member';
@@ -23,12 +29,6 @@ export const getShamedList = async (args: Arguments): Promise<string> => {
   if (!server) {
     throw new Error('Could not find server.');
   }
-
-  const table = new Table({
-    head: ['Name', 'Date Shamed'],
-    style: { head: [], border: [] },
-    chars: getTableBorder(),
-  });
 
   const perPage = 5;
   const totalPages = Math.ceil((await ShamedMember.count({ where: { server } })) / perPage);
@@ -49,6 +49,16 @@ export const getShamedList = async (args: Arguments): Promise<string> => {
     .skip(perPage * (currentPage - 1))
     .take(perPage)
     .getMany();
+
+  if (shamedMembers.length === 0) {
+    return `${EMOJI_WORKING_HARD} There are no shamed users!`;
+  }
+
+  const table = new Table({
+    head: ['Name', 'Date Shamed'],
+    style: { head: [], border: [] },
+    chars: getTableBorder(),
+  });
 
   shamedMembers.forEach(shamed => {
     const discordMember = args.message.guild.members.get(shamed.member.discordId);
