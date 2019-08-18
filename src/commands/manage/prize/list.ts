@@ -5,7 +5,7 @@ import { toSentenceSerial } from 'underscore.string';
 import { getConnection } from 'typeorm';
 import { canManage } from '../../../utils/permissions';
 import Server from '../../../entity/server';
-import { EMOJI_ERROR, EMOJI_INCORRECT_PERMISSIONS, EMOJI_PRIZE } from '../../../utils/emoji';
+import { EMOJI_ERROR, EMOJI_INCORRECT_PERMISSIONS, EMOJI_PRIZE, EMOJI_WORKING_HARD } from '../../../utils/emoji';
 import getTableBorder from '../../../utils/get-table-border';
 import { CommandArguments } from '../../../utils/command-arguments';
 import Prize from '../../../entity/prize';
@@ -29,12 +29,6 @@ export const getPrizeList = async (args: Arguments): Promise<string> => {
     return `${EMOJI_ERROR} You need to set the \`redeem-channel\` config before using prizes.`;
   }
 
-  const table = new Table({
-    head: ['ID', 'Description', 'Reaction Emoji', 'Price', 'Role to Give'],
-    style: { head: [], border: [] },
-    chars: getTableBorder(),
-  });
-
   const perPage = 5;
   const totalPages = Math.ceil((await Prize.count({ where: { server } })) / perPage);
 
@@ -53,6 +47,16 @@ export const getPrizeList = async (args: Arguments): Promise<string> => {
     .skip(perPage * (currentPage - 1))
     .take(perPage)
     .getMany();
+
+  if (prizes.length === 0) {
+    return `${EMOJI_WORKING_HARD} There are no prizes!`;
+  }
+
+  const table = new Table({
+    head: ['ID', 'Description', 'Reaction Emoji', 'Price', 'Role to Give'],
+    style: { head: [], border: [] },
+    chars: getTableBorder(),
+  });
 
   prizes.forEach(prize => {
     const roleNames = chain(prize.roleIds)

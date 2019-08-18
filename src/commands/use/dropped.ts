@@ -2,7 +2,7 @@ import { Argv } from 'yargs';
 import Table from 'cli-table';
 import { canDrop } from '../../utils/permissions';
 import Server from '../../entity/server';
-import { EMOJI_INCORRECT_PERMISSIONS } from '../../utils/emoji';
+import { EMOJI_INCORRECT_PERMISSIONS, EMOJI_WORKING_HARD } from '../../utils/emoji';
 import { CommandArguments } from '../../utils/command-arguments';
 import getTableBorder from '../../utils/get-table-border';
 
@@ -15,6 +15,10 @@ export const getDropList = async (args: CommandArguments): Promise<string> => {
 
   if (!server) {
     throw new Error('Could not find server.');
+  }
+
+  if (server.drops.length === 0) {
+    return `${EMOJI_WORKING_HARD} There are no drops yet!`;
   }
 
   const table = new Table({
