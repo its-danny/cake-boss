@@ -222,7 +222,7 @@ router.get('/ping', context => {
 
 io.on('join', async () => {
   return {
-    servers: await Server.count({ where: { active: true } }),
+    servers: await Server.count(),
     users: await User.count(),
     cakes: (await Server.find({ relations: ['members'] })).map(s => s.totalEarnedByMembers()).reduce((a, b) => a + b),
   };
@@ -230,7 +230,7 @@ io.on('join', async () => {
 
 setInterval(async () => {
   io.broadcast('live', {
-    servers: await Server.count({ where: { active: true } }),
+    servers: await Server.count(),
     users: await User.count(),
     cakes: (await Server.find({ relations: ['members'] })).map(s => s.totalEarnedByMembers()).reduce((a, b) => a + b),
   });
