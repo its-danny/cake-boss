@@ -17,6 +17,18 @@ export const redeemCake = async (args: CommandArguments): Promise<string> => {
     throw new Error('Could not find server.');
   }
 
+  if (!args.message.guild.me.hasPermission('MANAGE_ROLES')) {
+    return `${EMOJI_ERROR} I need permission to \`manage roles\`!`;
+  }
+
+  if (!args.message.guild.me.hasPermission('MANAGE_MESSAGES')) {
+    return `${EMOJI_ERROR} I need permission to \`manage messages\`!`;
+  }
+
+  if (!args.message.guild.me.hasPermission('ADD_REACTIONS')) {
+    return `${EMOJI_ERROR} I need permission to \`add reactions\`!`;
+  }
+
   if (!server.config.redeemChannelId || server.config.redeemChannelId === '') {
     return `${EMOJI_ERROR} Server not yet set up for prizes!`;
   }
