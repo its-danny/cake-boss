@@ -17,10 +17,7 @@ export interface Arguments extends CommandArguments {
 }
 
 export const giveCakeToMember = async (args: Arguments): Promise<string | void> => {
-  const server = await Server.findOne({
-    where: { discordId: args.message.guild.id },
-    relations: ['config', 'members'],
-  });
+  const server = await Server.findOne({ where: { discordId: args.message.guild.id } });
 
   if (!server) {
     throw new Error('Could not find server.');

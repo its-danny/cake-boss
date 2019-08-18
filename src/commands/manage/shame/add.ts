@@ -12,7 +12,7 @@ import {
 } from '../../../utils/emoji';
 import { logEvent } from '../../../utils/logger';
 
-interface Arguments extends CommandArguments {
+export interface Arguments extends CommandArguments {
   member: string;
 }
 
@@ -21,7 +21,7 @@ export const shameMember = async (args: Arguments): Promise<string | void> => {
     return `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`;
   }
 
-  const server = await Server.findOne({ where: { discordId: args.message.guild.id }, relations: ['shamed', 'config'] });
+  const server = await Server.findOne({ where: { discordId: args.message.guild.id } });
 
   if (!server) {
     throw new Error('Could not find server.');

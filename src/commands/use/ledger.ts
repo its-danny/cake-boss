@@ -12,10 +12,7 @@ export const getLedger = async (args: CommandArguments): Promise<string | void> 
     return `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`;
   }
 
-  const server = await Server.findOne({
-    where: { discordId: args.message.guild.id },
-    relations: ['config', 'members'],
-  });
+  const server = await Server.findOne({ where: { discordId: args.message.guild.id } });
 
   if (!server) {
     throw new Error('Could not find server.');

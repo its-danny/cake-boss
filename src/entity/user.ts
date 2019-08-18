@@ -23,7 +23,7 @@ export default class User extends BaseEntity {
   @Column({ nullable: false })
   discordId!: string;
 
-  @OneToMany(() => Member, member => member.user)
+  @OneToMany(() => Member, member => member.user, { eager: true })
   members!: Member[];
 
   totalEarned(): number {

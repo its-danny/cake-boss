@@ -8,7 +8,7 @@ export const canManage = async (message: Message): Promise<boolean> => {
     return true;
   }
 
-  const server = await Server.findOne({ where: { discordId: message.guild.id }, relations: ['config'] });
+  const server = await Server.findOne({ where: { discordId: message.guild.id } });
 
   if (server) {
     return message.member.roles.some(role => server.config.managerRoleIds.includes(role.id));
@@ -26,7 +26,7 @@ export const canBless = async (message: Message): Promise<boolean> => {
     return true;
   }
 
-  const server = await Server.findOne({ where: { discordId: message.guild.id }, relations: ['config'] });
+  const server = await Server.findOne({ where: { discordId: message.guild.id } });
 
   if (server) {
     return message.member.roles.some(role => server.config.blesserRoleIds.includes(role.id));
@@ -44,7 +44,7 @@ export const canDrop = async (message: Message): Promise<boolean> => {
     return true;
   }
 
-  const server = await Server.findOne({ where: { discordId: message.guild.id }, relations: ['config'] });
+  const server = await Server.findOne({ where: { discordId: message.guild.id } });
 
   if (server) {
     return message.member.roles.some(role => server.config.dropperRoleIds.includes(role.id));
@@ -54,7 +54,7 @@ export const canDrop = async (message: Message): Promise<boolean> => {
 };
 
 export const canGive = async (message: Message): Promise<boolean> => {
-  const server = await Server.findOne({ where: { discordId: message.guild.id }, relations: ['config'] });
+  const server = await Server.findOne({ where: { discordId: message.guild.id } });
 
   if (server) {
     const member = await Member.findOne({ where: { discordId: message.member.id } });

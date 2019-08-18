@@ -35,24 +35,24 @@ export default class Server extends BaseEntity {
   @Column({ nullable: false, default: true })
   active!: boolean;
 
-  @OneToOne(() => Config)
+  @OneToOne(() => Config, { eager: true })
   @JoinColumn()
   config!: Config;
 
-  @OneToMany(() => Member, member => member.server)
+  @OneToMany(() => Member, member => member.server, { eager: true })
   members!: Member[];
 
-  @OneToMany(() => ShamedMember, shamedMember => shamedMember.server)
+  @OneToMany(() => ShamedMember, shamedMember => shamedMember.server, { eager: true })
   shamed!: ShamedMember[];
 
-  @OneToMany(() => Prize, prize => prize.server)
+  @OneToMany(() => Prize, prize => prize.server, { eager: true })
   prizes!: Prize[];
 
-  @OneToMany(() => Drop, drop => drop.server)
+  @OneToMany(() => Drop, drop => drop.server, { eager: true })
   drops!: Drop[];
 
   static async findOrCreate(guildId: string): Promise<Server> {
-    const foundServer = await Server.findOne({ where: { discordId: guildId }, relations: ['config'] });
+    const foundServer = await Server.findOne({ where: { discordId: guildId } });
 
     if (foundServer) {
       foundServer.active = true;

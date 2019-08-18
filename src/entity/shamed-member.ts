@@ -13,7 +13,7 @@ export default class ShamedMember extends BaseEntity {
   @UpdateDateColumn({ nullable: true })
   updatedAt!: Date;
 
-  @ManyToOne(() => Member, member => member.shamed)
+  @ManyToOne(() => Member, member => member.shamed, { eager: true })
   member!: Member;
 
   @ManyToOne(() => Server, server => server.shamed)
