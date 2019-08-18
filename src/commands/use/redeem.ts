@@ -4,7 +4,7 @@ import { isShamed } from '../../utils/permissions';
 import Server from '../../entity/server';
 import { logRedeemed } from '../../utils/logger';
 import Member from '../../entity/member';
-import { EMOJI_DONT_DO_THAT, EMOJI_PRIZE_EVENT, EMOJI_ERROR, EMOJI_RECORD_NOT_FOUND } from '../../utils/emoji';
+import { EMOJI_DONT_DO_THAT, EMOJI_PRIZE, EMOJI_ERROR, EMOJI_RECORD_NOT_FOUND } from '../../utils/emoji';
 import { CommandArguments } from '../../utils/command-arguments';
 
 export const redeemCake = async (args: CommandArguments): Promise<string> => {
@@ -66,9 +66,9 @@ export const redeemCake = async (args: CommandArguments): Promise<string> => {
         logRedeemed(
           args.client,
           args.message,
-          `${EMOJI_PRIZE_EVENT} \`${moment().format('MMMM Do YYYY')}\` \`@${
-            args.message.author.tag
-          }\` redeemed a prize: \`${prize.description}\`!`,
+          `${EMOJI_PRIZE} \`${moment().format('MMMM Do YYYY')}\` \`@${args.message.author.tag}\` redeemed a prize: \`${
+            prize.description
+          }\`!`,
         );
       };
     }
@@ -77,7 +77,7 @@ export const redeemCake = async (args: CommandArguments): Promise<string> => {
   });
 
   return [
-    `${EMOJI_PRIZE_EVENT} **React to redeem!** Message will be deleted after 10 seconds.`,
+    `${EMOJI_PRIZE} **React to redeem!** Message will be deleted after 10 seconds.`,
     `\`--------------------------------------------------------\`\n`,
     `${prizeList.join('\n')}`,
   ].join('\n');
