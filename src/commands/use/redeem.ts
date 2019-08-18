@@ -8,10 +8,7 @@ import { EMOJI_DONT_DO_THAT, EMOJI_PRIZE_EVENT, EMOJI_ERROR, EMOJI_RECORD_NOT_FO
 import { CommandArguments } from '../../utils/command-arguments';
 
 export const redeemCake = async (args: CommandArguments): Promise<string> => {
-  const server = await Server.findOne({
-    where: { discordId: args.message.guild.id },
-    relations: ['config', 'prizes'],
-  });
+  const server = await Server.findOne({ where: { discordId: args.message.guild.id } });
 
   if (!server) {
     throw new Error('Could not find server.');

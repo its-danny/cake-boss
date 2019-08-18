@@ -4,10 +4,7 @@ import Member from '../../entity/member';
 import { CommandArguments } from '../../utils/command-arguments';
 
 export const getEarned = async (args: CommandArguments): Promise<string> => {
-  const server = await Server.findOne({
-    where: { discordId: args.message.guild.id },
-    relations: ['config'],
-  });
+  const server = await Server.findOne({ where: { discordId: args.message.guild.id } });
 
   if (!server) {
     throw new Error('Could not find server.');

@@ -48,10 +48,7 @@ export default class Member extends BaseEntity {
   shamed!: ShamedMember[];
 
   static async findOrCreate(serverDiscordId: string, discordUserId: string, discordMemberId: string): Promise<Member> {
-    const server = await Server.findOne({
-      where: { discordId: serverDiscordId },
-      relations: ['members'],
-    });
+    const server = await Server.findOne({ where: { discordId: serverDiscordId } });
 
     if (!server) {
       throw new Error('Could not find server.');
