@@ -29,9 +29,11 @@ export default class User extends BaseEntity {
   totalEarned(): number {
     let totalEarned = 0;
 
-    this.members.forEach(m => {
-      totalEarned += m.earned;
-    });
+    if (this.members) {
+      this.members.forEach(m => {
+        totalEarned += m.earned;
+      });
+    }
 
     return totalEarned;
   }

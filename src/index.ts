@@ -220,57 +220,6 @@ router.get('/ping', context => {
   context.body = 'ONLINE';
 });
 
-router.get('/leaderboard', async context => {
-  const allUsers = await User.find({ relations: ['members'] });
-  let topUsers: any[] = [];
-
-  if (allUsers) {
-    const top = allUsers
-      .sort((user1, user2) => {
-        return user2.totalEarned() - user1.totalEarned();
-      })
-      .slice(0, 10);
-
-    topUsers = await Promise.all(
-      top.map(async user => {
-        const discordUser = await client.fetchUser(user.discordId);
-
-        if (discordUser) {
-          return { name: `@${discordUser.username}`, earned: user.totalEarned() };
-        }
-
-        return undefined;
-      }),
-    );
-  }
-
-  const allServers = await Server.find({ where: { active: true }, relations: ['members'] });
-  let topServers: any[] = [];
-
-  if (allServers) {
-    const top = allServers
-      .sort((server1, server2) => {
-        return server2.totalEarnedByMembers() - server1.totalEarnedByMembers();
-      })
-      .slice(0, 10);
-
-    topServers = await Promise.all(
-      top.map(async server => {
-        const discordServer = client.guilds.get(server.discordId);
-
-        if (discordServer) {
-          return { name: discordServer.name, earned: server.totalEarnedByMembers() };
-        }
-
-        return undefined;
-      }),
-    );
-  }
-
-  // eslint-disable-next-line no-param-reassign
-  context.body = { topUsers, topServers };
-});
-
 io.on('join', async () => {
   return {
     servers: await Server.count({ where: { active: true } }),
@@ -282,6 +231,7 @@ setInterval(async () => {
   io.broadcast('live', {
     servers: await Server.count({ where: { active: true } }),
     users: await User.count(),
+    cakes: (await Server.find()).map(s => s.totalEarnedByMembers()).reduce((a, b) => a + b),
   });
 }, 3 * 1000);
 

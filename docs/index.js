@@ -8,6 +8,7 @@ new Vue({
     return {
       servers: 0,
       users: 0,
+      cakes: 0
     };
   },
 
@@ -17,32 +18,10 @@ new Vue({
     socket.on('live', response => {
       this.servers = response.servers;
       this.users = response.users;
+      this.cakes = response.cakes;
 
       this.$el.querySelector('#live').classList = '';
     });
-  },
-});
-
-new Vue({
-  el: '#leaderboard-wrap',
-
-  data() {
-    return {
-      topUsers: [],
-      topServers: [],
-    };
-  },
-
-  mounted() {
-    axios
-      .get('https://rabitrup.com/leaderboard')
-      .then(response => {
-        this.topUsers = response.data.topUsers;
-        this.topServers = response.data.topServers;
-
-        this.$el.querySelector('#leaderboard').classList = '';
-      })
-      .catch(() => {});
   },
 });
 
