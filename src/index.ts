@@ -224,7 +224,7 @@ io.on('join', async () => {
   return {
     servers: await Server.count(),
     users: await User.count(),
-    cakes: (await Server.find({ relations: ['members'] })).map(s => s.totalEarnedByMembers()).reduce((a, b) => a + b),
+    cakes: (await Server.find()).map(s => s.totalEarnedByMembers()).reduce((a, b) => a + b),
   };
 });
 
@@ -232,7 +232,7 @@ setInterval(async () => {
   io.broadcast('live', {
     servers: await Server.count(),
     users: await User.count(),
-    cakes: (await Server.find({ relations: ['members'] })).map(s => s.totalEarnedByMembers()).reduce((a, b) => a + b),
+    cakes: (await Server.find()).map(s => s.totalEarnedByMembers()).reduce((a, b) => a + b),
   });
 }, 3 * 1000);
 
