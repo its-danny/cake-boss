@@ -12,7 +12,7 @@ import {
 } from '../../../utils/emoji';
 import { logEvent } from '../../../utils/logger';
 
-interface Arguments extends CommandArguments {
+export interface Arguments extends CommandArguments {
   member: string;
 }
 

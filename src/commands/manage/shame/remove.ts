@@ -12,11 +12,11 @@ import {
 import { logEvent } from '../../../utils/logger';
 import { CommandArguments } from '../../../utils/command-arguments';
 
-interface Arguments extends CommandArguments {
+export interface Arguments extends CommandArguments {
   member: string;
 }
 
-export const shameMember = async (args: Arguments): Promise<string | void> => {
+export const unshameMember = async (args: Arguments): Promise<string | void> => {
   if (!(await canManage(args.message))) {
     return `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`;
   }
@@ -46,7 +46,7 @@ export const shameMember = async (args: Arguments): Promise<string | void> => {
   });
 
   if (shamedMember) {
-    shamedMember.remove();
+    await shamedMember.remove();
   }
 
   logEvent(
@@ -71,5 +71,5 @@ export const builder = (yargs: Argv) => yargs;
 export const handler = (args: Arguments) => {
   args.needsFetch = true;
   args.careAboutQuietMode = true;
-  args.promisedOutput = shameMember(args);
+  args.promisedOutput = unshameMember(args);
 };
