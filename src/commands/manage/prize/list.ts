@@ -1,5 +1,7 @@
 import { Argv } from 'yargs';
 import Table from 'cli-table';
+import { chain } from 'lodash';
+import { toSentenceSerial } from 'underscore.string';
 import { canManage } from '../../../utils/permissions';
 import Server from '../../../entity/server';
 import { EMOJI_ERROR, EMOJI_INCORRECT_PERMISSIONS } from '../../../utils/emoji';
@@ -28,17 +30,26 @@ export const getPrizeList = async (args: CommandArguments): Promise<string> => {
   });
 
   server.prizes.forEach(prize => {
-    let roleColumn = '';
+    const roleNames = chain(prize.roleIds)
+      .map(roleId => {
+        const role = args.message.guild.roles.get(roleId);
 
-    if (prize.roleId) {
-      const role = args.message.guild.roles.find(r => r.id === prize.roleId);
+        if (role) {
+          return role.name;
+        }
 
-      if (role) {
-        roleColumn = role.name;
-      }
-    }
+        return undefined;
+      })
+      .compact()
+      .value();
 
-    table.push([prize.id, prize.description, prize.reactionEmoji, prize.price, roleColumn]);
+    table.push([
+      prize.id,
+      prize.description,
+      prize.reactionEmoji,
+      prize.price,
+      roleNames.length > 0 ? toSentenceSerial(roleNames) : 'none',
+    ]);
 
     return false;
   });

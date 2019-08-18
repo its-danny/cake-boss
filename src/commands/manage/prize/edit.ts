@@ -11,6 +11,7 @@ export interface Arguments extends CommandArguments {
   description: string;
   reactionEmoji: string;
   price: number;
+  roles?: string;
 }
 
 export const editPrize = async (args: Arguments): Promise<string | void> => {
@@ -46,24 +47,26 @@ export const editPrize = async (args: Arguments): Promise<string | void> => {
     return `${EMOJI_ERROR} Couldn't find that prize, are you sure \`${args.id}\` is the right ID?`;
   }
 
-  let roleId;
-
-  if (args.role) {
-    const roleFound = args.message.guild.roles.find(role => role.name === args.role);
-
-    if (roleFound) {
-      roleId = roleFound.id;
-    } else {
-      return `${EMOJI_ERROR} Role must be valid!`;
-    }
-  }
-
   prize.description = args.description;
   prize.reactionEmoji = args.reactionEmoji;
   prize.price = args.price;
 
-  if (roleId) {
-    prize.roleId = roleId;
+  if (args.roles) {
+    if (args.roles === 'none') {
+      prize.roleIds = [];
+    } else {
+      const foundRolesIds = args.roles
+        .split(',')
+        .map(g => g.trim())
+        .filter(roleName => {
+          return args.message.guild.roles.find(role => role.name === roleName.trim());
+        })
+        .map(roleName => args.message.guild.roles.find(role => role.name === roleName.trim()).id);
+
+      if (foundRolesIds.length > 0) {
+        prize.roleIds = foundRolesIds;
+      }
+    }
   }
 
   await prize.save();
@@ -82,7 +85,7 @@ export const editPrize = async (args: Arguments): Promise<string | void> => {
   return `${EMOJI_JOB_WELL_DONE} Done!`;
 };
 
-export const command = 'edit <id> <description> <reactionEmoji> <price> [role]';
+export const command = 'edit <id> <description> <reactionEmoji> <price> [roles]';
 export const describe = 'Edit a prize';
 
 export const builder = (yargs: Argv) => yargs;
