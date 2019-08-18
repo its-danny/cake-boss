@@ -4,7 +4,7 @@ import { parse } from 'json2csv';
 import fs from 'fs';
 import Server from '../../entity/server';
 import { canManage } from '../../utils/permissions';
-import { EMOJI_INCORRECT_PERMISSIONS, EMOJI_WORKING_HARD } from '../../utils/emoji';
+import { EMOJI_INCORRECT_PERMISSIONS, EMOJI_WORKING_HARD, EMOJI_ERROR } from '../../utils/emoji';
 import { CommandArguments } from '../../utils/command-arguments';
 
 export const getLedger = async (args: CommandArguments): Promise<string | void> => {
@@ -16,6 +16,10 @@ export const getLedger = async (args: CommandArguments): Promise<string | void> 
 
   if (!server) {
     throw new Error('Could not find server.');
+  }
+
+  if (!args.message.guild.me.hasPermission('ATTACH_FILES')) {
+    return `${EMOJI_ERROR} I need permission to \`attach files\`!`;
   }
 
   if (server.members.length === 0) {
