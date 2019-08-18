@@ -43,6 +43,10 @@ export const setConfig = async (args: Arguments): Promise<string | void> => {
   }
 
   if (args.config === 'quiet-mode') {
+    if (args.value === 'true' && !args.message.guild.me.hasPermission('ADD_REACTIONS')) {
+      return `${EMOJI_ERROR} I need permission to \`add reactions\`!`;
+    }
+
     if (server.config.setQuietMode(args.value)) {
       await server.config.save();
 
@@ -162,6 +166,10 @@ export const setConfig = async (args: Arguments): Promise<string | void> => {
   }
 
   if (args.config === 'nickname') {
+    if (!args.message.guild.me.hasPermission('CHANGE_NICKNAME')) {
+      return `${EMOJI_ERROR} I need permission to \`change nickname\`!`;
+    }
+
     if (server.config.setNickname(args.value)) {
       await server.config.save();
 
