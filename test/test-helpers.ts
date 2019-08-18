@@ -5,6 +5,7 @@ import Server from '../src/entity/server';
 import User from '../src/entity/user';
 import Member from '../src/entity/member';
 import ShamedMember from '../src/entity/shamed-member';
+import Prize from '../src/entity/prize';
 
 export interface ServerOptions {
   noGiving?: boolean;
@@ -24,6 +25,13 @@ export const createServer = async (opts?: ServerOptions): Promise<Server> => {
   server.config = config;
 
   return server.save();
+};
+
+export const createPrize = async (server: Server): Promise<Prize> => {
+  const prize = new Prize();
+  prize.server = server;
+
+  return prize.save();
 };
 
 export const createUser = async (): Promise<User> => {
