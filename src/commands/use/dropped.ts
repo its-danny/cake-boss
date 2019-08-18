@@ -37,7 +37,9 @@ export const getDropList = async (args: CommandArguments): Promise<string> => {
     }
   });
 
-  Object.keys(dropped).forEach(channel => table.push([`#${channel}`, dropped[channel]]));
+  Object.keys(dropped)
+    .sort((a, b) => dropped[b] - dropped[a])
+    .forEach(channel => table.push([`#${channel}`, dropped[channel]]));
 
   return `${server.config.cakeEmoji} **Dropped ${
     server.config.cakeNamePlural

@@ -90,9 +90,9 @@ describe('commands/use/dropped', () => {
 
         Channel   Amount 
       ───────────────────
-        #general  7      
+        #${channelOne.name}  7      
       ───────────────────
-        #games    1      
+        #${channelTwo.name}    1      
       \`\`\`"
     `);
 
