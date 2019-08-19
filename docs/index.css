@@ -99,7 +99,7 @@ header {
   font-weight: bold;
 }
 
-#what, #how, #commands {
+#what, #commands {
   margin: 2.5rem 0;
 }
 
@@ -111,7 +111,11 @@ header {
   margin: 0;
 }
 
-#how ul {
+#mod-commands #how {
+  margin: 2.5rem 0 15px 0;
+}
+
+#mod-commands #how ul {
   margin: 0 0 15px 0;
   padding: 15px;
   text-align: left;
@@ -119,8 +123,12 @@ header {
   border-radius: 10px;
 }
 
-#how ul:last-child {
+#mod-commands #how ul:last-child {
   margin: 0;
+}
+
+#mod-commands h2 {
+  margin-top: 15px;
 }
 
 #mod-commands p:first-of-type {

@@ -69,31 +69,6 @@
           </div>
         </div>
 
-        <div id="how" class="row">
-          <div class="col-md-8 offset-md-2">
-            <h2>How does it work?</h2>
-
-            <p>By default, <strong>any</strong> user can give up to <strong>5</strong> cakes every <strong>hour</strong>.</p>
-
-            <p>To allow only users with <strong>5 or more</strong> cakes to give up to <strong>10</strong> cakes every <strong>24 hours</strong>:</p>
-
-            <ul class="list-unstyled">
-              <li><code>config set requirement-to-give 5</code></li>
-              <li><code>config set give-limit 10</code></li>
-              <li><code>config set give-limit-hour-reset 24</code></li>
-            </ul>
-
-            <p>Don't like cake?</p>
-
-            <ul class="list-unstyled">
-              <li><code>config set nickname "Hotdog Boss!"</code></li>
-              <li><code>config set cake-emoji 🌭</code></li>
-              <li><code>config set cake-name-singular hotdog</code></li>
-              <li><code>config set cake-name-plural hotdogs</code></li>
-            </ul>
-          </div>
-        </div>
-
         <div id="commands" class="row">
           <div class="col-md-8 offset-md-2">
             <h2>Commands</h2>
@@ -140,12 +115,34 @@
             </div>
 
             <div class="collapse" id="mod-commands">
-              <hr />
+              <div id="how">
+                <h2>How does it work?</h2>
+    
+                <p>By default, <strong>any</strong> user can give up to <strong>5</strong> cakes every <strong>hour</strong>.</p>
+    
+                <p>To allow only users with <strong>5 or more</strong> cakes to give up to <strong>10</strong> cakes every <strong>24 hours</strong>:</p>
+    
+                <ul class="list-unstyled">
+                  <li><code>config set requirement-to-give 5</code></li>
+                  <li><code>config set give-limit 10</code></li>
+                  <li><code>config set give-limit-hour-reset 24</code></li>
+                </ul>
+    
+                <p>Don't like cake?</p>
+    
+                <ul class="list-unstyled">
+                  <li><code>config set nickname "Hotdog Boss!"</code></li>
+                  <li><code>config set cake-emoji 🌭</code></li>
+                  <li><code>config set cake-name-singular hotdog</code></li>
+                  <li><code>config set cake-name-plural hotdogs</code></li>
+                </ul>
+              </div>
+
+              <p><a href="#" data-toggle="modal" data-target="#config">View all config options.</a></p>
 
               <h2>Mod Commands</h2>
 
               <p><strong>Note:</strong> <code>&lt;this&gt;</code> means required, <code>[this]</code> means optional.</p>
-              <p><a href="#" data-toggle="modal" data-target="#config">View config options</a></p>
 
               <div class="command clearfix">
                 <div class="cmd float-left"><code>bless &lt;member&gt; [amount]</code></div>
@@ -296,7 +293,7 @@
                 <tr>
                   <td><code>command-prefix</code></td>
                   <td>It's the command prefix!</td>
-                  <td><code></code></td>
+                  <td><code>-</code></td>
                 </tr>
 
                 <tr>
