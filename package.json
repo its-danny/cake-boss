@@ -3,7 +3,7 @@
    "version": "1.0.0",
    "description": "A discord bot that lets users reward each other cakes for being helpful, and redeem those cakes for prizes.",
    "scripts": {
-      "dev": "NODE_ENV=development npx nodemon --watch 'src/**/*.ts' --ignore 'src/**/*.spec.ts' --exec 'npx ts-node' src/index.ts",
+      "dev": "NODE_ENV=development npx nodemon --watch 'src/**/*.ts' --ignore 'src/**/*.test.ts' --exec 'npx ts-node' src/index.ts",
       "build": "NODE_ENV=production npx tsc",
       "start": "NODE_ENV=production node dist/index.js",
       "test": "NODE_ENV=test npx jest",
