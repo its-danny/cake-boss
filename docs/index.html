@@ -78,18 +78,18 @@
             <p>To allow only users with <strong>5 or more</strong> cakes to give up to <strong>10</strong> cakes every <strong>24 hours</strong>:</p>
 
             <ul class="list-unstyled">
-              <li><code>-config set requirement-to-give 5</code></li>
-              <li><code>-config set give-limit 10</code></li>
-              <li><code>-config set give-limit-hour-reset 24</code></li>
+              <li><code>config set requirement-to-give 5</code></li>
+              <li><code>config set give-limit 10</code></li>
+              <li><code>config set give-limit-hour-reset 24</code></li>
             </ul>
 
             <p>Don't like cake?</p>
 
             <ul class="list-unstyled">
-              <li><code>-config set nickname "Hotdog Boss!"</code></li>
-              <li><code>-config set cake-emoji 🌭</code></li>
-              <li><code>-config set cake-name-singular hotdog</code></li>
-              <li><code>-config set cake-name-plural hotdogs</code></li>
+              <li><code>config set nickname "Hotdog Boss!"</code></li>
+              <li><code>config set cake-emoji 🌭</code></li>
+              <li><code>config set cake-name-singular hotdog</code></li>
+              <li><code>config set cake-name-plural hotdogs</code></li>
             </ul>
           </div>
         </div>
@@ -99,37 +99,37 @@
             <h2>Commands</h2>
 
             <div class="command clearfix">
-              <div class="cmd float-left"><code>-give @johnny 5</code></div>
+              <div class="cmd float-left"><code>give @johnny 5</code></div>
               <div class="desc float-right">Give someone cake</div>
             </div>
 
             <div class="command clearfix">
-              <div class="cmd float-left"><code>-take</code></div>
+              <div class="cmd float-left"><code>take</code></div>
               <div class="desc float-right">Take a dropped cake</div>
             </div>
 
             <div class="command clearfix">
-              <div class="cmd float-left"><code>-balance</code></div>
+              <div class="cmd float-left"><code>balance</code></div>
               <div class="desc float-right">Check your cake balance</div>
             </div>
 
             <div class="command clearfix">
-              <div class="cmd float-left"><code>-redeem</code></div>
+              <div class="cmd float-left"><code>redeem</code></div>
               <div class="desc float-right">Redeem your cakes for prizes!</div>
             </div>
 
             <div class="command clearfix">
-              <div class="cmd float-left"><code>-earned</code></div>
+              <div class="cmd float-left"><code>earned</code></div>
               <div class="desc float-right">Check how many cakes you've earned over time</div>
             </div>
 
             <div class="command clearfix">
-              <div class="cmd float-left"><code>-leaders</code></div>
+              <div class="cmd float-left"><code>leaders</code></div>
               <div class="desc float-right">View the server leaderboard</div>
             </div>
 
             <div class="command clearfix">
-              <div class="cmd float-left"><code>-help</code></div>
+              <div class="cmd float-left"><code>help</code></div>
               <div class="desc float-right">This page!</div>
             </div>
 
@@ -148,92 +148,92 @@
               <p><a href="#" data-toggle="modal" data-target="#config">View config options</a></p>
 
               <div class="command clearfix">
-                <div class="cmd float-left"><code>-bless &lt;member&gt; [amount]</code></div>
+                <div class="cmd float-left"><code>bless &lt;member&gt; [amount]</code></div>
                 <div class="desc float-right">Bless them with cakes</div>
               </div>
 
               <div class="command clearfix">
-                <div class="cmd float-left"><code>-drop &lt;channel&gt; [amount]</code></div>
+                <div class="cmd float-left"><code>drop &lt;channel&gt; [amount]</code></div>
                 <div class="desc float-right">Drop cakes in a channel</div>
               </div>
 
               <div class="command clearfix">
-                <div class="cmd float-left"><code>-dropped</code></div>
+                <div class="cmd float-left"><code>dropped</code></div>
                 <div class="desc float-right">View dropped cakes</div>
               </div>
 
               <div class="command clearfix">
-                <div class="cmd float-left"><code>-remove &lt;member&gt; [amount]</code></div>
+                <div class="cmd float-left"><code>remove &lt;member&gt; [amount]</code></div>
                 <div class="desc float-right">Remove cakes from somone's balance</div>
               </div>
 
               <div class="command clearfix">
-                <div class="cmd float-left"><code>-disappear &lt;member&gt; [amount]</code></div>
+                <div class="cmd float-left"><code>disappear &lt;member&gt; [amount]</code></div>
                 <div class="desc float-right">Erase some cakes from history</div>
               </div>
 
               <div class="command clearfix">
-                <div class="cmd float-left"><code>-config set &lt;config&gt; &lt;value&gt;</code></div>
+                <div class="cmd float-left"><code>config set &lt;config&gt; &lt;value&gt;</code></div>
                 <div class="desc float-right">Set a config option</div>
               </div>
 
               <div class="command clearfix">
-                <div class="cmd float-left"><code>-config value &lt;config&gt;</code></div>
+                <div class="cmd float-left"><code>config value &lt;config&gt;</code></div>
                 <div class="desc float-right">Get the current value of a config option</div>
               </div>
 
               <div class="command clearfix">
-                <div class="cmd float-left"><code>-prize list [page]</code></div>
+                <div class="cmd float-left"><code>prize list [page]</code></div>
                 <div class="desc float-right">View prize list</div>
               </div>
 
               <div class="command clearfix">
-                <div class="cmd float-left"><code>-prize add &lt;description&gt; &lt;reactionEmoji&gt; &lt;price&gt; [roles]</code></div>
+                <div class="cmd float-left"><code>prize add &lt;description&gt; &lt;reactionEmoji&gt; &lt;price&gt; [roles]</code></div>
                 <div class="desc float-right">Add a prize</div>
               </div>
 
               <div class="command clearfix">
-                <div class="cmd float-left"><code>-prize edit &lt;id&gt; &lt;description&gt; &lt;reactionEmoji&gt; &lt;price&gt; [roles]</code></div>
+                <div class="cmd float-left"><code>prize edit &lt;id&gt; &lt;description&gt; &lt;reactionEmoji&gt; &lt;price&gt; [roles]</code></div>
                 <div class="desc float-right">Edit a prize</div>
               </div>
 
               <div class="command clearfix">
-                <div class="cmd float-left"><code>-prize remove &lt;id&gt;</code></div>
+                <div class="cmd float-left"><code>prize remove &lt;id&gt;</code></div>
                 <div class="desc float-right">Remove a prize</div>
               </div>
 
               <div class="command clearfix">
-                <div class="cmd float-left"><code>-shame list [page]</code></div>
+                <div class="cmd float-left"><code>shame list [page]</code></div>
                 <div class="desc float-right">List shamed users</div>
               </div>
 
               <div class="command clearfix">
-                <div class="cmd float-left"><code>-shame add &lt;user&gt;</code></div>
+                <div class="cmd float-left"><code>shame add &lt;user&gt;</code></div>
                 <div class="desc float-right">Shame someone so they can't use cakes</div>
               </div>
 
               <div class="command clearfix">
-                <div class="cmd float-left"><code>-shame remove &lt;user&gt;</code></div>
+                <div class="cmd float-left"><code>shame remove &lt;user&gt;</code></div>
                 <div class="desc float-right">Reluctantly unshame someone</div>
               </div>
 
               <div class="command clearfix">
-                <div class="cmd float-left"><code>-ledger</code></div>
+                <div class="cmd float-left"><code>ledger</code></div>
                 <div class="desc float-right">View the ledger (sent as CSV file)</div>
               </div>
 
               <div class="command clearfix">
-                <div class="cmd float-left"><code>-export</code></div>
+                <div class="cmd float-left"><code>export</code></div>
                 <div class="desc float-right">Export cake data (sent as CSV file, can be used to import if migrating to self-hosted)</div>
               </div>
 
               <div class="command clearfix">
-                <div class="cmd float-left"><code>-link</code></div>
+                <div class="cmd float-left"><code>link</code></div>
                 <div class="desc float-right">Check out the GitHub</div>
               </div>
 
               <div class="command clearfix">
-                <div class="cmd float-left"><code>-uptime</code></div>
+                <div class="cmd float-left"><code>uptime</code></div>
                 <div class="desc float-right">View bot uptime</div>
               </div>
             </div>
@@ -296,7 +296,7 @@
                 <tr>
                   <td><code>command-prefix</code></td>
                   <td>It's the command prefix!</td>
-                  <td><code>-</code></td>
+                  <td><code></code></td>
                 </tr>
 
                 <tr>
