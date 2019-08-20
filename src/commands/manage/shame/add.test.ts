@@ -4,7 +4,6 @@ import Drop from '../../../entity/drop';
 import Member from '../../../entity/member';
 import Prize from '../../../entity/prize';
 import Server from '../../../entity/server';
-import ShamedMember from '../../../entity/shamed-member';
 import User from '../../../entity/user';
 import { createServer, createClient, createMessage, createMember } from '../../../../test/test-helpers';
 import { shameMember, Arguments } from './add';
@@ -16,7 +15,7 @@ describe('commands/manage/shamed/add', () => {
       type: 'sqlite',
       database: ':memory:',
       dropSchema: true,
-      entities: [Config, Drop, Member, Prize, Server, ShamedMember, User],
+      entities: [Config, Drop, Member, Prize, Server, User],
       synchronize: true,
       logging: false,
     });
@@ -85,8 +84,8 @@ describe('commands/manage/shamed/add', () => {
 
     const response = await shameMember(args);
     expect(response).toBe(`${EMOJI_JOB_WELL_DONE} Done!`);
-    await server.reload();
-    expect(server.shamed).toHaveLength(1);
+    await member.reload();
+    expect(member.shamed).toBe(true);
 
     done();
   });

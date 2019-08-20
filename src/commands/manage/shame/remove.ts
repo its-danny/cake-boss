@@ -2,7 +2,6 @@ import { Argv } from 'yargs';
 import { canManage } from '../../../utils/permissions';
 import Server from '../../../entity/server';
 import Member from '../../../entity/member';
-import ShamedMember from '../../../entity/shamed-member';
 import {
   EMOJI_INCORRECT_PERMISSIONS,
   EMOJI_RECORD_NOT_FOUND,
@@ -40,11 +39,8 @@ export const unshameMember = async (args: Arguments): Promise<string | void> => 
     throw new Error('Could not find member.');
   }
 
-  const shamedMember = await ShamedMember.findOne({ where: { server, member } });
-
-  if (shamedMember) {
-    await shamedMember.remove();
-  }
+  member.shamed = false;
+  await member.save();
 
   logEvent(
     args.client,

@@ -4,7 +4,6 @@ import Drop from '../../../entity/drop';
 import Member from '../../../entity/member';
 import Prize from '../../../entity/prize';
 import Server from '../../../entity/server';
-import ShamedMember from '../../../entity/shamed-member';
 import User from '../../../entity/user';
 import { createServer, createClient, createMessage, createChannel, createPrize } from '../../../../test/test-helpers';
 import { removePrize, Arguments } from './remove';
@@ -16,7 +15,7 @@ describe('commands/manage/prize/remove', () => {
       type: 'sqlite',
       database: ':memory:',
       dropSchema: true,
-      entities: [Config, Drop, Member, Prize, Server, ShamedMember, User],
+      entities: [Config, Drop, Member, Prize, Server, User],
       synchronize: true,
       logging: false,
     });

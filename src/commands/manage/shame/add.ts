@@ -2,7 +2,6 @@ import { Argv } from 'yargs';
 import { canManage } from '../../../utils/permissions';
 import Server from '../../../entity/server';
 import Member from '../../../entity/member';
-import ShamedMember from '../../../entity/shamed-member';
 import { CommandArguments } from '../../../utils/command-arguments';
 import {
   EMOJI_INCORRECT_PERMISSIONS,
@@ -40,10 +39,8 @@ export const shameMember = async (args: Arguments): Promise<string | void> => {
     throw new Error('Could not find member.');
   }
 
-  const shamedMember = new ShamedMember();
-  shamedMember.member = member;
-  shamedMember.server = server;
-  await shamedMember.save();
+  member.shamed = true;
+  await member.save();
 
   logEvent(
     args.client,

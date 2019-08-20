@@ -4,7 +4,6 @@ import Config from '../src/entity/config';
 import Server from '../src/entity/server';
 import User from '../src/entity/user';
 import Member from '../src/entity/member';
-import ShamedMember from '../src/entity/shamed-member';
 import Prize from '../src/entity/prize';
 
 export interface ServerOptions {
@@ -76,13 +75,7 @@ export const createMember = async (opts: MemberOptions): Promise<Member> => {
   }
 
   if (opts.shamed) {
-    await member.save();
-
-    const shamedMember = new ShamedMember();
-    shamedMember.server = opts.server;
-    shamedMember.member = member;
-
-    await shamedMember.save();
+    member.shamed = true;
   }
 
   return member.save();
