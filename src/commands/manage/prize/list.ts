@@ -53,7 +53,7 @@ export const getPrizeList = async (args: Arguments): Promise<string> => {
   }
 
   const table = new Table({
-    head: ['ID', 'Description', 'Reaction Emoji', 'Price', 'Role to Give'],
+    head: ['ID', 'Description', 'Reaction Emoji', 'Price', 'Roles to Give'],
     style: { head: [], border: [] },
     chars: getTableBorder(),
   });
