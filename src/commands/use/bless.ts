@@ -144,7 +144,7 @@ export const handler = (args: Arguments) => {
   args.needsFetch = true;
   args.careAboutQuietMode = true;
 
-  if (/^<@!(\d*)>/.test(args.member)) {
+  if (/^<@(!?)(\d*)>/.test(args.member)) {
     args.promisedOutput = blessMember(args);
   } else {
     args.promisedOutput = blessRole(args);
