@@ -27,7 +27,7 @@ export const exportData = async (args: CommandArguments): Promise<string | void>
     return `${EMOJI_WORKING_HARD} Nobody has ${server.config.cakeNamePlural} yet!`;
   }
 
-  const fields = ['Server ID', 'User ID', 'Member ID', 'Balance', 'Earned', 'Given'];
+  const fields = ['Server ID', 'User ID', 'Member ID', 'Balance', 'Earned', 'Given', 'Shamed'];
   const data: any = [];
 
   const members = await Member.find({ where: { server }, relations: ['user'] });
@@ -41,6 +41,7 @@ export const exportData = async (args: CommandArguments): Promise<string | void>
       Balance: member.balance,
       Earned: member.earned,
       Given: member.given,
+      Shamed: member.shamed
     });
   }
 
