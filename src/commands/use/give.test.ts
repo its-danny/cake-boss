@@ -13,7 +13,6 @@ import Drop from '../../entity/drop';
 import Member from '../../entity/member';
 import Server from '../../entity/server';
 import Prize from '../../entity/prize';
-import ShamedMember from '../../entity/shamed-member';
 import User from '../../entity/user';
 
 describe('commands/use/give', () => {
@@ -22,7 +21,7 @@ describe('commands/use/give', () => {
       type: 'sqlite',
       database: ':memory:',
       dropSchema: true,
-      entities: [Config, Drop, Member, Prize, Server, ShamedMember, User],
+      entities: [Config, Drop, Member, Prize, Server, User],
       synchronize: true,
       logging: false,
     });

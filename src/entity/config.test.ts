@@ -6,7 +6,6 @@ import Drop from './drop';
 import Member from './member';
 import Server from './server';
 import Prize from './prize';
-import ShamedMember from './shamed-member';
 import User from './user';
 import { createServer, createMessage, createChannel } from '../../test/test-helpers';
 
@@ -16,7 +15,7 @@ describe('entities/config', () => {
       type: 'sqlite',
       database: ':memory:',
       dropSchema: true,
-      entities: [Config, Drop, Member, Prize, Server, ShamedMember, User],
+      entities: [Config, Drop, Member, Prize, Server, User],
       synchronize: true,
       logging: false,
     });

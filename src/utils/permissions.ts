@@ -1,7 +1,6 @@
 import { Message } from 'discord.js';
 import Server from '../entity/server';
 import Member from '../entity/member';
-import ShamedMember from '../entity/shamed-member';
 
 export const canManage = async (message: Message): Promise<boolean> => {
   if (message.member.hasPermission('ADMINISTRATOR')) {
@@ -74,8 +73,7 @@ export const isShamed = async (discordServerId: string, discordMemberId: string)
     const member = await Member.findOne({ where: { discordId: discordMemberId } });
 
     if (member) {
-      const shamed = await ShamedMember.findOne({ where: { server, member } });
-      return shamed !== undefined;
+      return member.shamed;
     }
   }
 

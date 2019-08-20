@@ -1,6 +1,5 @@
 import { Argv } from 'yargs';
 import Table from 'cli-table';
-import moment from 'moment';
 import { getConnection } from 'typeorm';
 import { canManage } from '../../../utils/permissions';
 import Server from '../../../entity/server';
@@ -13,7 +12,7 @@ import {
 } from '../../../utils/emoji';
 import getTableBorder from '../../../utils/get-table-border';
 import { CommandArguments } from '../../../utils/command-arguments';
-import ShamedMember from '../../../entity/shamed-member';
+import Member from '../../../entity/member';
 
 interface Arguments extends CommandArguments {
   page?: number;
@@ -31,7 +30,7 @@ export const getShamedList = async (args: Arguments): Promise<string> => {
   }
 
   const perPage = 5;
-  const totalPages = Math.ceil((await ShamedMember.count({ where: { server } })) / perPage);
+  const totalPages = Math.ceil((await Member.count({ where: { server, shamed: true } })) / perPage);
 
   if (args.page && (!Number.isInteger(args.page) || args.page > totalPages)) {
     return `${EMOJI_ERROR} Invalid page number, sorry!`;
@@ -40,12 +39,11 @@ export const getShamedList = async (args: Arguments): Promise<string> => {
   const currentPage = args.page ? args.page : 1;
 
   const connection = getConnection();
-  const shamedMembers: ShamedMember[] = await connection
-    .getRepository(ShamedMember)
-    .createQueryBuilder('shamed')
-    .where({ server })
-    .leftJoinAndSelect('shamed.member', 'member')
-    .orderBy('shamed.id', 'ASC')
+  const shamedMembers: Member[] = await connection
+    .getRepository(Member)
+    .createQueryBuilder('member')
+    .where({ server, shamed: true })
+    .orderBy('member.id', 'ASC')
     .skip(perPage * (currentPage - 1))
     .take(perPage)
     .getMany();
@@ -55,19 +53,19 @@ export const getShamedList = async (args: Arguments): Promise<string> => {
   }
 
   const table = new Table({
-    head: ['Name', 'Date Shamed'],
+    head: ['Name'],
     style: { head: [], border: [] },
     chars: getTableBorder(),
   });
 
   shamedMembers.forEach(shamed => {
-    const discordMember = args.message.guild.members.get(shamed.member.discordId);
+    const discordMember = args.message.guild.members.get(shamed.discordId);
 
     if (!discordMember) {
       return `${EMOJI_RECORD_NOT_FOUND} Uh oh, had trouble finding a user.`;
     }
 
-    table.push([discordMember.user.tag, moment(shamed.createdAt).format('MMMM Do YYYY')]);
+    table.push([discordMember.user.tag]);
 
     return false;
   });
