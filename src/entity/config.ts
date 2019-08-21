@@ -18,6 +18,7 @@ export type ConfigCommand =
   | 'cake-name-singular'
   | 'cake-name-plural'
   | 'drop-gifs'
+  | 'no-drop-gifs'
   | 'no-giving'
   | 'requirement-to-give'
   | 'give-limit'
@@ -75,6 +76,9 @@ export default class Config extends BaseEntity {
 
   @Column('simple-array', { nullable: false, default: '' })
   dropGifs!: string[];
+
+  @Column('simple-array', { nullable: false, default: '' })
+  noDropGifs!: string[];
 
   @Column({ nullable: false, default: false })
   noGiving!: boolean;
@@ -250,6 +254,18 @@ export default class Config extends BaseEntity {
     return true;
   }
 
+  setNoDropGifs(gifs: string): boolean {
+    if (gifs === 'none') {
+      this.noDropGifs = [];
+
+      return true;
+    }
+
+    this.noDropGifs = gifs.split(',').map(g => g.trim());
+
+    return true;
+  }
+
   setNoGiving(toggle: string): boolean {
     if (toggle !== 'true' && toggle !== 'false') {
       return false;
@@ -366,6 +382,8 @@ export default class Config extends BaseEntity {
         return { default: 'cakes', value: this.cakeNamePlural };
       case 'drop-gifs':
         return { default: 'none', value: isEmpty(this.dropGifs) ? 'none' : toSentenceSerial(this.dropGifs) };
+      case 'no-drop-gifs':
+        return { default: 'none', value: isEmpty(this.noDropGifs) ? 'none' : toSentenceSerial(this.noDropGifs) };
       case 'no-giving':
         return { default: 'false', value: `${this.noGiving}` };
       case 'requirement-to-give':

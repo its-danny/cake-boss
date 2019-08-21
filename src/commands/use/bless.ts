@@ -3,7 +3,12 @@ import Server from '../../entity/server';
 import { canBless, isShamed } from '../../utils/permissions';
 import Member from '../../entity/member';
 import { logEvent } from '../../utils/logger';
-import { EMOJI_DONT_DO_THAT, EMOJI_INCORRECT_PERMISSIONS, EMOJI_RECORD_NOT_FOUND, EMOJI_ERROR } from '../../utils/emoji';
+import {
+  EMOJI_DONT_DO_THAT,
+  EMOJI_INCORRECT_PERMISSIONS,
+  EMOJI_RECORD_NOT_FOUND,
+  EMOJI_ERROR,
+} from '../../utils/emoji';
 import { CommandArguments } from '../../utils/command-arguments';
 
 export interface Arguments extends CommandArguments {

@@ -23,7 +23,7 @@ createConnection().then(() => {
         member.balance = parseInt(row.Balance, 10);
         member.earned = parseInt(row.Earned, 10);
         member.given = parseInt(row.Given, 10);
-        member.shamed = row.Shamed
+        member.shamed = row.Shamed;
 
         // eslint-disable-next-line no-await-in-loop
         await member.save();

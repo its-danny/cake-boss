@@ -160,6 +160,23 @@ describe('entities/config', () => {
     ]);
   });
 
+  test('#setNoDropGifs', () => {
+    const config = new Config();
+
+    expect(config.setNoDropGifs('none')).toBe(true);
+    expect(config.noDropGifs).toEqual([]);
+
+    expect(
+      config.setDropGifs(
+        'https://media.giphy.com/media/QqkzeedW5Qq7S/giphy.gif,https://media.giphy.com/media/13Wlh2o9yCiMTu/giphy.gif',
+      ),
+    ).toBe(true);
+    expect(config.dropGifs).toEqual([
+      'https://media.giphy.com/media/QqkzeedW5Qq7S/giphy.gif',
+      'https://media.giphy.com/media/13Wlh2o9yCiMTu/giphy.gif',
+    ]);
+  });
+
   test('#setNoGiving', () => {
     const config = new Config();
 

@@ -1,5 +1,6 @@
 import { Argv } from 'yargs';
 import { TextChannel } from 'discord.js';
+import { isEmpty, sample } from 'lodash';
 import Server from '../../entity/server';
 import Drop from '../../entity/drop';
 import { logEvent } from '../../utils/logger';
@@ -22,7 +23,9 @@ export const takeCake = async (args: CommandArguments): Promise<string | void> =
   const drop = await Drop.findOne({ where: { server, channelDiscordId: args.message.channel.id } });
 
   if (!drop) {
-    return `${EMOJI_RECORD_NOT_FOUND} There are no drops here!`;
+    return `${EMOJI_RECORD_NOT_FOUND} There are no drops here!\n${
+      !isEmpty(server.config.noDropGifs) ? sample(server.config.noDropGifs) : ''
+    }`;
   }
 
   drop.amount -= 1;

@@ -41,7 +41,7 @@ export const exportData = async (args: CommandArguments): Promise<string | void>
       Balance: member.balance,
       Earned: member.earned,
       Given: member.given,
-      Shamed: member.shamed
+      Shamed: member.shamed,
     });
   }
 

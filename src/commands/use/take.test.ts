@@ -67,7 +67,7 @@ describe('commands/use/take', () => {
     };
 
     const response = await takeCake(args);
-    expect(response).toBe(`${EMOJI_RECORD_NOT_FOUND} There are no drops here!`);
+    expect(response).toBe(`${EMOJI_RECORD_NOT_FOUND} There are no drops here!\n`);
 
     done();
   });
