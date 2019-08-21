@@ -8,6 +8,7 @@ import {
   EMOJI_INCORRECT_PERMISSIONS,
   EMOJI_RECORD_NOT_FOUND,
   EMOJI_WORKING_HARD,
+  EMOJI_ERROR,
 } from '../../utils/emoji';
 import { CommandArguments } from '../../utils/command-arguments';
 
@@ -63,6 +64,10 @@ export const giveCakeToMember = async (args: Arguments): Promise<string | void> 
   }
 
   let amount = args.amount ? args.amount : 1;
+
+  if (!Number.isInteger(amount) && amount <= 0) {
+    return `${EMOJI_ERROR} Invalid amount, sorry!`;
+  }
 
   if (amount > server.config.giveLimit) {
     amount = server.config.giveLimit;

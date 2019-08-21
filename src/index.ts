@@ -38,7 +38,6 @@ const commandParser = yargs
   .scriptName('[command-prefix]')
   .commandDir('commands/manage', { exclude: /\.test\./gm, extensions: [NODE_ENV === 'production' ? 'js' : 'ts'] })
   .commandDir('commands/use', { exclude: /\.test\./gm, extensions: [NODE_ENV === 'production' ? 'js' : 'ts'] })
-  .strict(true)
   .showHelpOnFail(true)
   .wrap(null)
   .help();

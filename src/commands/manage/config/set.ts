@@ -257,6 +257,24 @@ export const setConfig = async (args: Arguments): Promise<string | void> => {
     }
   }
 
+  if (args.config === 'no-drop-gifs') {
+    if (server.config.setNoDropGifs(args.value)) {
+      await server.config.save();
+
+      await logEvent(
+        args.client,
+        args.message,
+        `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value
+          .split(',')
+          .join(', ')}\`.`,
+      );
+
+      configSet = true;
+    } else {
+      return `${EMOJI_ERROR} ${ERROR_MESSAGE}`;
+    }
+  }
+
   if (args.config === 'no-giving') {
     if (server.config.setNoGiving(args.value)) {
       await server.config.save();
