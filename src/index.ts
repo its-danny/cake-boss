@@ -30,7 +30,9 @@ if (!SENTRY_DISABLED) {
 
 // Bot
 
-const client = new Discord.Client();
+const client = new Discord.Client({
+  fetchAllMembers: true,
+});
 
 const NODE_ENV: string = process.env.NODE_ENV as string;
 
@@ -111,15 +113,12 @@ client.on('message', async (message: Message) => {
 
   if (message.author.id !== client.user.id && cleanContent.startsWith(`${commandPrefix}`)) {
     try {
-      const fetchedAuthorMember = await message.guild.fetchMember(message.author);
-      await Member.findOrCreate(server.discordId, message.author.id, fetchedAuthorMember.id);
+      await Member.findOrCreate(server.discordId, message.author.id, message.member.id);
 
       // eslint-disable-next-line no-restricted-syntax
       for (const member of message.mentions.members) {
         // eslint-disable-next-line no-await-in-loop
-        const fetchedMember = await message.guild.fetchMember(member[1]);
-        // eslint-disable-next-line no-await-in-loop
-        await Member.findOrCreate(server.discordId, fetchedMember.user.id, fetchedMember.id);
+        await Member.findOrCreate(server.discordId, member[1].user.id, member[1].id);
       }
 
       const context: CommandArguments = {
