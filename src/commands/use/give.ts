@@ -108,7 +108,8 @@ export const giveCakeToMember = async (args: Arguments): Promise<string | void> 
 
     return undefined;
   }
-  return `${server.config.cakeEmoji} They just got ${amount} ${
+
+  return `${server.config.cakeEmoji} ${receivingDiscordMember.displayName} just got ${amount} ${
     amount > 1 ? server.config.cakeNamePlural : server.config.cakeNameSingular
   }, <@${args.message.member.id}>!`;
 };

@@ -28,20 +28,20 @@ export const blessMember = async (args: Arguments): Promise<string | void> => {
     throw new Error('Could not find server.');
   }
 
-  const blessedMemberId = args.member.replace(/^<@!?/, '').replace(/>$/, '');
-  const blessedDiscordMember = args.message.guild.members.get(blessedMemberId);
+  const receivingMemberId = args.member.replace(/^<@!?/, '').replace(/>$/, '');
+  const receivingDiscordMember = args.message.guild.members.get(receivingMemberId);
 
-  if (!blessedDiscordMember) {
+  if (!receivingDiscordMember) {
     return `${EMOJI_RECORD_NOT_FOUND} Uh oh, I couldn't find them.`;
   }
 
-  if (await isShamed(server.discordId, blessedDiscordMember.id)) {
+  if (await isShamed(server.discordId, receivingDiscordMember.id)) {
     return `${EMOJI_DONT_DO_THAT} They have been **shamed** and can not get ${server.config.cakeNamePlural}!`;
   }
 
-  const blessedMember = await Member.findOne({ where: { discordId: blessedDiscordMember.id } });
+  const receivingMember = await Member.findOne({ where: { discordId: receivingDiscordMember.id } });
 
-  if (!blessedMember) {
+  if (!receivingMember) {
     throw new Error('Could not find member.');
   }
 
@@ -51,16 +51,16 @@ export const blessMember = async (args: Arguments): Promise<string | void> => {
     return `${EMOJI_ERROR} Invalid amount, sorry!`;
   }
 
-  blessedMember.earned += amount;
-  blessedMember.balance += amount;
+  receivingMember.earned += amount;
+  receivingMember.balance += amount;
 
-  await blessedMember.save();
+  await receivingMember.save();
 
   logEvent(
     args.client,
     args.message,
     `${server.config.cakeEmoji} \`${args.message.author.tag}\` blessed \`${
-      blessedDiscordMember.user.tag
+      receivingDiscordMember.user.tag
     }\` with ${amount} ${amount > 1 ? server.config.cakeNamePlural : server.config.cakeNameSingular}!`,
   );
 
@@ -78,7 +78,7 @@ export const blessMember = async (args: Arguments): Promise<string | void> => {
     return undefined;
   }
 
-  return `${server.config.cakeEmoji} They just got ${amount} ${
+  return `${server.config.cakeEmoji} ${receivingDiscordMember.displayName} just got ${amount} ${
     amount > 1 ? server.config.cakeNamePlural : server.config.cakeNameSingular
   }, <@${args.message.member.id}>!`;
 };
@@ -139,7 +139,7 @@ export const blessRole = async (args: Arguments): Promise<string | void> => {
     return undefined;
   }
 
-  return `${server.config.cakeEmoji} They just got ${amount} ${
+  return `${server.config.cakeEmoji} They all just got ${amount} ${
     amount > 1 ? server.config.cakeNamePlural : server.config.cakeNameSingular
   }, <@${args.message.member.id}>!`;
 };

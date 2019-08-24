@@ -108,6 +108,7 @@ export const createMessage = async (opts: MessageOptions): Promise<Message> => {
             if (found) {
               return {
                 id: found.discordId,
+                displayName: found.discordId,
 
                 user: {
                   tag: `${found.discordId}#1234`,

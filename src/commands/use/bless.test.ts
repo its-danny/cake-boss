@@ -74,13 +74,19 @@ describe('commands/use/bless', () => {
 
   it('should give them cake', async done => {
     const server = await createServer();
-    const member = await createMember({ server });
+    const sender = await createMember({ server });
+    const receiver = await createMember({ server });
 
     const args: Arguments = {
       client: createClient(),
-      message: await createMessage({ server, serverMembers: [member], permission: 'ADMINISTRATOR' }),
-      member: `<@${member.discordId}>`,
-      role: `<@${member.discordId}>`,
+      message: await createMessage({
+        server,
+        senderId: sender.discordId,
+        serverMembers: [sender, receiver],
+        permission: 'ADMINISTRATOR',
+      }),
+      member: `<@${receiver.discordId}>`,
+      role: `<@${receiver.discordId}>`,
       amount: 3,
       needsFetch: false,
       careAboutQuietMode: false,
@@ -89,11 +95,11 @@ describe('commands/use/bless', () => {
     };
 
     const response = await blessMember(args);
-    expect(response).toBe(`${EMOJI_CAKE} They just got 3 cakes, <@${args.message.member.id}>!`);
+    expect(response).toBe(`${EMOJI_CAKE} ${receiver.discordId} just got 3 cakes, <@${sender.discordId}>!`);
 
-    await member.reload();
-    expect(member.balance).toBe(3);
-    expect(member.earned).toBe(3);
+    await receiver.reload();
+    expect(receiver.balance).toBe(3);
+    expect(receiver.earned).toBe(3);
 
     done();
   });
