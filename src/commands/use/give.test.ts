@@ -148,7 +148,7 @@ describe('commands/use/give', () => {
     done();
   });
 
-  it(`should top you if you've hit your limit`, async done => {
+  it(`should stop you if you've hit your limit`, async done => {
     const server = await createServer();
     const sender = await createMember({ server, givenSinceReset: 5 });
     const receiver = await createMember({ server });
@@ -187,7 +187,7 @@ describe('commands/use/give', () => {
     };
 
     const response = await giveCakeToMember(args);
-    expect(response).toBe(`${EMOJI_CAKE} They just got 3 cakes, <@${args.message.member.id}>!`);
+    expect(response).toBe(`${EMOJI_CAKE} ${receiver.discordId} just got 3 cakes, <@${sender.discordId}>!`);
 
     await receiver.reload();
     expect(receiver.balance).toBe(3);
