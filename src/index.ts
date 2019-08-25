@@ -135,8 +135,12 @@ client.on('message', async (message: Message) => {
         reactions: null,
       };
 
-      const mentionRegex = new RegExp(`<@!?${message.mentions.members.get(client.user.id)!.id}>`);
-      const command = cleanContent.replace(commandPrefix, '').replace(mentionRegex, '');
+      let command = cleanContent.replace(commandPrefix, '');
+
+      if (message.isMemberMentioned(client.user)) {
+        const mentionRegex = new RegExp(`<@!?${message.mentions.members.get(client.user.id)!.id}>`);
+        command = command.replace(mentionRegex, '')
+      }
 
       commandParser.parse(command, context, async (error, argv) => {
         if (error) {
