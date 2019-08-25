@@ -140,7 +140,7 @@ export const createMessage = async (opts: MessageOptions): Promise<Message> => {
         },
       },
 
-      roles: opts.serverRoles ? opts.serverRoles : []
+      roles: opts.serverRoles ? opts.serverRoles : [],
     } as unknown) as Guild,
 
     author: {

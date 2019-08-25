@@ -111,7 +111,7 @@ client.on('message', async (message: Message) => {
 
   const { commandPrefix } = server.config;
 
-  if (message.author.id !== client.user.id && cleanContent.startsWith(`${commandPrefix}`)) {
+  if (message.author.id !== client.user.id && !message.author.bot && cleanContent.startsWith(`${commandPrefix}`)) {
     try {
       await Member.findOrCreate(server.discordId, message.author.id, message.member.id);
 
