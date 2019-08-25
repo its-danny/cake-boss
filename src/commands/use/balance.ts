@@ -1,9 +1,9 @@
 import { Argv } from 'yargs';
 import Server from '../../entity/server';
 import Member from '../../entity/member';
-import { CommandArguments } from '../../utils/command-arguments';
+import { CommandArguments, CommandResponse } from '../../utils/command-interfaces';
 
-export const getBalance = async (args: CommandArguments): Promise<string> => {
+export const getBalance = async (args: CommandArguments): Promise<CommandResponse> => {
   const server = await Server.findOne({ where: { discordId: args.message.guild.id } });
 
   if (!server) {
@@ -16,9 +16,11 @@ export const getBalance = async (args: CommandArguments): Promise<string> => {
     throw new Error('Could not find member.');
   }
 
-  return `${server.config.cakeEmoji} Your current balance is ${member.balance} ${
-    member.balance === 1 ? server.config.cakeNameSingular : server.config.cakeNamePlural
-  }!`;
+  return {
+    content: `${server.config.cakeEmoji} Your current balance is ${member.balance} ${
+      member.balance === 1 ? server.config.cakeNameSingular : server.config.cakeNamePlural
+    }!`,
+  };
 };
 
 export const command = 'balance';

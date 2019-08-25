@@ -2,7 +2,7 @@ import { Argv } from 'yargs';
 import { canManage } from '../../../utils/permissions';
 import Server from '../../../entity/server';
 import Member from '../../../entity/member';
-import { CommandArguments } from '../../../utils/command-arguments';
+import { CommandArguments, CommandResponse } from '../../../utils/command-interfaces';
 import {
   EMOJI_INCORRECT_PERMISSIONS,
   EMOJI_RECORD_NOT_FOUND,
@@ -15,9 +15,9 @@ export interface Arguments extends CommandArguments {
   member: string;
 }
 
-export const shameMember = async (args: Arguments): Promise<string | void> => {
+export const shameMember = async (args: Arguments): Promise<CommandResponse | void> => {
   if (!(await canManage(args.message))) {
-    return `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`;
+    return { content: `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!` };
   }
 
   const server = await Server.findOne({ where: { discordId: args.message.guild.id } });
@@ -30,7 +30,7 @@ export const shameMember = async (args: Arguments): Promise<string | void> => {
   const discordMember = args.message.guild.members.get(memberId);
 
   if (!discordMember) {
-    return `${EMOJI_RECORD_NOT_FOUND} Uh oh, I couldn't find them.`;
+    return { content: `${EMOJI_RECORD_NOT_FOUND} Uh oh, I couldn't find them.` };
   }
 
   const member = await Member.findOne({ where: { discordId: discordMember.id } });
@@ -53,7 +53,8 @@ export const shameMember = async (args: Arguments): Promise<string | void> => {
 
     return undefined;
   }
-  return `${EMOJI_JOB_WELL_DONE} Done!`;
+
+  return { content: `${EMOJI_JOB_WELL_DONE} Done!` };
 };
 
 export const command = 'add <member>';

@@ -2,7 +2,7 @@ import { createConnection, getConnection } from 'typeorm';
 import { getBalance } from './balance';
 import { createServer, createMember, createMessage, createClient } from '../../../test/test-helpers';
 import { EMOJI_CAKE } from '../../utils/emoji';
-import { CommandArguments } from '../../utils/command-arguments';
+import { CommandArguments, CommandResponse } from '../../utils/command-interfaces';
 import Config from '../../entity/config';
 import Drop from '../../entity/drop';
 import Member from '../../entity/member';
@@ -44,8 +44,8 @@ describe('commands/use/balance', () => {
       reactions: {},
     };
 
-    const response = await getBalance(args);
-    expect(response).toBe(`${EMOJI_CAKE} Your current balance is 3 cakes!`);
+    const response = (await getBalance(args)) as CommandResponse;
+    expect(response.content).toBe(`${EMOJI_CAKE} Your current balance is 3 cakes!`);
 
     done();
   });

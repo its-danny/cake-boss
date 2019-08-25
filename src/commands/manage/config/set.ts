@@ -3,7 +3,7 @@ import Server from '../../../entity/server';
 import { canManage } from '../../../utils/permissions';
 import { logEvent } from '../../../utils/logger';
 import { EMOJI_ERROR, EMOJI_INCORRECT_PERMISSIONS, EMOJI_CONFIG, EMOJI_JOB_WELL_DONE } from '../../../utils/emoji';
-import { CommandArguments } from '../../../utils/command-arguments';
+import { CommandArguments, CommandResponse } from '../../../utils/command-interfaces';
 import { ConfigCommand } from '../../../entity/config';
 
 interface Arguments extends CommandArguments {
@@ -13,9 +13,9 @@ interface Arguments extends CommandArguments {
 
 export const ERROR_MESSAGE = `Incorrect arguments, sorry! Maybe you need the docs? <https://dannytatom.github.io/cake-boss/>`;
 
-export const setConfig = async (args: Arguments): Promise<string | void> => {
+export const setConfig = async (args: Arguments): Promise<CommandResponse | void> => {
   if (!(await canManage(args.message))) {
-    return `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`;
+    return { content: `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!` };
   }
 
   const server = await Server.findOne({ where: { discordId: args.message.guild.id } });
@@ -38,13 +38,13 @@ export const setConfig = async (args: Arguments): Promise<string | void> => {
 
       configSet = true;
     } else {
-      return `${EMOJI_ERROR} ${ERROR_MESSAGE}`;
+      return { content: `${EMOJI_ERROR} ${ERROR_MESSAGE}` };
     }
   }
 
   if (args.config === 'quiet-mode') {
     if (args.value === 'true' && !args.message.guild.me.hasPermission('ADD_REACTIONS')) {
-      return `${EMOJI_ERROR} I need permission to \`add reactions\`!`;
+      return { content: `${EMOJI_ERROR} I need permission to \`add reactions\`!` };
     }
 
     if (server.config.setQuietMode(args.value)) {
@@ -56,9 +56,10 @@ export const setConfig = async (args: Arguments): Promise<string | void> => {
         `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`,
       );
 
-      return `${EMOJI_JOB_WELL_DONE} Done!`;
+      return { content: `${EMOJI_JOB_WELL_DONE} Done!` };
     }
-    return `${EMOJI_ERROR} ${ERROR_MESSAGE}`;
+
+    return { content: `${EMOJI_ERROR} ${ERROR_MESSAGE}` };
   }
 
   if (args.config === 'log-channel') {
@@ -77,7 +78,7 @@ export const setConfig = async (args: Arguments): Promise<string | void> => {
 
       configSet = true;
     } else {
-      return `${EMOJI_ERROR} ${ERROR_MESSAGE}`;
+      return { content: `${EMOJI_ERROR} ${ERROR_MESSAGE}` };
     }
   }
 
@@ -93,7 +94,7 @@ export const setConfig = async (args: Arguments): Promise<string | void> => {
 
       configSet = true;
     } else {
-      return `${EMOJI_ERROR} ${ERROR_MESSAGE}`;
+      return { content: `${EMOJI_ERROR} ${ERROR_MESSAGE}` };
     }
   }
 
@@ -113,7 +114,7 @@ export const setConfig = async (args: Arguments): Promise<string | void> => {
 
       configSet = true;
     } else {
-      return `${EMOJI_ERROR} ${ERROR_MESSAGE}`;
+      return { content: `${EMOJI_ERROR} ${ERROR_MESSAGE}` };
     }
   }
 
@@ -129,7 +130,7 @@ export const setConfig = async (args: Arguments): Promise<string | void> => {
 
       configSet = true;
     } else {
-      return `${EMOJI_ERROR} ${ERROR_MESSAGE}`;
+      return { content: `${EMOJI_ERROR} ${ERROR_MESSAGE}` };
     }
   }
 
@@ -145,7 +146,7 @@ export const setConfig = async (args: Arguments): Promise<string | void> => {
 
       configSet = true;
     } else {
-      return `${EMOJI_ERROR} ${ERROR_MESSAGE}`;
+      return { content: `${EMOJI_ERROR} ${ERROR_MESSAGE}` };
     }
   }
 
@@ -161,13 +162,13 @@ export const setConfig = async (args: Arguments): Promise<string | void> => {
 
       configSet = true;
     } else {
-      return `${EMOJI_ERROR} ${ERROR_MESSAGE}`;
+      return { content: `${EMOJI_ERROR} ${ERROR_MESSAGE}` };
     }
   }
 
   if (args.config === 'nickname') {
     if (!args.message.guild.me.hasPermission('CHANGE_NICKNAME')) {
-      return `${EMOJI_ERROR} I need permission to \`change nickname\`!`;
+      return { content: `${EMOJI_ERROR} I need permission to \`change nickname\`!` };
     }
 
     if (server.config.setNickname(args.value)) {
@@ -187,7 +188,7 @@ export const setConfig = async (args: Arguments): Promise<string | void> => {
 
       configSet = true;
     } else {
-      return `${EMOJI_ERROR} ${ERROR_MESSAGE}`;
+      return { content: `${EMOJI_ERROR} ${ERROR_MESSAGE}` };
     }
   }
 
@@ -203,7 +204,7 @@ export const setConfig = async (args: Arguments): Promise<string | void> => {
 
       configSet = true;
     } else {
-      return `${EMOJI_ERROR} ${ERROR_MESSAGE}`;
+      return { content: `${EMOJI_ERROR} ${ERROR_MESSAGE}` };
     }
   }
 
@@ -219,7 +220,7 @@ export const setConfig = async (args: Arguments): Promise<string | void> => {
 
       configSet = true;
     } else {
-      return `${EMOJI_ERROR} ${ERROR_MESSAGE}`;
+      return { content: `${EMOJI_ERROR} ${ERROR_MESSAGE}` };
     }
   }
 
@@ -235,7 +236,7 @@ export const setConfig = async (args: Arguments): Promise<string | void> => {
 
       configSet = true;
     } else {
-      return `${EMOJI_ERROR} ${ERROR_MESSAGE}`;
+      return { content: `${EMOJI_ERROR} ${ERROR_MESSAGE}` };
     }
   }
 
@@ -253,7 +254,7 @@ export const setConfig = async (args: Arguments): Promise<string | void> => {
 
       configSet = true;
     } else {
-      return `${EMOJI_ERROR} ${ERROR_MESSAGE}`;
+      return { content: `${EMOJI_ERROR} ${ERROR_MESSAGE}` };
     }
   }
 
@@ -271,7 +272,7 @@ export const setConfig = async (args: Arguments): Promise<string | void> => {
 
       configSet = true;
     } else {
-      return `${EMOJI_ERROR} ${ERROR_MESSAGE}`;
+      return { content: `${EMOJI_ERROR} ${ERROR_MESSAGE}` };
     }
   }
 
@@ -286,7 +287,7 @@ export const setConfig = async (args: Arguments): Promise<string | void> => {
 
       configSet = true;
     } else {
-      return `${EMOJI_ERROR} ${ERROR_MESSAGE}`;
+      return { content: `${EMOJI_ERROR} ${ERROR_MESSAGE}` };
     }
   }
 
@@ -302,7 +303,7 @@ export const setConfig = async (args: Arguments): Promise<string | void> => {
 
       configSet = true;
     } else {
-      return `${EMOJI_ERROR} ${ERROR_MESSAGE}`;
+      return { content: `${EMOJI_ERROR} ${ERROR_MESSAGE}` };
     }
   }
 
@@ -318,7 +319,7 @@ export const setConfig = async (args: Arguments): Promise<string | void> => {
 
       configSet = true;
     } else {
-      return `${EMOJI_ERROR} ${ERROR_MESSAGE}`;
+      return { content: `${EMOJI_ERROR} ${ERROR_MESSAGE}` };
     }
   }
 
@@ -334,7 +335,7 @@ export const setConfig = async (args: Arguments): Promise<string | void> => {
 
       configSet = true;
     } else {
-      return `${EMOJI_ERROR} ${ERROR_MESSAGE}`;
+      return { content: `${EMOJI_ERROR} ${ERROR_MESSAGE}` };
     }
   }
 
@@ -344,9 +345,11 @@ export const setConfig = async (args: Arguments): Promise<string | void> => {
 
       return undefined;
     }
-    return `${EMOJI_JOB_WELL_DONE} Done!`;
+
+    return { content: `${EMOJI_JOB_WELL_DONE} Done!` };
   }
-  return `${EMOJI_ERROR} Not a valid config!`;
+
+  return { content: `${EMOJI_ERROR} Not a valid config!` };
 };
 
 export const command = 'set <config> <value>';

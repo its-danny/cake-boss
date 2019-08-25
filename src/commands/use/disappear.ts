@@ -9,16 +9,16 @@ import {
   EMOJI_RECORD_NOT_FOUND,
   EMOJI_JOB_WELL_DONE,
 } from '../../utils/emoji';
-import { CommandArguments } from '../../utils/command-arguments';
+import { CommandArguments, CommandResponse } from '../../utils/command-interfaces';
 
 export interface Arguments extends CommandArguments {
   member: string;
   amount?: number;
 }
 
-export const disappearCakes = async (args: Arguments): Promise<string | void> => {
+export const disappearCakes = async (args: Arguments): Promise<CommandResponse | void> => {
   if (!(await canManage(args.message))) {
-    return `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`;
+    return { content: `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!` };
   }
 
   const server = await Server.findOne({ where: { discordId: args.message.guild.id } });
@@ -31,7 +31,7 @@ export const disappearCakes = async (args: Arguments): Promise<string | void> =>
   const targetDiscordMember = args.message.guild.members.get(targetMemberId);
 
   if (!targetDiscordMember) {
-    return `${EMOJI_RECORD_NOT_FOUND} Uh oh, I couldn't find them.`;
+    return { content: `${EMOJI_RECORD_NOT_FOUND} Uh oh, I couldn't find them.` };
   }
 
   const targetMember = await Member.findOne({ where: { discordId: targetDiscordMember.id } });
@@ -43,7 +43,7 @@ export const disappearCakes = async (args: Arguments): Promise<string | void> =>
   const amount = args.amount ? args.amount : 1;
 
   if (!Number.isInteger(amount) && amount <= 0) {
-    return `${EMOJI_ERROR} Invalid amount, sorry!`;
+    return { content: `${EMOJI_ERROR} Invalid amount, sorry!` };
   }
 
   if (targetMember.balance < amount) {
@@ -73,7 +73,8 @@ export const disappearCakes = async (args: Arguments): Promise<string | void> =>
 
     return undefined;
   }
-  return `${EMOJI_JOB_WELL_DONE} Done!`;
+
+  return { content: `${EMOJI_JOB_WELL_DONE} Done!` };
 };
 
 export const command = 'disappear <member> [amount]';

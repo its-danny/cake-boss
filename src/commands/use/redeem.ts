@@ -5,9 +5,9 @@ import Server from '../../entity/server';
 import { logRedeemed } from '../../utils/logger';
 import Member from '../../entity/member';
 import { EMOJI_DONT_DO_THAT, EMOJI_PRIZE, EMOJI_ERROR, EMOJI_RECORD_NOT_FOUND } from '../../utils/emoji';
-import { CommandArguments } from '../../utils/command-arguments';
+import { CommandArguments, CommandResponse } from '../../utils/command-interfaces';
 
-export const redeemCake = async (args: CommandArguments): Promise<string> => {
+export const redeemCake = async (args: CommandArguments): Promise<CommandResponse> => {
   const server = await Server.findOne({ where: { discordId: args.message.guild.id } });
 
   if (!server) {
@@ -15,23 +15,25 @@ export const redeemCake = async (args: CommandArguments): Promise<string> => {
   }
 
   if (!args.message.guild.me.hasPermission('MANAGE_ROLES')) {
-    return `${EMOJI_ERROR} I need permission to \`manage roles\`!`;
+    return { content: `${EMOJI_ERROR} I need permission to \`manage roles\`!` };
   }
 
   if (!args.message.guild.me.hasPermission('MANAGE_MESSAGES')) {
-    return `${EMOJI_ERROR} I need permission to \`manage messages\`!`;
+    return { content: `${EMOJI_ERROR} I need permission to \`manage messages\`!` };
   }
 
   if (!args.message.guild.me.hasPermission('ADD_REACTIONS')) {
-    return `${EMOJI_ERROR} I need permission to \`add reactions\`!`;
+    return { content: `${EMOJI_ERROR} I need permission to \`add reactions\`!` };
   }
 
   if (!server.config.redeemChannelId || server.config.redeemChannelId === '') {
-    return `${EMOJI_ERROR} Server not yet set up for prizes!`;
+    return { content: `${EMOJI_ERROR} Server not yet set up for prizes!` };
   }
 
   if (await isShamed(args.message.guild.id, args.message.member.id)) {
-    return `${EMOJI_DONT_DO_THAT} You have been **shamed** and can not redeem ${server.config.cakeNamePlural}!`;
+    return {
+      content: `${EMOJI_DONT_DO_THAT} You have been **shamed** and can not redeem ${server.config.cakeNamePlural}!`,
+    };
   }
 
   const prizeList: string[] = [];
@@ -40,7 +42,7 @@ export const redeemCake = async (args: CommandArguments): Promise<string> => {
   const member = await Member.findOne({ where: { discordId: args.message.member.id } });
 
   if (server.prizes.length === 0) {
-    return `${EMOJI_RECORD_NOT_FOUND} There are no prizes.`;
+    return { content: `${EMOJI_RECORD_NOT_FOUND} There are no prizes.` };
   }
 
   server.prizes.forEach(prize => {
@@ -76,11 +78,13 @@ export const redeemCake = async (args: CommandArguments): Promise<string> => {
     return false;
   });
 
-  return [
-    `${EMOJI_PRIZE} **React to redeem!** Message will be deleted after 10 seconds.`,
-    `\`--------------------------------------------------------\`\n`,
-    `${prizeList.join('\n')}`,
-  ].join('\n');
+  return {
+    content: [
+      `${EMOJI_PRIZE} **React to redeem!** Message will be deleted after 10 seconds.`,
+      `\`--------------------------------------------------------\`\n`,
+      `${prizeList.join('\n')}`,
+    ].join('\n'),
+  };
 };
 
 export const command = 'redeem';

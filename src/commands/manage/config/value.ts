@@ -1,5 +1,5 @@
 import { Argv } from 'yargs';
-import { CommandArguments } from '../../../utils/command-arguments';
+import { CommandArguments, CommandResponse } from '../../../utils/command-interfaces';
 import { canManage } from '../../../utils/permissions';
 import { EMOJI_INCORRECT_PERMISSIONS, EMOJI_ERROR, EMOJI_CONFIG } from '../../../utils/emoji';
 import Server from '../../../entity/server';
@@ -9,9 +9,9 @@ interface Arguments extends CommandArguments {
   config: ConfigCommand;
 }
 
-export const getValue = async (args: Arguments): Promise<string> => {
+export const getValue = async (args: Arguments): Promise<CommandResponse> => {
   if (!(await canManage(args.message))) {
-    return `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`;
+    return { content: `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!` };
   }
 
   const server = await Server.findOne({ where: { discordId: args.message.guild.id } });
@@ -23,10 +23,12 @@ export const getValue = async (args: Arguments): Promise<string> => {
   const value = server.config.getValue(args.config, args.message.guild);
 
   if (value) {
-    return `${EMOJI_CONFIG} \`${args.config}\` is currently set to \`${value.value}\`, the default is \`${value.default}\`.`;
+    return {
+      content: `${EMOJI_CONFIG} \`${args.config}\` is currently set to \`${value.value}\`, the default is \`${value.default}\`.`,
+    };
   }
 
-  return `${EMOJI_ERROR} Not a valid config!`;
+  return { content: `${EMOJI_ERROR} Not a valid config!` };
 };
 
 export const command = 'value <config>';

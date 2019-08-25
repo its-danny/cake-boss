@@ -8,6 +8,7 @@ import User from '../../../entity/user';
 import { createServer, createClient, createMessage, createChannel, createPrize } from '../../../../test/test-helpers';
 import { removePrize, Arguments } from './remove';
 import { EMOJI_ERROR, EMOJI_INCORRECT_PERMISSIONS, EMOJI_JOB_WELL_DONE } from '../../../utils/emoji';
+import { CommandResponse } from '../../../utils/command-interfaces';
 
 describe('commands/manage/prize/remove', () => {
   beforeEach(async done => {
@@ -44,8 +45,8 @@ describe('commands/manage/prize/remove', () => {
       reactions: {},
     };
 
-    const response = await removePrize(args);
-    expect(response).toBe(`${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`);
+    const response = (await removePrize(args)) as CommandResponse;
+    expect(response.content).toBe(`${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`);
 
     done();
   });
@@ -64,8 +65,8 @@ describe('commands/manage/prize/remove', () => {
       reactions: {},
     };
 
-    const response = await removePrize(args);
-    expect(response).toBe(`${EMOJI_ERROR} You need to set the \`redeem-channel\` config before using prizes.`);
+    const response = (await removePrize(args)) as CommandResponse;
+    expect(response.content).toBe(`${EMOJI_ERROR} You need to set the \`redeem-channel\` config before using prizes.`);
 
     done();
   });
@@ -87,8 +88,10 @@ describe('commands/manage/prize/remove', () => {
       reactions: {},
     };
 
-    const response = await removePrize(args);
-    expect(response).toBe(`${EMOJI_ERROR} Couldn't find that prize, are you sure \`${args.id}\` is the right ID?`);
+    const response = (await removePrize(args)) as CommandResponse;
+    expect(response.content).toBe(
+      `${EMOJI_ERROR} Couldn't find that prize, are you sure \`${args.id}\` is the right ID?`,
+    );
 
     done();
   });
@@ -111,8 +114,8 @@ describe('commands/manage/prize/remove', () => {
       reactions: {},
     };
 
-    const response = await removePrize(args);
-    expect(response).toBe(`${EMOJI_JOB_WELL_DONE} Done!`);
+    const response = (await removePrize(args)) as CommandResponse;
+    expect(response.content).toBe(`${EMOJI_JOB_WELL_DONE} Done!`);
     await server.reload();
     expect(server.prizes).toHaveLength(0);
 

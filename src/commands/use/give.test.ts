@@ -14,6 +14,7 @@ import Member from '../../entity/member';
 import Server from '../../entity/server';
 import Prize from '../../entity/prize';
 import User from '../../entity/user';
+import { CommandResponse } from '../../utils/command-interfaces';
 
 describe('commands/use/give', () => {
   beforeEach(async done => {
@@ -52,8 +53,8 @@ describe('commands/use/give', () => {
       reactions: {},
     };
 
-    const response = await giveCakeToMember(args);
-    expect(response).toBe(`${EMOJI_WORKING_HARD} You can't give ${server.config.cakeNamePlural}!`);
+    const response = (await giveCakeToMember(args)) as CommandResponse;
+    expect(response.content).toBe(`${EMOJI_WORKING_HARD} You can't give ${server.config.cakeNamePlural}!`);
 
     done();
   });
@@ -74,8 +75,8 @@ describe('commands/use/give', () => {
       reactions: {},
     };
 
-    const response = await giveCakeToMember(args);
-    expect(response).toBe(
+    const response = (await giveCakeToMember(args)) as CommandResponse;
+    expect(response.content).toBe(
       `${EMOJI_DONT_DO_THAT} You have been **shamed** and can not give ${server.config.cakeNamePlural}!`,
     );
 
@@ -97,8 +98,8 @@ describe('commands/use/give', () => {
       reactions: {},
     };
 
-    const response = await giveCakeToMember(args);
-    expect(response).toBe(`${EMOJI_RECORD_NOT_FOUND} Uh oh, I couldn't find them.`);
+    const response = (await giveCakeToMember(args)) as CommandResponse;
+    expect(response.content).toBe(`${EMOJI_RECORD_NOT_FOUND} Uh oh, I couldn't find them.`);
 
     done();
   });
@@ -118,8 +119,8 @@ describe('commands/use/give', () => {
       reactions: {},
     };
 
-    const response = await giveCakeToMember(args);
-    expect(response).toBe(`${EMOJI_DONT_DO_THAT} Don't be greedy!`);
+    const response = (await giveCakeToMember(args)) as CommandResponse;
+    expect(response.content).toBe(`${EMOJI_DONT_DO_THAT} Don't be greedy!`);
 
     done();
   });
@@ -140,8 +141,8 @@ describe('commands/use/give', () => {
       reactions: {},
     };
 
-    const response = await giveCakeToMember(args);
-    expect(response).toBe(
+    const response = (await giveCakeToMember(args)) as CommandResponse;
+    expect(response.content).toBe(
       `${EMOJI_DONT_DO_THAT} They have been **shamed** and can not get ${server.config.cakeNamePlural}!`,
     );
 
@@ -164,8 +165,8 @@ describe('commands/use/give', () => {
       reactions: {},
     };
 
-    const response = await giveCakeToMember(args);
-    expect(response).toBe(`${EMOJI_INCORRECT_PERMISSIONS} You can't do that yet!`);
+    const response = (await giveCakeToMember(args)) as CommandResponse;
+    expect(response.content).toBe(`${EMOJI_INCORRECT_PERMISSIONS} You can't do that yet!`);
 
     done();
   });
@@ -186,8 +187,8 @@ describe('commands/use/give', () => {
       reactions: {},
     };
 
-    const response = await giveCakeToMember(args);
-    expect(response).toBe(`${EMOJI_CAKE} ${receiver.discordId} just got 3 cakes, <@${sender.discordId}>!`);
+    const response = (await giveCakeToMember(args)) as CommandResponse;
+    expect(response.content).toBe(`${EMOJI_CAKE} ${receiver.discordId} just got 3 cakes, <@${sender.discordId}>!`);
 
     await receiver.reload();
     expect(receiver.balance).toBe(3);

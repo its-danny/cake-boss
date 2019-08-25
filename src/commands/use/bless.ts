@@ -9,7 +9,7 @@ import {
   EMOJI_RECORD_NOT_FOUND,
   EMOJI_ERROR,
 } from '../../utils/emoji';
-import { CommandArguments } from '../../utils/command-arguments';
+import { CommandArguments, CommandResponse } from '../../utils/command-interfaces';
 
 export interface Arguments extends CommandArguments {
   member: string;
@@ -17,9 +17,9 @@ export interface Arguments extends CommandArguments {
   amount?: number;
 }
 
-export const blessMember = async (args: Arguments): Promise<string | void> => {
+export const blessMember = async (args: Arguments): Promise<CommandResponse | void> => {
   if (!(await canBless(args.message))) {
-    return `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`;
+    return { content: `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!` };
   }
 
   const server = await Server.findOne({ where: { discordId: args.message.guild.id } });
@@ -32,11 +32,13 @@ export const blessMember = async (args: Arguments): Promise<string | void> => {
   const receivingDiscordMember = args.message.guild.members.get(receivingMemberId);
 
   if (!receivingDiscordMember) {
-    return `${EMOJI_RECORD_NOT_FOUND} Uh oh, I couldn't find them.`;
+    return { content: `${EMOJI_RECORD_NOT_FOUND} Uh oh, I couldn't find them.` };
   }
 
   if (await isShamed(server.discordId, receivingDiscordMember.id)) {
-    return `${EMOJI_DONT_DO_THAT} They have been **shamed** and can not get ${server.config.cakeNamePlural}!`;
+    return {
+      content: `${EMOJI_DONT_DO_THAT} They have been **shamed** and can not get ${server.config.cakeNamePlural}!`,
+    };
   }
 
   const receivingMember = await Member.findOne({ where: { discordId: receivingDiscordMember.id } });
@@ -48,7 +50,7 @@ export const blessMember = async (args: Arguments): Promise<string | void> => {
   const amount = args.amount ? args.amount : 1;
 
   if (!Number.isInteger(amount) && amount <= 0) {
-    return `${EMOJI_ERROR} Invalid amount, sorry!`;
+    return { content: `${EMOJI_ERROR} Invalid amount, sorry!` };
   }
 
   receivingMember.earned += amount;
@@ -78,14 +80,16 @@ export const blessMember = async (args: Arguments): Promise<string | void> => {
     return undefined;
   }
 
-  return `${server.config.cakeEmoji} ${receivingDiscordMember.displayName} just got ${amount} ${
-    amount > 1 ? server.config.cakeNamePlural : server.config.cakeNameSingular
-  }, <@${args.message.member.id}>!`;
+  return {
+    content: `${server.config.cakeEmoji} ${receivingDiscordMember.displayName} just got ${amount} ${
+      amount > 1 ? server.config.cakeNamePlural : server.config.cakeNameSingular
+    }, <@${args.message.member.id}>!`,
+  };
 };
 
-export const blessRole = async (args: Arguments): Promise<string | void> => {
+export const blessRole = async (args: Arguments): Promise<CommandResponse | void> => {
   if (!(await canBless(args.message))) {
-    return `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`;
+    return { content: `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!` };
   }
 
   const server = await Server.findOne({ where: { discordId: args.message.guild.id } });
@@ -97,7 +101,7 @@ export const blessRole = async (args: Arguments): Promise<string | void> => {
   const discordRole = args.message.guild.roles.find(role => role.name === args.role);
 
   if (!discordRole) {
-    return `${EMOJI_RECORD_NOT_FOUND} Uh oh, I couldn't find that role.`;
+    return { content: `${EMOJI_RECORD_NOT_FOUND} Uh oh, I couldn't find that role.` };
   }
 
   const amount = args.amount ? args.amount : 1;
@@ -139,9 +143,11 @@ export const blessRole = async (args: Arguments): Promise<string | void> => {
     return undefined;
   }
 
-  return `${server.config.cakeEmoji} They all just got ${amount} ${
-    amount > 1 ? server.config.cakeNamePlural : server.config.cakeNameSingular
-  }, <@${args.message.member.id}>!`;
+  return {
+    content: `${server.config.cakeEmoji} They all just got ${amount} ${
+      amount > 1 ? server.config.cakeNamePlural : server.config.cakeNameSingular
+    }, <@${args.message.member.id}>!`,
+  };
 };
 
 export const command = 'bless <member|role> [amount]';

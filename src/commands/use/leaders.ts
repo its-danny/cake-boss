@@ -3,9 +3,9 @@ import Table from 'cli-table';
 import Server from '../../entity/server';
 import { EMOJI_WORKING_HARD } from '../../utils/emoji';
 import getTableBorder from '../../utils/get-table-border';
-import { CommandArguments } from '../../utils/command-arguments';
+import { CommandArguments, CommandResponse } from '../../utils/command-interfaces';
 
-export const getLeaderboard = async (args: CommandArguments): Promise<string> => {
+export const getLeaderboard = async (args: CommandArguments): Promise<CommandResponse> => {
   const server = await Server.findOne({ where: { discordId: args.message.guild.id } });
 
   if (!server) {
@@ -18,7 +18,7 @@ export const getLeaderboard = async (args: CommandArguments): Promise<string> =>
     .slice(0, 10);
 
   if (sorted.length === 0) {
-    return `${EMOJI_WORKING_HARD} There are no leaders yet!`;
+    return { content: `${EMOJI_WORKING_HARD} There are no leaders yet!` };
   }
 
   const table = new Table({
@@ -32,7 +32,7 @@ export const getLeaderboard = async (args: CommandArguments): Promise<string> =>
     table.push([`#${index + 1}`, discordMember ? discordMember.displayName : member.discordId, member.earned]);
   });
 
-  return `${server.config.cakeEmoji} **Leaders!** \n\n\`\`\`\n\n${table.toString()}\n\`\`\``;
+  return { content: `${server.config.cakeEmoji} **Leaders!** \n\n\`\`\`\n\n${table.toString()}\n\`\`\`` };
 };
 
 export const command = 'leaders';

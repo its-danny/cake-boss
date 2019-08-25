@@ -11,16 +11,16 @@ import {
   EMOJI_WORKING_HARD,
 } from '../../../utils/emoji';
 import getTableBorder from '../../../utils/get-table-border';
-import { CommandArguments } from '../../../utils/command-arguments';
+import { CommandArguments, CommandResponse } from '../../../utils/command-interfaces';
 import Member from '../../../entity/member';
 
 interface Arguments extends CommandArguments {
   page?: number;
 }
 
-export const getShamedList = async (args: Arguments): Promise<string> => {
+export const getShamedList = async (args: Arguments): Promise<CommandResponse> => {
   if (!(await canManage(args.message))) {
-    return `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`;
+    return { content: `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!` };
   }
 
   const server = await Server.findOne({ where: { discordId: args.message.guild.id } });
@@ -33,7 +33,7 @@ export const getShamedList = async (args: Arguments): Promise<string> => {
   const totalPages = Math.ceil((await Member.count({ where: { server, shamed: true } })) / perPage);
 
   if (args.page && (!Number.isInteger(args.page) || args.page > totalPages)) {
-    return `${EMOJI_ERROR} Invalid page number, sorry!`;
+    return { content: `${EMOJI_ERROR} Invalid page number, sorry!` };
   }
 
   const currentPage = args.page ? args.page : 1;
@@ -49,7 +49,7 @@ export const getShamedList = async (args: Arguments): Promise<string> => {
     .getMany();
 
   if (shamedMembers.length === 0) {
-    return `${EMOJI_WORKING_HARD} There are no shamed users!`;
+    return { content: `${EMOJI_WORKING_HARD} There are no shamed users!` };
   }
 
   const table = new Table({
@@ -70,7 +70,9 @@ export const getShamedList = async (args: Arguments): Promise<string> => {
     return false;
   });
 
-  return `${EMOJI_SHAME} **Shame List** [ Page ${currentPage} of ${totalPages} ]\n\n\`\`\`\n\n${table.toString()}\n\`\`\``;
+  return {
+    content: `${EMOJI_SHAME} **Shame List** [ Page ${currentPage} of ${totalPages} ]\n\n\`\`\`\n\n${table.toString()}\n\`\`\``,
+  };
 };
 
 export const command = 'list [page]';

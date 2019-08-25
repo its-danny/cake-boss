@@ -8,6 +8,7 @@ import User from '../../../entity/user';
 import { createServer, createClient, createMessage, createMember } from '../../../../test/test-helpers';
 import { shameMember, Arguments } from './add';
 import { EMOJI_INCORRECT_PERMISSIONS, EMOJI_JOB_WELL_DONE, EMOJI_RECORD_NOT_FOUND } from '../../../utils/emoji';
+import { CommandResponse } from '../../../utils/command-interfaces';
 
 describe('commands/manage/shamed/add', () => {
   beforeEach(async done => {
@@ -43,8 +44,8 @@ describe('commands/manage/shamed/add', () => {
       reactions: {},
     };
 
-    const response = await shameMember(args);
-    expect(response).toBe(`${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`);
+    const response = (await shameMember(args)) as CommandResponse;
+    expect(response.content).toBe(`${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`);
 
     done();
   });
@@ -62,8 +63,8 @@ describe('commands/manage/shamed/add', () => {
       reactions: {},
     };
 
-    const response = await shameMember(args);
-    expect(response).toBe(`${EMOJI_RECORD_NOT_FOUND} Uh oh, I couldn't find them.`);
+    const response = (await shameMember(args)) as CommandResponse;
+    expect(response.content).toBe(`${EMOJI_RECORD_NOT_FOUND} Uh oh, I couldn't find them.`);
 
     done();
   });
@@ -82,8 +83,8 @@ describe('commands/manage/shamed/add', () => {
       reactions: {},
     };
 
-    const response = await shameMember(args);
-    expect(response).toBe(`${EMOJI_JOB_WELL_DONE} Done!`);
+    const response = (await shameMember(args)) as CommandResponse;
+    expect(response.content).toBe(`${EMOJI_JOB_WELL_DONE} Done!`);
     await member.reload();
     expect(member.shamed).toBe(true);
 

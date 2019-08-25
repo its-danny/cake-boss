@@ -3,16 +3,16 @@ import { canManage } from '../../../utils/permissions';
 import Server from '../../../entity/server';
 import Prize from '../../../entity/prize';
 import { logEvent } from '../../../utils/logger';
-import { CommandArguments } from '../../../utils/command-arguments';
+import { CommandArguments, CommandResponse } from '../../../utils/command-interfaces';
 import { EMOJI_ERROR, EMOJI_JOB_WELL_DONE, EMOJI_INCORRECT_PERMISSIONS, EMOJI_CONFIG } from '../../../utils/emoji';
 
 export interface Arguments extends CommandArguments {
   id: number;
 }
 
-export const removePrize = async (args: Arguments): Promise<string | void> => {
+export const removePrize = async (args: Arguments): Promise<CommandResponse | void> => {
   if (!(await canManage(args.message))) {
-    return `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`;
+    return { content: `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!` };
   }
 
   const server = await Server.findOne({ where: { discordId: args.message.guild.id } });
@@ -22,13 +22,13 @@ export const removePrize = async (args: Arguments): Promise<string | void> => {
   }
 
   if (!server.config.redeemChannelId || server.config.redeemChannelId === '') {
-    return `${EMOJI_ERROR} You need to set the \`redeem-channel\` config before using prizes.`;
+    return { content: `${EMOJI_ERROR} You need to set the \`redeem-channel\` config before using prizes.` };
   }
 
   const prize = await Prize.findOne({ server, id: args.id });
 
   if (!prize) {
-    return `${EMOJI_ERROR} Couldn't find that prize, are you sure \`${args.id}\` is the right ID?`;
+    return { content: `${EMOJI_ERROR} Couldn't find that prize, are you sure \`${args.id}\` is the right ID?` };
   }
 
   await prize.remove();
@@ -44,7 +44,8 @@ export const removePrize = async (args: Arguments): Promise<string | void> => {
 
     return undefined;
   }
-  return `${EMOJI_JOB_WELL_DONE} Done!`;
+
+  return { content: `${EMOJI_JOB_WELL_DONE} Done!` };
 };
 
 export const command = 'remove <id>';

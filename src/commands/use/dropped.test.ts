@@ -8,7 +8,7 @@ import Member from '../../entity/member';
 import Server from '../../entity/server';
 import Prize from '../../entity/prize';
 import User from '../../entity/user';
-import { CommandArguments } from '../../utils/command-arguments';
+import { CommandArguments, CommandResponse } from '../../utils/command-interfaces';
 
 describe('commands/use/dropped', () => {
   beforeEach(async done => {
@@ -43,8 +43,8 @@ describe('commands/use/dropped', () => {
       reactions: {},
     };
 
-    const response = await getDropList(args);
-    expect(response).toBe(`${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`);
+    const response = (await getDropList(args)) as CommandResponse;
+    expect(response.content).toBe(`${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`);
 
     done();
   });
@@ -81,8 +81,8 @@ describe('commands/use/dropped', () => {
       reactions: {},
     };
 
-    const response = await getDropList(args);
-    expect(response).toMatchInlineSnapshot(`
+    const response = (await getDropList(args)) as CommandResponse;
+    expect(response.content).toMatchInlineSnapshot(`
       "${EMOJI_CAKE} **Dropped cakes** 
 
       \`\`\`
