@@ -38,7 +38,7 @@ export default class Config extends BaseEntity {
   @UpdateDateColumn({ nullable: true })
   updatedAt!: Date;
 
-  @Column({ nullable: false, default: '-' })
+  @Column({ nullable: false, default: 'cake' })
   commandPrefix!: string;
 
   @Column({ nullable: false, default: false })
