@@ -1,5 +1,5 @@
 import { createConnection, getConnection } from 'typeorm';
-import { getTopEarners } from './leaders';
+import { getTopGivers } from './givers';
 import { createServer, createMember, createMessage, createClient } from '../../../test/test-helpers';
 import { EMOJI_CAKE, EMOJI_WORKING_HARD } from '../../utils/emoji';
 import { CommandArguments, CommandResponse } from '../../utils/command-interfaces';
@@ -10,7 +10,7 @@ import Server from '../../entity/server';
 import Prize from '../../entity/prize';
 import User from '../../entity/user';
 
-describe('commands/use/leaders', () => {
+describe('commands/use/givers', () => {
   beforeEach(async done => {
     await createConnection({
       type: 'sqlite',
@@ -43,8 +43,8 @@ describe('commands/use/leaders', () => {
       reactions: {},
     };
 
-    const response = (await getTopEarners(args)) as CommandResponse;
-    expect(response.content).toBe(`${EMOJI_WORKING_HARD} There are no top earners yet!`);
+    const response = (await getTopGivers(args)) as CommandResponse;
+    expect(response.content).toBe(`${EMOJI_WORKING_HARD} There are no top givers yet!`);
 
     done();
   });
@@ -52,9 +52,9 @@ describe('commands/use/leaders', () => {
   it(`should let you know if you're not set up yet`, async done => {
     const server = await createServer();
 
-    const memberOne = await createMember({ server, earned: 1 });
-    const memberTwo = await createMember({ server, earned: 2 });
-    const memberThree = await createMember({ server, earned: 3 });
+    const memberOne = await createMember({ server, given: 1 });
+    const memberTwo = await createMember({ server, given: 2 });
+    const memberThree = await createMember({ server, given: 3 });
 
     const args: CommandArguments = {
       client: createClient(),
@@ -65,19 +65,19 @@ describe('commands/use/leaders', () => {
       reactions: {},
     };
 
-    const response = (await getTopEarners(args)) as CommandResponse;
+    const response = (await getTopGivers(args)) as CommandResponse;
     expect(response.content).toMatchInlineSnapshot(`
-      "${EMOJI_CAKE} **Top Earners** 
+      "${EMOJI_CAKE} **Top Givers** 
 
       \`\`\`
 
-            Member                                Earned 
-      ────────────────────────────────────────────────────
-        #1  ${memberThree.discordId}  3      
-      ────────────────────────────────────────────────────
-        #2  ${memberTwo.discordId}  2      
-      ────────────────────────────────────────────────────
-        #3  ${memberOne.discordId}  1      
+            Member                                Given 
+      ───────────────────────────────────────────────────
+        #1  ${memberThree.discordId}  3     
+      ───────────────────────────────────────────────────
+        #2  ${memberTwo.discordId}  2     
+      ───────────────────────────────────────────────────
+        #3  ${memberOne.discordId}  1     
       \`\`\`"
     `);
 

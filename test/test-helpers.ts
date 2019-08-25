@@ -45,6 +45,7 @@ export interface MemberOptions {
   discordId?: string;
   balance?: number;
   earned?: number;
+  given?: number;
   givenSinceReset?: number;
   shamed?: boolean;
 }
@@ -68,6 +69,10 @@ export const createMember = async (opts: MemberOptions): Promise<Member> => {
 
   if (opts.earned) {
     member.earned = opts.earned;
+  }
+
+  if (opts.given) {
+    member.given = opts.given;
   }
 
   if (opts.givenSinceReset) {
