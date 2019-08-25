@@ -60,7 +60,7 @@ export const dropCakes = async (args: Arguments): Promise<string | void> => {
   );
 
   discordChannel.send(
-    `${EMOJI_WORKING_HARD} ${server.config.cakeEmoji} ${amount} ${
+    `\u200B${EMOJI_WORKING_HARD} ${server.config.cakeEmoji} ${amount} ${
       amount > 1 ? server.config.cakeNamePlural : server.config.cakeNameSingular
     } just dropped! \`${server.config.commandPrefix}take\` it!\n${
       !isEmpty(server.config.dropGifs) ? sample(server.config.dropGifs) : ''

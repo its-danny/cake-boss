@@ -53,7 +53,7 @@ interface WatchedMessage {
 const messagesToWatch: WatchedMessage[] = [];
 
 const handleError = async (error: Error, message: Message) => {
-  message.channel.send(`${EMOJI_ERROR} Uh oh, something broke!`);
+  message.channel.send(`\u200B${EMOJI_ERROR} Uh oh, something broke!`);
 
   if (NODE_ENV === 'production' && !SENTRY_DISABLED) {
     Sentry.captureException(error);
@@ -135,7 +135,7 @@ client.on('message', async (message: Message) => {
         if (error) {
           if (error.name === 'YError') {
             message.channel.send(
-              `${EMOJI_WORKING_HARD} Looks like you need some help! Check the commands here: <https://dannytatom.github.io/cake-boss/>`,
+              `\u200B${EMOJI_WORKING_HARD} Looks like you need some help! Check the commands here: <https://dannytatom.github.io/cake-boss/>`,
             );
           } else {
             handleError(error, message);
@@ -149,12 +149,12 @@ client.on('message', async (message: Message) => {
         let sentMessage: Message | null = null;
 
         if (argv.needsFetch && (!server.config.quietMode || !argv.careAboutQuietMode)) {
-          sentMessage = (await message.channel.send(EMOJI_THINKING)) as Message;
+          sentMessage = (await message.channel.send(`\u200B${EMOJI_THINKING}`)) as Message;
         }
 
         if (argv.help) {
           message.channel.send(
-            `${EMOJI_WORKING_HARD} Looks like you need some help! Check the commands here: <https://dannytatom.github.io/cake-boss/>`,
+            `\u200B${EMOJI_WORKING_HARD} Looks like you need some help! Check the commands here: <https://dannytatom.github.io/cake-boss/>`,
           );
         }
 
@@ -169,7 +169,7 @@ client.on('message', async (message: Message) => {
             if (sentMessage && i === 0) {
               sentMessage.edit(out);
             } else {
-              sentMessage = (await message.channel.send(out)) as Message;
+              sentMessage = (await message.channel.send(`\u200B${out}`)) as Message;
             }
           });
 
