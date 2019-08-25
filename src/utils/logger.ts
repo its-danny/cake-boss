@@ -18,7 +18,7 @@ export const logEvent = async (client: Client, message: Message, string: string)
         eventMessage += `\n${message.url}`;
       }
 
-      channel.send(`${eventMessage}`);
+      channel.send(`\u200B${eventMessage}`);
     }
   }
 };
@@ -34,7 +34,7 @@ export const logRedeemed = async (client: Client, message: Message, string: stri
     const channel: TextChannel = client.channels.get(server.config.redeemChannelId) as TextChannel;
 
     if (channel) {
-      channel.send(`${string}`);
+      channel.send(`\u200B${string}`);
     }
   }
 };

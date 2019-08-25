@@ -59,7 +59,7 @@ export const exportData = async (args: CommandArguments): Promise<string | void>
         throw writeError;
       }
 
-      await args.message.channel.send(`${EMOJI_WORKING_HARD} Of course!`, { files: [filePath + fileName] });
+      await args.message.channel.send(`\u200B${EMOJI_WORKING_HARD} Of course!`, { files: [filePath + fileName] });
 
       fs.unlink(filePath + fileName, unlinkError => {
         if (unlinkError) {
