@@ -12,16 +12,16 @@ import {
   EMOJI_WORKING_HARD,
   EMOJI_ERROR,
 } from '../../utils/emoji';
-import { CommandArguments } from '../../utils/command-arguments';
+import { CommandArguments, CommandResponse } from '../../utils/command-interfaces';
 
 export interface Arguments extends CommandArguments {
   channel: string;
   amount?: number;
 }
 
-export const dropCakes = async (args: Arguments): Promise<string | void> => {
+export const dropCakes = async (args: Arguments): Promise<CommandResponse | void> => {
   if (!(await canDrop(args.message))) {
-    return `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`;
+    return { content: `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!` };
   }
 
   const server = await Server.findOne({ where: { discordId: args.message.guild.id } });
@@ -34,13 +34,13 @@ export const dropCakes = async (args: Arguments): Promise<string | void> => {
   const discordChannel = args.message.guild.channels.get(channelId) as TextChannel;
 
   if (!discordChannel) {
-    return `${EMOJI_RECORD_NOT_FOUND} Uh oh, I couldn't find that channel.`;
+    return { content: `${EMOJI_RECORD_NOT_FOUND} Uh oh, I couldn't find that channel.` };
   }
 
   const amount = args.amount ? args.amount : 1;
 
   if (!Number.isInteger(amount) && amount <= 0) {
-    return `${EMOJI_ERROR} Invalid amount, sorry!`;
+    return { content: `${EMOJI_ERROR} Invalid amount, sorry!` };
   }
 
   const drop = new Drop();
@@ -72,7 +72,8 @@ export const dropCakes = async (args: Arguments): Promise<string | void> => {
 
     return undefined;
   }
-  return `${EMOJI_JOB_WELL_DONE} Done!`;
+
+  return { content: `${EMOJI_JOB_WELL_DONE} Done!` };
 };
 
 export const command = 'drop <channel> [amount]';

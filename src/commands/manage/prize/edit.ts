@@ -4,7 +4,7 @@ import Server from '../../../entity/server';
 import Prize from '../../../entity/prize';
 import { logEvent } from '../../../utils/logger';
 import { EMOJI_ERROR, EMOJI_JOB_WELL_DONE, EMOJI_INCORRECT_PERMISSIONS, EMOJI_CONFIG } from '../../../utils/emoji';
-import { CommandArguments } from '../../../utils/command-arguments';
+import { CommandArguments, CommandResponse } from '../../../utils/command-interfaces';
 
 export interface Arguments extends CommandArguments {
   id: number;
@@ -14,9 +14,9 @@ export interface Arguments extends CommandArguments {
   roles?: string;
 }
 
-export const editPrize = async (args: Arguments): Promise<string | void> => {
+export const editPrize = async (args: Arguments): Promise<CommandResponse | void> => {
   if (!(await canManage(args.message))) {
-    return `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`;
+    return { content: `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!` };
   }
 
   const server = await Server.findOne({ where: { discordId: args.message.guild.id } });
@@ -26,25 +26,25 @@ export const editPrize = async (args: Arguments): Promise<string | void> => {
   }
 
   if (!server.config.redeemChannelId || server.config.redeemChannelId === '') {
-    return `${EMOJI_ERROR} You need to set the \`redeem-channel\` config before using prizes.`;
+    return { content: `${EMOJI_ERROR} You need to set the \`redeem-channel\` config before using prizes.` };
   }
 
   if (args.description.trim() === '') {
-    return `${EMOJI_ERROR} Description required!`;
+    return { content: `${EMOJI_ERROR} Description required!` };
   }
 
   if (args.reactionEmoji.trim() === '') {
-    return `${EMOJI_ERROR} Reaction emoji required!`;
+    return { content: `${EMOJI_ERROR} Reaction emoji required!` };
   }
 
   if (args.price <= 0) {
-    return `${EMOJI_ERROR} Price must be 1 or more!`;
+    return { content: `${EMOJI_ERROR} Price must be 1 or more!` };
   }
 
   const prize = await Prize.findOne({ server, id: args.id });
 
   if (!prize) {
-    return `${EMOJI_ERROR} Couldn't find that prize, are you sure \`${args.id}\` is the right ID?`;
+    return { content: `${EMOJI_ERROR} Couldn't find that prize, are you sure \`${args.id}\` is the right ID?` };
   }
 
   prize.description = args.description;
@@ -82,7 +82,8 @@ export const editPrize = async (args: Arguments): Promise<string | void> => {
 
     return undefined;
   }
-  return `${EMOJI_JOB_WELL_DONE} Done!`;
+
+  return { content: `${EMOJI_JOB_WELL_DONE} Done!` };
 };
 
 export const command = 'edit <id> <description> <reactionEmoji> <price> [roles]';

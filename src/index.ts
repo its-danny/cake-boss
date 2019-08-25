@@ -6,6 +6,7 @@ import yargs from 'yargs';
 import { createConnection } from 'typeorm';
 import moment from 'moment';
 import fs from 'fs';
+import fsExtra from 'fs-extra';
 import schedule from 'node-schedule';
 import Koa from 'koa';
 import Router from 'koa-router';
@@ -14,7 +15,7 @@ import cors from '@koa/cors';
 import Member from './entity/member';
 import Server from './entity/server';
 import User from './entity/user';
-import { CommandArguments } from './utils/command-arguments';
+import { CommandArguments, CommandResponse } from './utils/command-interfaces';
 import { EMOJI_JOB_WELL_DONE, EMOJI_WORKING_HARD, EMOJI_THINKING, EMOJI_CAKE, EMOJI_ERROR } from './utils/emoji';
 
 dotenv.config({ path: `./.env` });
@@ -86,7 +87,7 @@ client.on('guildDelete', async (guild: Guild) => {
 
   if (server) {
     server.active = false;
-    server.save();
+    await server.save();
   }
 });
 
@@ -139,7 +140,7 @@ client.on('message', async (message: Message) => {
 
       if (message.isMemberMentioned(client.user)) {
         const mentionRegex = new RegExp(`<@!?${message.mentions.members.get(client.user.id)!.id}>`);
-        command = command.replace(mentionRegex, '')
+        command = command.replace(mentionRegex, '');
       }
 
       commandParser.parse(command, context, async (error, argv) => {
@@ -170,19 +171,19 @@ client.on('message', async (message: Message) => {
         }
 
         if (argv.promisedOutput) {
-          let commandOutput: string[] | string = (await argv.promisedOutput) as string[] | string;
+          const commandResponse: CommandResponse = (await argv.promisedOutput) as CommandResponse;
 
-          if (!Array.isArray(commandOutput)) {
-            commandOutput = [commandOutput];
+          if (sentMessage) {
+            await sentMessage.edit(
+              `\u200B${commandResponse.content}`,
+              commandResponse.messageOptions || commandResponse.richEmbed,
+            );
+          } else {
+            sentMessage = (await message.channel.send(
+              `\u200B${commandResponse.content}`,
+              commandResponse.messageOptions || commandResponse.richEmbed || commandResponse.attachment,
+            )) as Message;
           }
-
-          commandOutput.forEach(async (out, i) => {
-            if (sentMessage && i === 0) {
-              sentMessage.edit(out);
-            } else {
-              sentMessage = (await message.channel.send(`\u200B${out}`)) as Message;
-            }
-          });
 
           const reactions = argv.reactions as { [key: string]: () => void } | null;
 
@@ -258,7 +259,7 @@ createConnection()
       api.listen(API_PORT, () => console.log('🚀 API online!'));
     }
 
-    fs.writeFileSync('./.uptime', moment().utc(), 'utf8');
+    fs.writeFileSync(`${process.cwd()}/.uptime`, moment().utc(), 'utf8');
 
     schedule.scheduleJob('0 * * * *', async () => {
       const servers = await Server.find({ where: { active: true } });
@@ -280,6 +281,10 @@ createConnection()
           await server.save();
         }
       });
+    });
+
+    schedule.scheduleJob('*/10 * * * *', async () => {
+      await fsExtra.emptyDir(`${process.cwd()}/tmp/`);
     });
   })
   .catch(error => {

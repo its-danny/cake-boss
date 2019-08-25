@@ -10,14 +10,14 @@ import {
   EMOJI_WORKING_HARD,
   EMOJI_ERROR,
 } from '../../utils/emoji';
-import { CommandArguments } from '../../utils/command-arguments';
+import { CommandArguments, CommandResponse } from '../../utils/command-interfaces';
 
 export interface Arguments extends CommandArguments {
   member: string;
   amount?: number;
 }
 
-export const giveCakeToMember = async (args: Arguments): Promise<string | void> => {
+export const giveCakeToMember = async (args: Arguments): Promise<CommandResponse | void> => {
   const server = await Server.findOne({ where: { discordId: args.message.guild.id } });
 
   if (!server) {
@@ -25,26 +25,30 @@ export const giveCakeToMember = async (args: Arguments): Promise<string | void> 
   }
 
   if (server.config.noGiving) {
-    return `${EMOJI_WORKING_HARD} You can't give ${server.config.cakeNamePlural}!`;
+    return { content: `${EMOJI_WORKING_HARD} You can't give ${server.config.cakeNamePlural}!` };
   }
 
   if (await isShamed(args.message.guild.id, args.message.member.id)) {
-    return `${EMOJI_DONT_DO_THAT} You have been **shamed** and can not give ${server.config.cakeNamePlural}!`;
+    return {
+      content: `${EMOJI_DONT_DO_THAT} You have been **shamed** and can not give ${server.config.cakeNamePlural}!`,
+    };
   }
 
   const receivingMemberId = args.member.replace(/^<@!?/, '').replace(/>$/, '');
   const receivingDiscordMember = args.message.guild.members.get(receivingMemberId);
 
   if (!receivingDiscordMember) {
-    return `${EMOJI_RECORD_NOT_FOUND} Uh oh, I couldn't find them.`;
+    return { content: `${EMOJI_RECORD_NOT_FOUND} Uh oh, I couldn't find them.` };
   }
 
   if (receivingDiscordMember.id === args.message.member.id) {
-    return `${EMOJI_DONT_DO_THAT} Don't be greedy!`;
+    return { content: `${EMOJI_DONT_DO_THAT} Don't be greedy!` };
   }
 
   if (await isShamed(server.discordId, receivingDiscordMember.id)) {
-    return `${EMOJI_DONT_DO_THAT} They have been **shamed** and can not get ${server.config.cakeNamePlural}!`;
+    return {
+      content: `${EMOJI_DONT_DO_THAT} They have been **shamed** and can not get ${server.config.cakeNamePlural}!`,
+    };
   }
 
   const receivingMember = await Member.findOne({ where: { discordId: receivingDiscordMember.id } });
@@ -60,13 +64,13 @@ export const giveCakeToMember = async (args: Arguments): Promise<string | void> 
   }
 
   if (!(await canGive(args.message))) {
-    return `${EMOJI_INCORRECT_PERMISSIONS} You can't do that yet!`;
+    return { content: `${EMOJI_INCORRECT_PERMISSIONS} You can't do that yet!` };
   }
 
   let amount = args.amount ? args.amount : 1;
 
   if (!Number.isInteger(amount) && amount <= 0) {
-    return `${EMOJI_ERROR} Invalid amount, sorry!`;
+    return { content: `${EMOJI_ERROR} Invalid amount, sorry!` };
   }
 
   if (amount > server.config.giveLimit) {
@@ -109,9 +113,11 @@ export const giveCakeToMember = async (args: Arguments): Promise<string | void> 
     return undefined;
   }
 
-  return `${server.config.cakeEmoji} ${receivingDiscordMember.displayName} just got ${amount} ${
-    amount > 1 ? server.config.cakeNamePlural : server.config.cakeNameSingular
-  }, <@${args.message.member.id}>!`;
+  return {
+    content: `${server.config.cakeEmoji} ${receivingDiscordMember.displayName} just got ${amount} ${
+      amount > 1 ? server.config.cakeNamePlural : server.config.cakeNameSingular
+    }, <@${args.message.member.id}>!`,
+  };
 };
 
 export const command = 'give <member> [amount]';

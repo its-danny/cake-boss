@@ -8,6 +8,7 @@ import Member from '../../entity/member';
 import Server from '../../entity/server';
 import Prize from '../../entity/prize';
 import User from '../../entity/user';
+import { CommandResponse } from '../../utils/command-interfaces';
 
 describe('commands/use/bless', () => {
   beforeEach(async done => {
@@ -45,8 +46,8 @@ describe('commands/use/bless', () => {
       reactions: {},
     };
 
-    const response = await blessMember(args);
-    expect(response).toBe(`${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`);
+    const response = (await blessMember(args)) as CommandResponse;
+    expect(response.content).toBe(`${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`);
 
     done();
   });
@@ -66,8 +67,8 @@ describe('commands/use/bless', () => {
       reactions: {},
     };
 
-    const response = await blessMember(args);
-    expect(response).toBe(`${EMOJI_RECORD_NOT_FOUND} Uh oh, I couldn't find them.`);
+    const response = (await blessMember(args)) as CommandResponse;
+    expect(response.content).toBe(`${EMOJI_RECORD_NOT_FOUND} Uh oh, I couldn't find them.`);
 
     done();
   });
@@ -94,8 +95,8 @@ describe('commands/use/bless', () => {
       reactions: {},
     };
 
-    const response = await blessMember(args);
-    expect(response).toBe(`${EMOJI_CAKE} ${receiver.discordId} just got 3 cakes, <@${sender.discordId}>!`);
+    const response = (await blessMember(args)) as CommandResponse;
+    expect(response.content).toBe(`${EMOJI_CAKE} ${receiver.discordId} just got 3 cakes, <@${sender.discordId}>!`);
 
     await receiver.reload();
     expect(receiver.balance).toBe(3);

@@ -8,6 +8,7 @@ import Member from '../../entity/member';
 import Server from '../../entity/server';
 import Prize from '../../entity/prize';
 import User from '../../entity/user';
+import { CommandResponse } from '../../utils/command-interfaces';
 
 describe('commands/use/drop', () => {
   beforeEach(async done => {
@@ -44,8 +45,8 @@ describe('commands/use/drop', () => {
       reactions: {},
     };
 
-    const response = await dropCakes(args);
-    expect(response).toBe(`${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`);
+    const response = (await dropCakes(args)) as CommandResponse;
+    expect(response.content).toBe(`${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`);
 
     done();
   });
@@ -65,8 +66,8 @@ describe('commands/use/drop', () => {
       reactions: {},
     };
 
-    const response = await dropCakes(args);
-    expect(response).toBe(`${EMOJI_JOB_WELL_DONE} Done!`);
+    const response = (await dropCakes(args)) as CommandResponse;
+    expect(response.content).toBe(`${EMOJI_JOB_WELL_DONE} Done!`);
 
     const drop = await Drop.findOne({ where: { server, channelDiscordId: channel.id } });
     expect(drop).toBeDefined();

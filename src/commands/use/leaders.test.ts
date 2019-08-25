@@ -2,7 +2,7 @@ import { createConnection, getConnection } from 'typeorm';
 import { getLeaderboard } from './leaders';
 import { createServer, createMember, createMessage, createClient } from '../../../test/test-helpers';
 import { EMOJI_CAKE, EMOJI_WORKING_HARD } from '../../utils/emoji';
-import { CommandArguments } from '../../utils/command-arguments';
+import { CommandArguments, CommandResponse } from '../../utils/command-interfaces';
 import Config from '../../entity/config';
 import Drop from '../../entity/drop';
 import Member from '../../entity/member';
@@ -43,8 +43,8 @@ describe('commands/use/leaders', () => {
       reactions: {},
     };
 
-    const response = await getLeaderboard(args);
-    expect(response).toBe(`${EMOJI_WORKING_HARD} There are no leaders yet!`);
+    const response = (await getLeaderboard(args)) as CommandResponse;
+    expect(response.content).toBe(`${EMOJI_WORKING_HARD} There are no leaders yet!`);
 
     done();
   });
@@ -65,8 +65,8 @@ describe('commands/use/leaders', () => {
       reactions: {},
     };
 
-    const response = await getLeaderboard(args);
-    expect(response).toMatchInlineSnapshot(`
+    const response = (await getLeaderboard(args)) as CommandResponse;
+    expect(response.content).toMatchInlineSnapshot(`
       "${EMOJI_CAKE} **Leaders!** 
 
       \`\`\`

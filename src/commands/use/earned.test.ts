@@ -2,7 +2,7 @@ import { createConnection, getConnection } from 'typeorm';
 import { getEarned } from './earned';
 import { createServer, createMember, createMessage, createClient } from '../../../test/test-helpers';
 import { EMOJI_CAKE } from '../../utils/emoji';
-import { CommandArguments } from '../../utils/command-arguments';
+import { CommandArguments } from '../../utils/command-interfaces';
 import Config from '../../entity/config';
 import Drop from '../../entity/drop';
 import Member from '../../entity/member';
@@ -45,7 +45,7 @@ describe('commands/use/earned', () => {
     };
 
     const response = await getEarned(args);
-    expect(response).toBe(`${EMOJI_CAKE} You've earned a total of 5 cakes!`);
+    expect(response.content).toBe(`${EMOJI_CAKE} You've earned a total of 5 cakes!`);
 
     done();
   });

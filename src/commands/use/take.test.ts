@@ -8,7 +8,7 @@ import Member from '../../entity/member';
 import Server from '../../entity/server';
 import Prize from '../../entity/prize';
 import User from '../../entity/user';
-import { CommandArguments } from '../../utils/command-arguments';
+import { CommandArguments, CommandResponse } from '../../utils/command-interfaces';
 
 describe('commands/use/take', () => {
   beforeEach(async done => {
@@ -45,8 +45,8 @@ describe('commands/use/take', () => {
       reactions: {},
     };
 
-    const response = await takeCake(args);
-    expect(response).toBe(
+    const response = (await takeCake(args)) as CommandResponse;
+    expect(response.content).toBe(
       `${EMOJI_DONT_DO_THAT} You have been **shamed** and can not get ${server.config.cakeNamePlural}!`,
     );
 
@@ -66,8 +66,8 @@ describe('commands/use/take', () => {
       reactions: {},
     };
 
-    const response = await takeCake(args);
-    expect(response).toBe(`${EMOJI_RECORD_NOT_FOUND} There are no drops here!\n`);
+    const response = (await takeCake(args)) as CommandResponse;
+    expect(response.content).toBe(`${EMOJI_RECORD_NOT_FOUND} There are no drops here!\n`);
 
     done();
   });
@@ -92,8 +92,10 @@ describe('commands/use/take', () => {
       reactions: {},
     };
 
-    const response = await takeCake(args);
-    expect(response).toBe(`${EMOJI_JOB_WELL_DONE} ${server.config.cakeEmoji} You got it, <@${member.discordId}>!`);
+    const response = (await takeCake(args)) as CommandResponse;
+    expect(response.content).toBe(
+      `${EMOJI_JOB_WELL_DONE} ${server.config.cakeEmoji} You got it, <@${member.discordId}>!`,
+    );
 
     await drop.reload();
     expect(drop.amount).toBe(1);

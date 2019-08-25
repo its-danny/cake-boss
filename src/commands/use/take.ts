@@ -7,9 +7,9 @@ import { logEvent } from '../../utils/logger';
 import Member from '../../entity/member';
 import { isShamed } from '../../utils/permissions';
 import { EMOJI_DONT_DO_THAT, EMOJI_RECORD_NOT_FOUND, EMOJI_JOB_WELL_DONE } from '../../utils/emoji';
-import { CommandArguments } from '../../utils/command-arguments';
+import { CommandArguments, CommandResponse } from '../../utils/command-interfaces';
 
-export const takeCake = async (args: CommandArguments): Promise<string | void> => {
+export const takeCake = async (args: CommandArguments): Promise<CommandResponse | void> => {
   const server = await Server.findOne({ where: { discordId: args.message.guild.id } });
 
   if (!server) {
@@ -17,15 +17,19 @@ export const takeCake = async (args: CommandArguments): Promise<string | void> =
   }
 
   if (await isShamed(server.discordId, args.message.member.id)) {
-    return `${EMOJI_DONT_DO_THAT} You have been **shamed** and can not get ${server.config.cakeNamePlural}!`;
+    return {
+      content: `${EMOJI_DONT_DO_THAT} You have been **shamed** and can not get ${server.config.cakeNamePlural}!`,
+    };
   }
 
   const drop = await Drop.findOne({ where: { server, channelDiscordId: args.message.channel.id } });
 
   if (!drop) {
-    return `${EMOJI_RECORD_NOT_FOUND} There are no drops here!\n${
-      !isEmpty(server.config.noDropGifs) ? sample(server.config.noDropGifs) : ''
-    }`;
+    return {
+      content: `${EMOJI_RECORD_NOT_FOUND} There are no drops here!\n${
+        !isEmpty(server.config.noDropGifs) ? sample(server.config.noDropGifs) : ''
+      }`,
+    };
   }
 
   drop.amount -= 1;
@@ -68,7 +72,7 @@ export const takeCake = async (args: CommandArguments): Promise<string | void> =
 
     return undefined;
   }
-  return `${EMOJI_JOB_WELL_DONE} ${server.config.cakeEmoji} You got it, <@${args.message.member.id}>!`;
+  return { content: `${EMOJI_JOB_WELL_DONE} ${server.config.cakeEmoji} You got it, <@${args.message.member.id}>!` };
 };
 
 export const command = 'take';

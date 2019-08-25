@@ -3,12 +3,12 @@ import Table from 'cli-table';
 import { canDrop } from '../../utils/permissions';
 import Server from '../../entity/server';
 import { EMOJI_INCORRECT_PERMISSIONS, EMOJI_WORKING_HARD } from '../../utils/emoji';
-import { CommandArguments } from '../../utils/command-arguments';
+import { CommandArguments, CommandResponse } from '../../utils/command-interfaces';
 import getTableBorder from '../../utils/get-table-border';
 
-export const getDropList = async (args: CommandArguments): Promise<string> => {
+export const getDropList = async (args: CommandArguments): Promise<CommandResponse> => {
   if (!(await canDrop(args.message))) {
-    return `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`;
+    return { content: `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!` };
   }
 
   const server = await Server.findOne({ where: { discordId: args.message.guild.id } });
@@ -18,7 +18,7 @@ export const getDropList = async (args: CommandArguments): Promise<string> => {
   }
 
   if (server.drops.length === 0) {
-    return `${EMOJI_WORKING_HARD} There are no drops yet!`;
+    return { content: `${EMOJI_WORKING_HARD} There are no drops yet!` };
   }
 
   const table = new Table({
@@ -45,9 +45,11 @@ export const getDropList = async (args: CommandArguments): Promise<string> => {
     .sort((a, b) => dropped[b] - dropped[a])
     .forEach(channel => table.push([`#${channel}`, dropped[channel]]));
 
-  return `${server.config.cakeEmoji} **Dropped ${
-    server.config.cakeNamePlural
-  }** \n\n\`\`\`\n\n${table.toString()}\n\`\`\``;
+  return {
+    content: `${server.config.cakeEmoji} **Dropped ${
+      server.config.cakeNamePlural
+    }** \n\n\`\`\`\n\n${table.toString()}\n\`\`\``,
+  };
 };
 
 export const command = 'dropped';

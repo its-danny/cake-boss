@@ -8,6 +8,7 @@ import User from '../../../entity/user';
 import { createServer, createClient, createMessage, createChannel, createPrize } from '../../../../test/test-helpers';
 import { editPrize, Arguments } from './edit';
 import { EMOJI_ERROR, EMOJI_INCORRECT_PERMISSIONS, EMOJI_JOB_WELL_DONE } from '../../../utils/emoji';
+import { CommandResponse } from '../../../utils/command-interfaces';
 
 describe('commands/manage/prize/edit', () => {
   beforeEach(async done => {
@@ -47,8 +48,8 @@ describe('commands/manage/prize/edit', () => {
       reactions: {},
     };
 
-    const response = await editPrize(args);
-    expect(response).toBe(`${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`);
+    const response = (await editPrize(args)) as CommandResponse;
+    expect(response.content).toBe(`${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`);
 
     done();
   });
@@ -70,8 +71,8 @@ describe('commands/manage/prize/edit', () => {
       reactions: {},
     };
 
-    const response = await editPrize(args);
-    expect(response).toBe(`${EMOJI_ERROR} You need to set the \`redeem-channel\` config before using prizes.`);
+    const response = (await editPrize(args)) as CommandResponse;
+    expect(response.content).toBe(`${EMOJI_ERROR} You need to set the \`redeem-channel\` config before using prizes.`);
 
     done();
   });
@@ -97,8 +98,8 @@ describe('commands/manage/prize/edit', () => {
       reactions: {},
     };
 
-    const response = await editPrize(args);
-    expect(response).toBe(`${EMOJI_ERROR} Description required!`);
+    const response = (await editPrize(args)) as CommandResponse;
+    expect(response.content).toBe(`${EMOJI_ERROR} Description required!`);
 
     done();
   });
@@ -124,8 +125,8 @@ describe('commands/manage/prize/edit', () => {
       reactions: {},
     };
 
-    const response = await editPrize(args);
-    expect(response).toBe(`${EMOJI_ERROR} Reaction emoji required!`);
+    const response = (await editPrize(args)) as CommandResponse;
+    expect(response.content).toBe(`${EMOJI_ERROR} Reaction emoji required!`);
 
     done();
   });
@@ -151,8 +152,8 @@ describe('commands/manage/prize/edit', () => {
       reactions: {},
     };
 
-    const response = await editPrize(args);
-    expect(response).toBe(`${EMOJI_ERROR} Price must be 1 or more!`);
+    const response = (await editPrize(args)) as CommandResponse;
+    expect(response.content).toBe(`${EMOJI_ERROR} Price must be 1 or more!`);
 
     done();
   });
@@ -177,8 +178,10 @@ describe('commands/manage/prize/edit', () => {
       reactions: {},
     };
 
-    const response = await editPrize(args);
-    expect(response).toBe(`${EMOJI_ERROR} Couldn't find that prize, are you sure \`${args.id}\` is the right ID?`);
+    const response = (await editPrize(args)) as CommandResponse;
+    expect(response.content).toBe(
+      `${EMOJI_ERROR} Couldn't find that prize, are you sure \`${args.id}\` is the right ID?`,
+    );
 
     done();
   });
@@ -204,8 +207,8 @@ describe('commands/manage/prize/edit', () => {
       reactions: {},
     };
 
-    const response = await editPrize(args);
-    expect(response).toBe(`${EMOJI_JOB_WELL_DONE} Done!`);
+    const response = (await editPrize(args)) as CommandResponse;
+    expect(response.content).toBe(`${EMOJI_JOB_WELL_DONE} Done!`);
     await server.reload();
     expect(server.prizes).toHaveLength(1);
 

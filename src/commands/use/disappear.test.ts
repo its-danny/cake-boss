@@ -8,6 +8,7 @@ import Member from '../../entity/member';
 import Server from '../../entity/server';
 import Prize from '../../entity/prize';
 import User from '../../entity/user';
+import { CommandResponse } from '../../utils/command-interfaces';
 
 describe('commands/use/disappear', () => {
   beforeEach(async done => {
@@ -44,8 +45,8 @@ describe('commands/use/disappear', () => {
       reactions: {},
     };
 
-    const response = await disappearCakes(args);
-    expect(response).toBe(`${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`);
+    const response = (await disappearCakes(args)) as CommandResponse;
+    expect(response.content).toBe(`${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`);
 
     done();
   });
@@ -64,8 +65,8 @@ describe('commands/use/disappear', () => {
       reactions: {},
     };
 
-    const response = await disappearCakes(args);
-    expect(response).toBe(`${EMOJI_RECORD_NOT_FOUND} Uh oh, I couldn't find them.`);
+    const response = (await disappearCakes(args)) as CommandResponse;
+    expect(response.content).toBe(`${EMOJI_RECORD_NOT_FOUND} Uh oh, I couldn't find them.`);
 
     done();
   });
@@ -85,8 +86,8 @@ describe('commands/use/disappear', () => {
       reactions: {},
     };
 
-    const response = await disappearCakes(args);
-    expect(response).toBe(`${EMOJI_JOB_WELL_DONE} Done!`);
+    const response = (await disappearCakes(args)) as CommandResponse;
+    expect(response.content).toBe(`${EMOJI_JOB_WELL_DONE} Done!`);
 
     await member.reload();
     expect(member.balance).toBe(4);
