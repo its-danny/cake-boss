@@ -15,7 +15,8 @@ export const getTopGivers = async (args: CommandArguments): Promise<CommandRespo
   const sorted = server.members
     .concat()
     .sort((a, b) => b.given - a.given)
-    .slice(0, 10);
+    .slice(0, 10)
+    .filter(mem => mem.given > 0);
 
   if (sorted.length === 0) {
     return { content: `${EMOJI_WORKING_HARD} There are no top givers yet!` };

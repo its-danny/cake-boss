@@ -15,7 +15,8 @@ export const getTopEarners = async (args: CommandArguments): Promise<CommandResp
   const sorted = server.members
     .concat()
     .sort((a, b) => b.earned - a.earned)
-    .slice(0, 10);
+    .slice(0, 10)
+    .filter(mem => mem.earned > 0);
 
   if (sorted.length === 0) {
     return { content: `${EMOJI_WORKING_HARD} There are no top earners yet!` };
