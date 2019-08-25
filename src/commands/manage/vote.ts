@@ -1,8 +1,8 @@
 import { Argv } from 'yargs';
 import { CommandArguments } from '../../utils/command-interfaces';
 
-export const command = 'info';
-export const describe = `What is Cake Boss?`;
+export const command = 'vote';
+export const describe = `Vote for Cake Boss!`;
 
 export const builder = (yargs: Argv) => yargs;
 
@@ -10,11 +10,10 @@ export const handler = (args: CommandArguments) => {
   args.promisedOutput = new Promise(resolve =>
     resolve({
       content: `
-        Cake Boss is a discord bot that lets users reward each other cakes for being helpful, and redeem those cakes for prizes.
+        Vote for Cake Boss if you're diggin' it!
 
-        GitHub: <https://github.com/dannytatom/cake-boss>
-        Docs: <https://dannytatom.github.io/cake-boss/>
-        Support: <https://discord.gg/2AG9fKt>
+        Discord Bots: <https://discordbots.org/bot/611013950942871562>
+        Bots on Discrd: <https://bots.ondiscord.xyz/bots/611013950942871562>
       `
         .split('\n')
         .map(l => l.trim())
