@@ -111,7 +111,11 @@ client.on('message', async (message: Message) => {
 
   const { commandPrefix } = server.config;
 
-  if (message.author.id !== client.user.id && !message.author.bot && cleanContent.startsWith(`${commandPrefix}`)) {
+  if (
+    message.author.id !== client.user.id &&
+    !message.author.bot &&
+    (cleanContent.startsWith(`${commandPrefix}`) || message.isMemberMentioned(client.user))
+  ) {
     try {
       await Member.findOrCreate(server.discordId, message.author.id, message.member.id);
 
@@ -131,7 +135,10 @@ client.on('message', async (message: Message) => {
         reactions: null,
       };
 
-      commandParser.parse(cleanContent.replace(`${commandPrefix}`, ''), context, async (error, argv) => {
+      const mentionRegex = new RegExp(`<@!?${message.mentions.members.get(client.user.id)!.id}>`);
+      const command = cleanContent.replace(commandPrefix, '').replace(mentionRegex, '');
+
+      commandParser.parse(command, context, async (error, argv) => {
         if (error) {
           if (error.name === 'YError') {
             message.channel.send(
