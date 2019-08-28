@@ -277,9 +277,9 @@ createConnection()
             member.givenSinceReset = 0;
             await member.save();
           });
-
-          await server.save();
         }
+
+        await server.save();
       });
     });
 
