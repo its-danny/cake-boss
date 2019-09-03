@@ -138,7 +138,7 @@ client.on('message', async (message: Message) => {
 
       let command = cleanContent.replace(commandPrefix, '');
 
-      if (message.isMemberMentioned(client.user)) {
+      if (message.isMemberMentioned(client.user) && message.mentions.members.get(client.user.id)) {
         const mentionRegex = new RegExp(`<@!?${message.mentions.members.get(client.user.id)!.id}>`);
         command = command.replace(mentionRegex, '');
       }
