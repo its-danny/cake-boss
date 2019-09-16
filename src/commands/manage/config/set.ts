@@ -118,6 +118,22 @@ export const setConfig = async (args: Arguments): Promise<CommandResponse | void
     }
   }
 
+  if (args.config === 'redeem-timer') {
+    if (server.config.setRedeemTimer(args.value)) {
+      await server.config.save();
+
+      await logEvent(
+        args.client,
+        args.message,
+        `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`,
+      );
+
+      configSet = true;
+    } else {
+      return { content: `${EMOJI_ERROR} ${ERROR_MESSAGE}` };
+    }
+  }
+
   if (args.config === 'manager-roles') {
     if (server.config.setRoles(args.value, args.config, args.message.guild)) {
       await server.config.save();

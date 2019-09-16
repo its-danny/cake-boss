@@ -80,6 +80,14 @@ describe('entities/config', () => {
     expect(config.logWithLink).toBe(false);
   });
 
+  test('#setRedeemTimer', () => {
+    const config = new Config();
+
+    expect(config.setRedeemTimer('words')).toBe(false);
+    expect(config.setRedeemTimer('20')).toBe(true);
+    expect(config.setRedeemTimer('-3')).toBe(false);
+  });
+
   test('#setRedeemChannel', async done => {
     const server = await createServer();
     const channel = createChannel('games');

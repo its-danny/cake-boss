@@ -10,6 +10,7 @@ export type ConfigCommand =
   | 'log-channel'
   | 'log-with-link'
   | 'redeem-channel'
+  | 'redeem-timer'
   | 'manager-roles'
   | 'blesser-roles'
   | 'dropper-roles'
@@ -52,6 +53,9 @@ export default class Config extends BaseEntity {
 
   @Column({ nullable: true, type: String })
   redeemChannelId!: string | null;
+
+  @Column({ nullable: false, default: 10 })
+  redeemTimer!: number;
 
   @Column('simple-array', { nullable: false, default: '' })
   managerRoleIds!: string[];
@@ -156,6 +160,18 @@ export default class Config extends BaseEntity {
     }
 
     this.redeemChannelId = channelId;
+
+    return true;
+  }
+
+  setRedeemTimer(seconds: string) {
+    const number = parseInt(seconds, 10);
+
+    if (!Number.isInteger(number) || number < 0) {
+      return false;
+    }
+
+    this.redeemTimer = number;
 
     return true;
   }

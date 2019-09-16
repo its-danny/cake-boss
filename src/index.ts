@@ -203,7 +203,7 @@ client.on('message', async (message: Message) => {
             const toWatch = { message: sentMessage, reactions, userId: message.author.id };
             messagesToWatch.push(toWatch);
             const toWatchIndex = messagesToWatch.indexOf(toWatch);
-            sentMessage.delete(1000 * 10).then(() => messagesToWatch.splice(toWatchIndex, 1));
+            sentMessage.delete(1000 * server.config.redeemTimer).then(() => messagesToWatch.splice(toWatchIndex, 1));
           }
         }
       });
