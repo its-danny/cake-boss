@@ -44,3 +44,7 @@ I'm too lazy to dive into this, but if you've used Node & PostgreSQL then it sho
 ## Contributing
 
 Contributions are welcome. Check the [guidelines](https://github.com/dannytatom/cake-boss/blob/master/CONTRIBUTING.md) and get at it!
+
+---
+
+If you dig the bot, feel free to upvote it on [Discord Bots](https://discordbots.org/bot/611013950942871562) or [Bots on Discord](https://bots.ondiscord.xyz/bots/611013950942871562).

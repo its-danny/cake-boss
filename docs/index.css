@@ -154,3 +154,11 @@ footer {
   margin-bottom: 5rem;
   text-align: center;
 }
+
+footer .social {
+  margin-bottom: 10px;
+}
+
+footer .vote span {
+  opacity: 0.5;
+}
