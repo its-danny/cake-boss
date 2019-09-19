@@ -4,13 +4,13 @@ import Member from '../../entity/member';
 import { CommandArguments, CommandResponse } from '../../utils/command-interfaces';
 
 export const getBalance = async (args: CommandArguments): Promise<CommandResponse> => {
-  const server = await Server.findOne({ where: { discordId: args.message.guild.id } });
+  const server = await Server.findOne({ where: { discordId: args.message.guild.id }, cache: true });
 
   if (!server) {
     throw new Error('Could not find server.');
   }
 
-  const member = await Member.findOne({ where: { server, discordId: args.message.member.id } });
+  const member = await Member.findOne({ where: { server, discordId: args.message.member.id }, cache: true });
 
   if (!member) {
     throw new Error('Could not find member.');

@@ -8,6 +8,7 @@ module.exports = {
   database: process.env.ORM_DATABASE,
   synchronize: true,
   logging: false,
+  cache: true,
 
   entities: [process.env.NODE_ENV === 'production' ? 'dist/entity/**/*.js' : 'src/entity/**/!(*.test.ts)'],
   migrations: [process.env.NODE_ENV === 'production' ? 'dist/migration/**/*.js' : 'src/migration/**/!(*.test.ts)'],

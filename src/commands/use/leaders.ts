@@ -6,7 +6,7 @@ import getTableBorder from '../../utils/get-table-border';
 import { CommandArguments, CommandResponse } from '../../utils/command-interfaces';
 
 export const getTopEarners = async (args: CommandArguments): Promise<CommandResponse> => {
-  const server = await Server.findOne({ where: { discordId: args.message.guild.id } });
+  const server = await Server.findOne({ where: { discordId: args.message.guild.id }, cache: true });
 
   if (!server) {
     throw new Error('Could not find server.');

@@ -46,13 +46,13 @@ export default class Member extends BaseEntity {
   server!: Server;
 
   static async findOrCreate(serverDiscordId: string, discordUserId: string, discordMemberId: string): Promise<Member> {
-    const server = await Server.findOne({ where: { discordId: serverDiscordId } });
+    const server = await Server.findOne({ where: { discordId: serverDiscordId }, cache: true });
 
     if (!server) {
       throw new Error('Could not find server.');
     }
 
-    let user = await User.findOne({ where: { discordId: discordUserId } });
+    let user = await User.findOne({ where: { discordId: discordUserId }, cache: true });
 
     if (!user) {
       user = new User();
@@ -61,7 +61,7 @@ export default class Member extends BaseEntity {
       user = await user.save();
     }
 
-    let member = await Member.findOne({ where: { discordId: discordMemberId } });
+    let member = await Member.findOne({ where: { discordId: discordMemberId }, cache: true });
 
     if (!member) {
       member = new Member();

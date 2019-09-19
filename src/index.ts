@@ -67,7 +67,7 @@ client.on('ready', async () => {
   client.user.setActivity(`in the kitchen! ${EMOJI_WORKING_HARD}`);
 
   client.guilds.forEach(async guild => {
-    const server = await Server.findOne({ where: { discordId: guild.id } });
+    const server = await Server.findOne({ where: { discordId: guild.id }, cache: true });
     const member = guild.members.get(client.user.id);
 
     if (server && member) {
@@ -83,7 +83,7 @@ client.on('guildCreate', async (guild: Guild) => {
 });
 
 client.on('guildDelete', async (guild: Guild) => {
-  const server = await Server.findOne({ where: { discordId: guild.id } });
+  const server = await Server.findOne({ where: { discordId: guild.id }, cache: true });
 
   if (server) {
     server.active = false;
@@ -98,7 +98,7 @@ client.on('messageReactionAdd', (reaction, user) => {
       watching.message.edit(`${EMOJI_JOB_WELL_DONE} Prize redeemed!`);
       messagesToWatch.splice(index, 1);
 
-      const server = await Server.findOne({ where: { discordId: watching.message.guild.id } });
+      const server = await Server.findOne({ where: { discordId: watching.message.guild.id }, cache: true });
 
       if (server && server.config.redeemChannelId && server.config.redeemPingRoleIds.length > 0) {
         const discordChannel = watching.message.guild.channels.get(server.config.redeemChannelId) as TextChannel;
@@ -273,7 +273,7 @@ createConnection()
     fs.writeFileSync(`${process.cwd()}/.uptime`, moment().utc(), 'utf8');
 
     schedule.scheduleJob('0 * * * *', async () => {
-      const servers = await Server.find({ where: { active: true } });
+      const servers = await Server.find({ where: { active: true }, cache: true });
 
       servers.forEach(async server => {
         // eslint-disable-next-line no-param-reassign
