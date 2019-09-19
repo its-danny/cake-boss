@@ -8,12 +8,12 @@ new Vue({
     return {
       servers: 0,
       users: 0,
-      cakes: 0
+      cakes: 0,
     };
   },
 
   mounted() {
-    const socket = io('https://rabitrup.com');
+    const socket = io('https://fuckadomain.name');
 
     socket.on('live', response => {
       this.servers = response.servers;
@@ -36,7 +36,7 @@ new Vue({
 
   mounted() {
     axios
-      .get('https://rabitrup.com/ping')
+      .get('https://fuckadomain.name/ping')
       .then(() => {
         this.isOnline = true;
       })
