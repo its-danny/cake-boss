@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import dotenv from 'dotenv';
-import Discord, { Message, Guild } from 'discord.js';
+import Discord, { Message, Guild, TextChannel } from 'discord.js';
 import * as Sentry from '@sentry/node';
 import yargs from 'yargs';
 import { createConnection } from 'typeorm';
@@ -97,6 +97,17 @@ client.on('messageReactionAdd', (reaction, user) => {
       watching.reactions[reaction.emoji.toString()]();
       watching.message.edit(`${EMOJI_JOB_WELL_DONE} Prize redeemed!`);
       messagesToWatch.splice(index, 1);
+
+      const server = await Server.findOne({ where: { discordId: watching.message.guild.id } });
+
+      if (server && server.config.redeemChannelId && server.config.redeemPingRoleIds.length > 0) {
+        const discordChannel = watching.message.guild.channels.get(server.config.redeemChannelId) as TextChannel;
+
+        if (discordChannel) {
+          const mentions = server.config.redeemPingRoleIds.map(id => `<@&${id}>`);
+          discordChannel.send(`👇 A prize was redeemed, ${mentions.join(' ')}!`);
+        }
+      }
     }
   });
 });

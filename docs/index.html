@@ -1,17 +1,22 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <link href="https://fonts.googleapis.com/css?family=Beth+Ellen&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="./index.css">
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
+    <link href="https://fonts.googleapis.com/css?family=Beth+Ellen&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="./index.css" />
 
-    <link rel="apple-touch-icon" sizes="180x180" href="./favicon/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="./favicon/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="./favicon/favicon-16x16.png">
-    <link rel="manifest" href="/site.webmanifest">
+    <link rel="apple-touch-icon" sizes="180x180" href="./favicon/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="./favicon/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="./favicon/favicon-16x16.png" />
+    <link rel="manifest" href="/site.webmanifest" />
 
     <title>Cake Boss - A Discord bot</title>
   </head>
@@ -23,15 +28,26 @@
           <div id="top-content" class="col-md-8 offset-md-2">
             <div id="avatar-wrap">
               <img id="avatar" src="./avatar.jpg" />
-              
+
               <div id="status-wrap">
-                <div id="status" :class="{ online: isOnline }" data-toggle="tooltip" data-placement="right" :title="isOnline ? 'Online!' : 'Offline'"></div>
+                <div
+                  id="status"
+                  :class="{ online: isOnline }"
+                  data-toggle="tooltip"
+                  data-placement="right"
+                  :title="isOnline ? 'Online!' : 'Offline'"
+                ></div>
               </div>
             </div>
 
             <h1>Cake Boss!</h1>
 
-            <a id="add-to-discord" class="btn btn-dark" href="https://discordapp.com/oauth2/authorize?client_id=611013950942871562&scope=bot&permissions=335588416" target="_blank">
+            <a
+              id="add-to-discord"
+              class="btn btn-dark"
+              href="https://discordapp.com/oauth2/authorize?client_id=611013950942871562&scope=bot&permissions=335588416"
+              target="_blank"
+            >
               <i class="fab fa-discord"></i>
               Add to Discord
             </a>
@@ -41,7 +57,7 @@
                 <span class="badge badge-pill badge-dark">
                   <span class="count">{{ servers }}</span> {{ servers > 1 ? 'Servers' : 'Server' }}
                 </span>
-  
+
                 <span class="badge badge-pill badge-dark">
                   <span class="count">{{ users }}</span> {{ users > 1 ? 'Users' : 'User' }}
                 </span>
@@ -72,10 +88,13 @@
         <div id="commands" class="row">
           <div class="col-md-8 offset-md-2">
             <h2>Commands</h2>
-            
-	    <p><strong>Note:</strong> The default command prefix is <code>cake</code>, but might be different on your server.</p>
-            
-	    <div class="command clearfix">
+
+            <p>
+              <strong>Note:</strong> The default command prefix is <code>cake</code>, but might be different on your
+              server.
+            </p>
+
+            <div class="command clearfix">
               <div class="cmd float-left"><code>give @johnny 5</code></div>
               <div class="desc float-right">Give someone cake</div>
             </div>
@@ -116,7 +135,14 @@
             </div>
 
             <div class="clearfix">
-              <a class="float-right" data-toggle="collapse" href="#mod-commands" role="button" aria-expanded="false" aria-controls="mod-commands">
+              <a
+                class="float-right"
+                data-toggle="collapse"
+                href="#mod-commands"
+                role="button"
+                aria-expanded="false"
+                aria-controls="mod-commands"
+              >
                 Are you a mod?
               </a>
             </div>
@@ -124,19 +150,25 @@
             <div class="collapse" id="mod-commands">
               <div id="how">
                 <h2>How does it work?</h2>
-    
-                <p>By default, <strong>any</strong> user can give up to <strong>5</strong> cakes every <strong>hour</strong>.</p>
-    
-                <p>To allow only users with <strong>5 or more</strong> cakes to give up to <strong>10</strong> cakes every <strong>24 hours</strong>:</p>
-    
+
+                <p>
+                  By default, <strong>any</strong> user can give up to <strong>5</strong> cakes every
+                  <strong>hour</strong>.
+                </p>
+
+                <p>
+                  To allow only users with <strong>5 or more</strong> cakes to give up to <strong>10</strong> cakes
+                  every <strong>24 hours</strong>:
+                </p>
+
                 <ul class="list-unstyled">
                   <li><code>config set requirement-to-give 5</code></li>
                   <li><code>config set give-limit 10</code></li>
                   <li><code>config set give-limit-hour-reset 24</code></li>
                 </ul>
-    
+
                 <p>Don't like cake?</p>
-    
+
                 <ul class="list-unstyled">
                   <li><code>config set command-prefix hotdog</code></li>
                   <li><code>config set nickname "Hotdog Boss!"</code></li>
@@ -150,7 +182,9 @@
 
               <h2>Mod Commands</h2>
 
-              <p><strong>Note:</strong> <code>&lt;this&gt;</code> means required, <code>[this]</code> means optional.</p>
+              <p>
+                <strong>Note:</strong> <code>&lt;this&gt;</code> means required, <code>[this]</code> means optional.
+              </p>
 
               <div class="command clearfix">
                 <div class="cmd float-left"><code>bless &lt;member|role&gt; [amount]</code></div>
@@ -193,12 +227,16 @@
               </div>
 
               <div class="command clearfix">
-                <div class="cmd float-left"><code>prize add &lt;description&gt; &lt;reactionEmoji&gt; &lt;price&gt; [roles]</code></div>
+                <div class="cmd float-left">
+                  <code>prize add &lt;description&gt; &lt;reactionEmoji&gt; &lt;price&gt; [roles]</code>
+                </div>
                 <div class="desc float-right">Add a prize</div>
               </div>
 
               <div class="command clearfix">
-                <div class="cmd float-left"><code>prize edit &lt;id&gt; &lt;description&gt; &lt;reactionEmoji&gt; &lt;price&gt; [roles]</code></div>
+                <div class="cmd float-left">
+                  <code>prize edit &lt;id&gt; &lt;description&gt; &lt;reactionEmoji&gt; &lt;price&gt; [roles]</code>
+                </div>
                 <div class="desc float-right">Edit a prize</div>
               </div>
 
@@ -229,7 +267,9 @@
 
               <div class="command clearfix">
                 <div class="cmd float-left"><code>export</code></div>
-                <div class="desc float-right">Export cake data (sent as CSV file, can be used to import if migrating to self-hosted)</div>
+                <div class="desc float-right">
+                  Export cake data (sent as CSV file, can be used to import if migrating to self-hosted)
+                </div>
               </div>
 
               <div class="command clearfix">
@@ -271,7 +311,7 @@
                   <th scope="col" width="150">Default</th>
                 </tr>
               </thead>
-    
+
               <tbody>
                 <tr>
                   <td><code>nickname</code></td>
@@ -305,7 +345,10 @@
 
                 <tr>
                   <td><code>no-drop-gifs</code></td>
-                  <td>List of GIfs to randomly choose from and post when someone tries to take in a channel with no drops (comma-separated)</td>
+                  <td>
+                    List of GIfs to randomly choose from and post when someone tries to take in a channel with no drops
+                    (comma-separated)
+                  </td>
                   <td><code>none</code></td>
                 </tr>
 
@@ -364,6 +407,15 @@
                 </tr>
 
                 <tr>
+                  <td><code>redeem-ping-roles</code></td>
+                  <td>
+                    Roles that will be pinged when a prize is redeemed (comma-separated, ping sent to
+                    <code>redeem-channel</code>)
+                  </td>
+                  <td><code>none</code></td>
+                </tr>
+
+                <tr>
                   <td><code>no-giving</code></td>
                   <td>Only allow managers, blessers, and droppers to give cake</td>
                   <td><code>false</code></td>
@@ -406,9 +458,21 @@
       </div>
     </footer>
 
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script
+      src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+      integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+      integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+      integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+      crossorigin="anonymous"
+    ></script>
     <script src="https://kit.fontawesome.com/002ce2cd9d.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>

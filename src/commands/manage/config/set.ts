@@ -182,6 +182,22 @@ export const setConfig = async (args: Arguments): Promise<CommandResponse | void
     }
   }
 
+  if (args.config === 'redeem-ping-roles') {
+    if (server.config.setRoles(args.value, args.config, args.message.guild)) {
+      await server.config.save();
+
+      await logEvent(
+        args.client,
+        args.message,
+        `${EMOJI_CONFIG} \`${args.message.author.tag}\` updated \`${args.config}\`.`,
+      );
+
+      configSet = true;
+    } else {
+      return { content: `${EMOJI_ERROR} ${ERROR_MESSAGE}` };
+    }
+  }
+
   if (args.config === 'nickname') {
     if (!args.message.guild.me.hasPermission('CHANGE_NICKNAME')) {
       return { content: `${EMOJI_ERROR} I need permission to \`change nickname\`!` };

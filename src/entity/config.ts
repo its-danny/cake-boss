@@ -14,6 +14,7 @@ export type ConfigCommand =
   | 'manager-roles'
   | 'blesser-roles'
   | 'dropper-roles'
+  | 'redeem-ping-roles'
   | 'nickname'
   | 'cake-emoji'
   | 'cake-name-singular'
@@ -25,7 +26,7 @@ export type ConfigCommand =
   | 'give-limit'
   | 'give-limit-hour-reset';
 
-type roleTypes = 'manager-roles' | 'blesser-roles' | 'dropper-roles';
+type roleTypes = 'manager-roles' | 'blesser-roles' | 'dropper-roles' | 'redeem-ping-roles';
 type cakeNameType = 'singular' | 'plural';
 
 @Entity()
@@ -65,6 +66,9 @@ export default class Config extends BaseEntity {
 
   @Column('simple-array', { nullable: false, default: '' })
   dropperRoleIds!: string[];
+
+  @Column('simple-array', { nullable: false, default: '' })
+  redeemPingRoleIds!: string[];
 
   @Column({ nullable: false, default: 'CAKE BOSS!' })
   nickname!: string;
@@ -188,6 +192,9 @@ export default class Config extends BaseEntity {
         case 'dropper-roles':
           this.dropperRoleIds = [];
           break;
+        case 'redeem-ping-roles':
+          this.redeemPingRoleIds = [];
+          break;
         default:
       }
 
@@ -212,6 +219,9 @@ export default class Config extends BaseEntity {
           break;
         case 'dropper-roles':
           this.dropperRoleIds = foundRolesIds;
+          break;
+        case 'redeem-ping-roles':
+          this.redeemPingRoleIds = foundRolesIds;
           break;
         default:
       }
