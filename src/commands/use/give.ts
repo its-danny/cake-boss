@@ -18,7 +18,7 @@ export interface Arguments extends CommandArguments {
 }
 
 export const giveCakeToMember = async (args: Arguments): Promise<CommandResponse | void> => {
-  const server = await Server.findOne({ where: { discordId: args.message.guild.id } });
+  const server = await Server.findOne({ where: { discordId: args.message.guild.id }, cache: true });
 
   if (!server) {
     throw new Error('Could not find server.');
@@ -51,13 +51,13 @@ export const giveCakeToMember = async (args: Arguments): Promise<CommandResponse
     };
   }
 
-  const receivingMember = await Member.findOne({ where: { discordId: receivingDiscordMember.id } });
+  const receivingMember = await Member.findOne({ where: { discordId: receivingDiscordMember.id }, cache: true });
 
   if (!receivingMember) {
     throw new Error('Could not find member.');
   }
 
-  const givingMember = await Member.findOne({ where: { discordId: args.message.member.id } });
+  const givingMember = await Member.findOne({ where: { discordId: args.message.member.id }, cache: true });
 
   if (!givingMember) {
     throw new Error('Could not find member.');

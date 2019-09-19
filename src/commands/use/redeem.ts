@@ -8,7 +8,7 @@ import { EMOJI_DONT_DO_THAT, EMOJI_PRIZE, EMOJI_ERROR, EMOJI_RECORD_NOT_FOUND } 
 import { CommandArguments, CommandResponse } from '../../utils/command-interfaces';
 
 export const redeemCake = async (args: CommandArguments): Promise<CommandResponse> => {
-  const server = await Server.findOne({ where: { discordId: args.message.guild.id } });
+  const server = await Server.findOne({ where: { discordId: args.message.guild.id }, cache: true });
 
   if (!server) {
     throw new Error('Could not find server.');
@@ -39,7 +39,7 @@ export const redeemCake = async (args: CommandArguments): Promise<CommandRespons
   const prizeList: string[] = [];
   args.reactions = {};
 
-  const member = await Member.findOne({ where: { discordId: args.message.member.id } });
+  const member = await Member.findOne({ where: { discordId: args.message.member.id }, cache: true });
 
   if (server.prizes.length === 0) {
     return { content: `${EMOJI_RECORD_NOT_FOUND} There are no prizes.` };

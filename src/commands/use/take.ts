@@ -10,7 +10,7 @@ import { EMOJI_DONT_DO_THAT, EMOJI_RECORD_NOT_FOUND, EMOJI_JOB_WELL_DONE } from 
 import { CommandArguments, CommandResponse } from '../../utils/command-interfaces';
 
 export const takeCake = async (args: CommandArguments): Promise<CommandResponse | void> => {
-  const server = await Server.findOne({ where: { discordId: args.message.guild.id } });
+  const server = await Server.findOne({ where: { discordId: args.message.guild.id, cache: true } });
 
   if (!server) {
     throw new Error('Could not find server.');
@@ -22,7 +22,7 @@ export const takeCake = async (args: CommandArguments): Promise<CommandResponse 
     };
   }
 
-  const drop = await Drop.findOne({ where: { server, channelDiscordId: args.message.channel.id } });
+  const drop = await Drop.findOne({ where: { server, channelDiscordId: args.message.channel.id }, cache: true });
 
   if (!drop) {
     return {
@@ -40,7 +40,7 @@ export const takeCake = async (args: CommandArguments): Promise<CommandResponse 
     await drop.save();
   }
 
-  const member = await Member.findOne({ where: { discordId: args.message.member.id } });
+  const member = await Member.findOne({ where: { discordId: args.message.member.id }, cache: true });
 
   if (!member) {
     throw new Error('Could not find member.');

@@ -21,7 +21,7 @@ export const disappearCakes = async (args: Arguments): Promise<CommandResponse |
     return { content: `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!` };
   }
 
-  const server = await Server.findOne({ where: { discordId: args.message.guild.id } });
+  const server = await Server.findOne({ where: { discordId: args.message.guild.id }, cache: true });
 
   if (!server) {
     throw new Error('Could not find server.');
@@ -34,7 +34,7 @@ export const disappearCakes = async (args: Arguments): Promise<CommandResponse |
     return { content: `${EMOJI_RECORD_NOT_FOUND} Uh oh, I couldn't find them.` };
   }
 
-  const targetMember = await Member.findOne({ where: { discordId: targetDiscordMember.id } });
+  const targetMember = await Member.findOne({ where: { discordId: targetDiscordMember.id }, cache: true });
 
   if (!targetMember) {
     throw new Error('Could not find member.');

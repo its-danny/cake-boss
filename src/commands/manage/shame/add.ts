@@ -20,7 +20,7 @@ export const shameMember = async (args: Arguments): Promise<CommandResponse | vo
     return { content: `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!` };
   }
 
-  const server = await Server.findOne({ where: { discordId: args.message.guild.id } });
+  const server = await Server.findOne({ where: { discordId: args.message.guild.id }, cache: true });
 
   if (!server) {
     throw new Error('Could not find server.');
@@ -33,7 +33,7 @@ export const shameMember = async (args: Arguments): Promise<CommandResponse | vo
     return { content: `${EMOJI_RECORD_NOT_FOUND} Uh oh, I couldn't find them.` };
   }
 
-  const member = await Member.findOne({ where: { discordId: discordMember.id } });
+  const member = await Member.findOne({ where: { discordId: discordMember.id }, cache: true });
 
   if (!member) {
     throw new Error('Could not find member.');

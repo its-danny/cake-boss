@@ -7,7 +7,7 @@ export const canManage = async (message: Message): Promise<boolean> => {
     return true;
   }
 
-  const server = await Server.findOne({ where: { discordId: message.guild.id } });
+  const server = await Server.findOne({ where: { discordId: message.guild.id }, cache: true });
 
   if (server) {
     return message.member.roles.some(role => server.config.managerRoleIds.includes(role.id));
@@ -25,7 +25,7 @@ export const canBless = async (message: Message): Promise<boolean> => {
     return true;
   }
 
-  const server = await Server.findOne({ where: { discordId: message.guild.id } });
+  const server = await Server.findOne({ where: { discordId: message.guild.id }, cache: true });
 
   if (server) {
     return message.member.roles.some(role => server.config.blesserRoleIds.includes(role.id));
@@ -43,7 +43,7 @@ export const canDrop = async (message: Message): Promise<boolean> => {
     return true;
   }
 
-  const server = await Server.findOne({ where: { discordId: message.guild.id } });
+  const server = await Server.findOne({ where: { discordId: message.guild.id }, cache: true });
 
   if (server) {
     return message.member.roles.some(role => server.config.dropperRoleIds.includes(role.id));
@@ -53,10 +53,10 @@ export const canDrop = async (message: Message): Promise<boolean> => {
 };
 
 export const canGive = async (message: Message): Promise<boolean> => {
-  const server = await Server.findOne({ where: { discordId: message.guild.id } });
+  const server = await Server.findOne({ where: { discordId: message.guild.id }, cache: true });
 
   if (server) {
-    const member = await Member.findOne({ where: { discordId: message.member.id } });
+    const member = await Member.findOne({ where: { discordId: message.member.id }, cache: true });
 
     if (member) {
       return member.earned >= server.config.requirementToGive && member.givenSinceReset < server.config.giveLimit;
@@ -67,10 +67,10 @@ export const canGive = async (message: Message): Promise<boolean> => {
 };
 
 export const isShamed = async (discordServerId: string, discordMemberId: string): Promise<boolean> => {
-  const server = await Server.findOne({ where: { discordId: discordServerId } });
+  const server = await Server.findOne({ where: { discordId: discordServerId }, cache: true });
 
   if (server) {
-    const member = await Member.findOne({ where: { discordId: discordMemberId } });
+    const member = await Member.findOne({ where: { discordId: discordMemberId }, cache: true });
 
     if (member) {
       return member.shamed;
