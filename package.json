@@ -8,7 +8,7 @@
     "start": "NODE_ENV=production node dist/index.js",
     "test": "NODE_ENV=test yarn run jest",
     "lint": "yarn run eslint --ext .ts ./",
-    "pretty": "yarn run eslint --ext .ts ./ --fix && yarn run pretty-quick",
+    "pretty": "yarn run eslint --ext .ts ./ --fix && yarn run pretty-quick --staged",
     "typeorm": "yarn run ts-node ./node_modules/.bin/typeorm",
     "import": "yarn run ts-node import.ts"
   },
