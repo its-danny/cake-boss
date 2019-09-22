@@ -8,7 +8,7 @@ import { handleError } from '../../utils/errors';
 
 export const getTopGivers = async (args: CommandArguments): Promise<CommandResponse | void> => {
   try {
-    const server = await Server.findOne({ where: { discordId: args.message.guild.id }, cache: true });
+    const server = await Server.findOne({ where: { discordId: args.message.guild.id } });
 
     if (!server) {
       throw new Error('Could not find server.');

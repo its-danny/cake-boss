@@ -13,6 +13,7 @@ import Config from './config';
 import Member from './member';
 import Drop from './drop';
 import Prize from './prize';
+import { handleError } from '../utils/errors';
 
 @Entity()
 export default class Server extends BaseEntity {
@@ -47,34 +48,34 @@ export default class Server extends BaseEntity {
   @OneToMany(() => Drop, drop => drop.server, { eager: true })
   drops!: Drop[];
 
-  static async findOrCreate(guildId: string): Promise<Server> {
-    const foundServer = await Server.findOne({ where: { discordId: guildId }, cache: true });
-
-    if (foundServer) {
-      foundServer.active = true;
-      return foundServer.save();
-    }
-
-    const config = new Config();
-
+  static async findOrCreate(guildId: string): Promise<Server | void> {
     try {
-      await config.save();
-    } catch (error) {
-      throw error;
-    }
+      const foundServer = await Server.findOne({ where: { discordId: guildId } });
 
-    const server = new Server();
-    server.discordId = guildId;
-    server.active = true;
-    server.config = config;
+      if (foundServer) {
+        foundServer.active = true;
+        return foundServer.save();
+      }
 
-    try {
+      const config = new Config();
+
+      try {
+        await config.save();
+      } catch (error) {
+        handleError(error, null);
+      }
+
+      const server = new Server();
+      server.discordId = guildId;
+      server.active = true;
+      server.config = config;
+
       await server.save();
-    } catch (error) {
-      throw error;
-    }
 
-    return server;
+      return server;
+    } catch (error) {
+      return handleError(error, null);
+    }
   }
 
   totalEarnedByMembers(): number {

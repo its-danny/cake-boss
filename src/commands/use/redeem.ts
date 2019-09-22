@@ -10,7 +10,7 @@ import { handleError } from '../../utils/errors';
 
 export const redeemCake = async (args: CommandArguments): Promise<CommandResponse | void> => {
   try {
-    const server = await Server.findOne({ where: { discordId: args.message.guild.id }, cache: true });
+    const server = await Server.findOne({ where: { discordId: args.message.guild.id } });
 
     if (!server) {
       throw new Error('Could not find server.');
@@ -41,7 +41,7 @@ export const redeemCake = async (args: CommandArguments): Promise<CommandRespons
     const prizeList: string[] = [];
     args.reactions = {};
 
-    const member = await Member.findOne({ where: { discordId: args.message.member.id }, cache: true });
+    const member = await Member.findOne({ where: { discordId: args.message.member.id } });
 
     if (server.prizes.length === 0) {
       return { content: `${EMOJI_RECORD_NOT_FOUND} There are no prizes.` };

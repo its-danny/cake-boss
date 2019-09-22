@@ -21,7 +21,7 @@ export const getPrizeList = async (args: Arguments): Promise<CommandResponse | v
       return { content: `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!` };
     }
 
-    const server = await Server.findOne({ where: { discordId: args.message.guild.id }, cache: true });
+    const server = await Server.findOne({ where: { discordId: args.message.guild.id } });
 
     if (!server) {
       throw new Error('Could not find server.');
@@ -32,7 +32,7 @@ export const getPrizeList = async (args: Arguments): Promise<CommandResponse | v
     }
 
     const perPage = 5;
-    const totalPages = Math.ceil((await Prize.count({ where: { server }, cache: true })) / perPage);
+    const totalPages = Math.ceil((await Prize.count({ where: { server } })) / perPage);
 
     if (args.page && (!Number.isInteger(args.page) || args.page > totalPages)) {
       return { content: `${EMOJI_ERROR} Invalid page number, sorry!` };

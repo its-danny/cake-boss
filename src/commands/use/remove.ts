@@ -23,7 +23,7 @@ export const removeCakes = async (args: Arguments): Promise<CommandResponse | vo
       return { content: `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!` };
     }
 
-    const server = await Server.findOne({ where: { discordId: args.message.guild.id }, cache: true });
+    const server = await Server.findOne({ where: { discordId: args.message.guild.id } });
 
     if (!server) {
       throw new Error('Could not find server.');
@@ -36,7 +36,7 @@ export const removeCakes = async (args: Arguments): Promise<CommandResponse | vo
       return { content: `${EMOJI_RECORD_NOT_FOUND} Uh oh, I couldn't find them.` };
     }
 
-    const targetMember = await Member.findOne({ where: { discordId: targetDiscordMember.id }, cache: true });
+    const targetMember = await Member.findOne({ where: { discordId: targetDiscordMember.id } });
 
     if (!targetMember) {
       throw new Error('Could not find member.');

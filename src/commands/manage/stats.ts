@@ -18,7 +18,7 @@ const getUserStats = async (args: Arguments): Promise<string | void> => {
       return `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`;
     }
 
-    const server = await Server.findOne({ where: { discordId: args.message.guild.id }, cache: true });
+    const server = await Server.findOne({ where: { discordId: args.message.guild.id } });
 
     if (!server) {
       throw new Error('Could not find server.');
@@ -32,20 +32,23 @@ const getUserStats = async (args: Arguments): Promise<string | void> => {
     }
 
     const member = await Member.findOrCreate(args.message.guild.id, discordMember.user.id, discordMember.id);
-    const reset = server.config.giveLimitHourReset;
 
-    const embed = new RichEmbed()
-      .setColor('#0099ff')
-      .setAuthor(discordMember.displayName, discordMember.user.avatarURL)
-      .setDescription(`${humanize(server.config.cakeNameSingular)} stats for ${discordMember.user.tag}`)
-      .setThumbnail(discordMember.user.avatarURL)
-      .addField('Balance', member.balance, true)
-      .addField('Earned', member.earned, true)
-      .addField('Given', member.given, true)
-      .addField(`Given Since Reset (${reset} ${reset === 1 ? 'hour' : 'hoursn'})`, member.givenSinceReset, true)
-      .addField('Shamed', member.shamed);
+    if (member) {
+      const reset = server.config.giveLimitHourReset;
 
-    args.message.channel.send(embed);
+      const embed = new RichEmbed()
+        .setColor('#0099ff')
+        .setAuthor(discordMember.displayName, discordMember.user.avatarURL)
+        .setDescription(`${humanize(server.config.cakeNameSingular)} stats for ${discordMember.user.tag}`)
+        .setThumbnail(discordMember.user.avatarURL)
+        .addField('Balance', member.balance, true)
+        .addField('Earned', member.earned, true)
+        .addField('Given', member.given, true)
+        .addField(`Given Since Reset (${reset} ${reset === 1 ? 'hour' : 'hoursn'})`, member.givenSinceReset, true)
+        .addField('Shamed', member.shamed);
+
+      args.message.channel.send(embed);
+    }
 
     return undefined;
   } catch (error) {

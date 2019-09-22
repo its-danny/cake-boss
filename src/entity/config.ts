@@ -271,11 +271,9 @@ export default class Config extends BaseEntity {
   setDropGifs(gifs: string): boolean {
     if (gifs === 'none') {
       this.dropGifs = [];
-
-      return true;
+    } else {
+      this.dropGifs = gifs.split(',').map(g => g.trim());
     }
-
-    this.dropGifs = gifs.split(',').map(g => g.trim());
 
     return true;
   }
@@ -283,11 +281,9 @@ export default class Config extends BaseEntity {
   setNoDropGifs(gifs: string): boolean {
     if (gifs === 'none') {
       this.noDropGifs = [];
-
-      return true;
+    } else {
+      this.noDropGifs = gifs.split(',').map(g => g.trim());
     }
-
-    this.noDropGifs = gifs.split(',').map(g => g.trim());
 
     return true;
   }

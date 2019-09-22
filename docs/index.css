@@ -7,17 +7,17 @@ h1 {
   margin-top: 15px;
   font-family: 'Beth Ellen', cursive;
   font-size: 3rem;
-  color: #57A2A2;
+  color: #57a2a2;
 }
 
 h2 {
   margin: 0 0 15px 0;
   font-size: 1.5rem;
-  color: #B09795;
+  color: #b09795;
 }
 
 a {
-  color: #B09795;
+  color: #b09795;
 }
 
 a:hover {
@@ -29,11 +29,11 @@ code {
 }
 
 hr {
-  background-color: #fff7ef;;
+  background-color: #fff7ef;
 }
 
 header {
-  background-color: #A7E8DF;
+  background-color: #a7e8df;
   background-image: url('./background.png');
   border-bottom: 3px solid #96d4cb;
 }
@@ -73,7 +73,7 @@ header {
 
 #add-to-discord {
   margin-top: 15px;
-  background-color: #B09795;
+  background-color: #b09795;
   border: 0;
   font-weight: bold;
 }
@@ -99,11 +99,13 @@ header {
   font-weight: bold;
 }
 
-#what, #commands {
+#what,
+#commands {
   margin: 2.5rem 0;
 }
 
-#what, #how {
+#what,
+#how {
   text-align: center;
 }
 

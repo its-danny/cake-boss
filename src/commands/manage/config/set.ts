@@ -20,7 +20,7 @@ export const setConfig = async (args: Arguments): Promise<CommandResponse | void
       return { content: `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!` };
     }
 
-    const server = await Server.findOne({ where: { discordId: args.message.guild.id }, cache: true });
+    const server = await Server.findOne({ where: { discordId: args.message.guild.id } });
 
     if (!server) {
       throw new Error('Could not find server.');

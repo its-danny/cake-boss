@@ -12,7 +12,7 @@ import { handleError } from '../../utils/errors';
 
 export const takeCake = async (args: CommandArguments): Promise<CommandResponse | void> => {
   try {
-    const server = await Server.findOne({ where: { discordId: args.message.guild.id, cache: true } });
+    const server = await Server.findOne({ where: { discordId: args.message.guild.id } });
 
     if (!server) {
       throw new Error('Could not find server.');
@@ -24,7 +24,7 @@ export const takeCake = async (args: CommandArguments): Promise<CommandResponse 
       };
     }
 
-    const drop = await Drop.findOne({ where: { server, channelDiscordId: args.message.channel.id }, cache: true });
+    const drop = await Drop.findOne({ where: { server, channelDiscordId: args.message.channel.id } });
 
     if (!drop) {
       return {
@@ -42,7 +42,7 @@ export const takeCake = async (args: CommandArguments): Promise<CommandResponse 
       await drop.save();
     }
 
-    const member = await Member.findOne({ where: { discordId: args.message.member.id }, cache: true });
+    const member = await Member.findOne({ where: { discordId: args.message.member.id } });
 
     if (!member) {
       throw new Error('Could not find member.');
