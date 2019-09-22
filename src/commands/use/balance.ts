@@ -6,13 +6,13 @@ import { handleError } from '../../utils/errors';
 
 export const getBalance = async (args: CommandArguments): Promise<CommandResponse | void> => {
   try {
-    const server = await Server.findOne({ where: { discordId: args.message.guild.id }, cache: true });
+    const server = await Server.findOne({ where: { discordId: args.message.guild.id } });
 
     if (!server) {
       throw new Error('Could not find server.');
     }
 
-    const member = await Member.findOne({ where: { server, discordId: args.message.member.id }, cache: true });
+    const member = await Member.findOne({ where: { server, discordId: args.message.member.id } });
 
     if (!member) {
       throw new Error('Could not find member.');

@@ -58,7 +58,7 @@ client.on('ready', async () => {
   client.user.setActivity(`in the kitchen! ${EMOJI_WORKING_HARD}`);
 
   client.guilds.forEach(async guild => {
-    const server = await Server.findOne({ where: { discordId: guild.id }, cache: true });
+    const server = await Server.findOne({ where: { discordId: guild.id } });
     const member = guild.members.get(client.user.id);
 
     if (server && member) {
@@ -74,7 +74,7 @@ client.on('guildCreate', async (guild: Guild) => {
 });
 
 client.on('guildDelete', async (guild: Guild) => {
-  const server = await Server.findOne({ where: { discordId: guild.id }, cache: true });
+  const server = await Server.findOne({ where: { discordId: guild.id } });
 
   if (server) {
     server.active = false;
@@ -89,7 +89,7 @@ client.on('messageReactionAdd', (reaction, user) => {
       watching.message.edit(`${EMOJI_JOB_WELL_DONE} Prize redeemed!`);
       messagesToWatch.splice(index, 1);
 
-      const server = await Server.findOne({ where: { discordId: watching.message.guild.id }, cache: true });
+      const server = await Server.findOne({ where: { discordId: watching.message.guild.id } });
 
       if (server && server.config.redeemChannelId && server.config.redeemPingRoleIds.length > 0) {
         const discordChannel = watching.message.guild.channels.get(server.config.redeemChannelId) as TextChannel;
@@ -112,105 +112,110 @@ client.on('message', async (message: Message) => {
 
   const server = await Server.findOrCreate(message.guild.id);
 
-  const { commandPrefix } = server.config;
+  if (server) {
+    const { commandPrefix } = server.config;
 
-  if (
-    message.author.id !== client.user.id &&
-    !message.author.bot &&
-    (cleanContent.startsWith(`${commandPrefix}`) || message.isMemberMentioned(client.user))
-  ) {
-    try {
-      await Member.findOrCreate(server.discordId, message.author.id, message.member.id);
+    if (
+      message.author.id !== client.user.id &&
+      !message.author.bot &&
+      (cleanContent.startsWith(`${commandPrefix}`) || message.isMemberMentioned(client.user))
+    ) {
+      try {
+        await Member.findOrCreate(server.discordId, message.author.id, message.member.id);
 
-      // eslint-disable-next-line no-restricted-syntax
-      for (const member of message.mentions.members) {
-        // eslint-disable-next-line no-await-in-loop
-        await Member.findOrCreate(server.discordId, member[1].user.id, member[1].id);
-      }
+        // eslint-disable-next-line no-restricted-syntax
+        for (const member of message.mentions.members) {
+          // eslint-disable-next-line no-await-in-loop
+          if ((await Member.count({ where: { discordId: member[1].id } })) === 0) {
+            // eslint-disable-next-line no-await-in-loop
+            await Member.findOrCreate(server.discordId, member[1].user.id, member[1].id);
+          }
+        }
 
-      const context: CommandArguments = {
-        client,
-        message,
-        deleteCaller: false,
-        needsFetch: false,
-        careAboutQuietMode: false,
-        promisedOutput: null,
-        reactions: null,
-      };
+        const context: CommandArguments = {
+          client,
+          message,
+          deleteCaller: false,
+          needsFetch: false,
+          careAboutQuietMode: false,
+          promisedOutput: null,
+          reactions: null,
+        };
 
-      let command = cleanContent.replace(commandPrefix, '');
+        let command = cleanContent.replace(commandPrefix, '');
 
-      if (message.isMemberMentioned(client.user) && message.mentions.members.get(client.user.id)) {
-        const mentionRegex = new RegExp(`<@!?${message.mentions.members.get(client.user.id)!.id}>`);
-        command = command.replace(mentionRegex, '');
-      }
+        if (message.isMemberMentioned(client.user) && message.mentions.members.get(client.user.id)) {
+          const mentionRegex = new RegExp(`<@!?${message.mentions.members.get(client.user.id)!.id}>`);
+          command = command.replace(mentionRegex, '');
+        }
 
-      commandParser.parse(command, context, async (error, argv) => {
-        if (error) {
-          if (error.name === 'YError') {
+        commandParser.parse(command, context, async (error, argv) => {
+          if (error) {
+            if (error.name === 'YError') {
+              message.channel.send(
+                `\u200B${EMOJI_WORKING_HARD} Looks like you need some help! Check the commands here: <https://dannytatom.github.io/cake-boss/>`,
+              );
+            } else {
+              handleError(error, message);
+            }
+          }
+
+          if (argv.deleteCaller) {
+            message.delete();
+          }
+
+          let sentMessage: Message | null = null;
+
+          if (argv.needsFetch && (!server.config.quietMode || !argv.careAboutQuietMode)) {
+            sentMessage = (await message.channel.send(`\u200B${EMOJI_THINKING}`)) as Message;
+          }
+
+          if (argv.help) {
             message.channel.send(
               `\u200B${EMOJI_WORKING_HARD} Looks like you need some help! Check the commands here: <https://dannytatom.github.io/cake-boss/>`,
             );
-          } else {
-            handleError(error, message);
-          }
-        }
-
-        if (argv.deleteCaller) {
-          message.delete();
-        }
-
-        let sentMessage: Message | null = null;
-
-        if (argv.needsFetch && (!server.config.quietMode || !argv.careAboutQuietMode)) {
-          sentMessage = (await message.channel.send(`\u200B${EMOJI_THINKING}`)) as Message;
-        }
-
-        if (argv.help) {
-          message.channel.send(
-            `\u200B${EMOJI_WORKING_HARD} Looks like you need some help! Check the commands here: <https://dannytatom.github.io/cake-boss/>`,
-          );
-        }
-
-        if (argv.promisedOutput) {
-          const commandResponse: CommandResponse = (await argv.promisedOutput) as CommandResponse;
-
-          if (sentMessage) {
-            await sentMessage.edit(
-              `\u200B${commandResponse.content}`,
-              commandResponse.messageOptions || commandResponse.richEmbed,
-            );
-          } else {
-            sentMessage = (await message.channel.send(
-              `\u200B${commandResponse.content}`,
-              commandResponse.messageOptions || commandResponse.richEmbed || commandResponse.attachment,
-            )) as Message;
           }
 
-          const reactions = argv.reactions as { [key: string]: () => void } | null;
+          if (argv.promisedOutput) {
+            const commandResponse: CommandResponse = (await argv.promisedOutput) as CommandResponse;
 
-          if (sentMessage && reactions) {
-            Object.keys(reactions).forEach(emoji => {
-              let react: string;
+            if (sentMessage) {
+              await sentMessage.edit(
+                `\u200B${commandResponse.content}`,
+                commandResponse.messageOptions || commandResponse.richEmbed,
+              );
+            } else {
+              sentMessage = (await message.channel.send(
+                `\u200B${commandResponse.content}`,
+                commandResponse.messageOptions || commandResponse.richEmbed || commandResponse.attachment,
+              )) as Message;
+            }
 
-              if (/\b:\d{18}/.test(emoji)) {
-                [react] = emoji.match(/\d{18}/)!;
-              } else {
-                react = emoji;
-              }
+            const reactions = argv.reactions as { [key: string]: () => void } | null;
 
-              sentMessage!.react(react);
-            });
+            if (sentMessage && reactions) {
+              Object.keys(reactions).forEach(emoji => {
+                let react: string;
 
-            const toWatch = { message: sentMessage, reactions, userId: message.author.id };
-            messagesToWatch.push(toWatch);
-            const toWatchIndex = messagesToWatch.indexOf(toWatch);
-            sentMessage.delete(1000 * server.config.redeemTimer).then(() => messagesToWatch.splice(toWatchIndex, 1));
+                if (/\b:\d{18}/.test(emoji)) {
+                  [react] = emoji.match(/\d{18}/)!;
+                } else {
+                  react = emoji;
+                }
+
+                sentMessage!.react(react);
+              });
+
+              const toWatch = { message: sentMessage, reactions, userId: message.author.id };
+              messagesToWatch.push(toWatch);
+              const toWatchIndex = messagesToWatch.indexOf(toWatch);
+              sentMessage.delete(1000 * server.config.redeemTimer).then(() => messagesToWatch.splice(toWatchIndex, 1));
+            }
           }
-        }
-      });
-    } catch (error) {
-      handleError(error, message);
+        });
+      } catch (error) {
+        handleError(error, message);
+      }
     }
   }
 });
@@ -264,7 +269,7 @@ createConnection()
     fs.writeFileSync(`${process.cwd()}/.uptime`, moment().utc(), 'utf8');
 
     schedule.scheduleJob('0 * * * *', async () => {
-      const servers = await Server.find({ where: { active: true }, cache: true });
+      const servers = await Server.find({ where: { active: true } });
 
       servers.forEach(async server => {
         // eslint-disable-next-line no-param-reassign

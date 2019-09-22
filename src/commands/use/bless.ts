@@ -24,7 +24,7 @@ export const blessMember = async (args: Arguments): Promise<CommandResponse | vo
       return { content: `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!` };
     }
 
-    const server = await Server.findOne({ where: { discordId: args.message.guild.id }, cache: true });
+    const server = await Server.findOne({ where: { discordId: args.message.guild.id } });
 
     if (!server) {
       throw new Error('Could not find server.');
@@ -43,7 +43,7 @@ export const blessMember = async (args: Arguments): Promise<CommandResponse | vo
       };
     }
 
-    const receivingMember = await Member.findOne({ where: { discordId: receivingDiscordMember.id }, cache: true });
+    const receivingMember = await Member.findOne({ where: { discordId: receivingDiscordMember.id } });
 
     if (!receivingMember) {
       throw new Error('Could not find member.');
@@ -98,7 +98,7 @@ export const blessRole = async (args: Arguments): Promise<CommandResponse | void
       return { content: `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!` };
     }
 
-    const server = await Server.findOne({ where: { discordId: args.message.guild.id }, cache: true });
+    const server = await Server.findOne({ where: { discordId: args.message.guild.id } });
 
     if (!server) {
       throw new Error('Could not find server.');
@@ -117,13 +117,15 @@ export const blessRole = async (args: Arguments): Promise<CommandResponse | void
       // eslint-disable-next-line no-await-in-loop
       if (!(await isShamed(server.discordId, discordMember.id))) {
         // eslint-disable-next-line no-await-in-loop
-        const member = await Member.findOrCreate(server.discordId, discordMember.user.id, discordMember.id);
+        const member = await Member.findOne({ where: { discordId: discordMember.id } });
 
-        member.earned += amount;
-        member.balance += amount;
+        if (member) {
+          member.earned += amount;
+          member.balance += amount;
 
-        // eslint-disable-next-line no-await-in-loop
-        await member.save();
+          // eslint-disable-next-line no-await-in-loop
+          await member.save();
+        }
       }
     }
 

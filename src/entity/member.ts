@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 import User from './user';
 import Server from './server';
+import { handleError } from '../utils/errors';
 
 @Entity()
 export default class Member extends BaseEntity {
@@ -45,33 +46,41 @@ export default class Member extends BaseEntity {
   @ManyToOne(() => Server, server => server.members)
   server!: Server;
 
-  static async findOrCreate(serverDiscordId: string, discordUserId: string, discordMemberId: string): Promise<Member> {
-    const server = await Server.findOne({ where: { discordId: serverDiscordId }, cache: true });
+  static async findOrCreate(
+    serverDiscordId: string,
+    discordUserId: string,
+    discordMemberId: string,
+  ): Promise<Member | void> {
+    try {
+      const server = await Server.findOne({ where: { discordId: serverDiscordId } });
 
-    if (!server) {
-      throw new Error('Could not find server.');
+      if (!server) {
+        throw new Error('Could not find server.');
+      }
+
+      let user = await User.findOne({ where: { discordId: discordUserId } });
+
+      if (!user) {
+        user = new User();
+        user.discordId = discordUserId;
+
+        user = await user.save();
+      }
+
+      let member = await Member.findOne({ where: { discordId: discordMemberId } });
+
+      if (!member) {
+        member = new Member();
+        member.discordId = discordMemberId;
+        member.server = server;
+        member.user = user;
+
+        member = await member.save();
+      }
+
+      return member;
+    } catch (error) {
+      return handleError(error, null);
     }
-
-    let user = await User.findOne({ where: { discordId: discordUserId }, cache: true });
-
-    if (!user) {
-      user = new User();
-      user.discordId = discordUserId;
-
-      user = await user.save();
-    }
-
-    let member = await Member.findOne({ where: { discordId: discordMemberId }, cache: true });
-
-    if (!member) {
-      member = new Member();
-      member.discordId = discordMemberId;
-      member.server = server;
-      member.user = user;
-
-      member = await member.save();
-    }
-
-    return member;
   }
 }

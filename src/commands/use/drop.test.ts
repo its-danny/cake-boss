@@ -69,7 +69,7 @@ describe('commands/use/drop', () => {
     const response = (await dropCakes(args)) as CommandResponse;
     expect(response.content).toBe(`${EMOJI_JOB_WELL_DONE} Done!`);
 
-    const drop = await Drop.findOne({ where: { server, channelDiscordId: channel.id }, cache: true });
+    const drop = await Drop.findOne({ where: { server, channelDiscordId: channel.id } });
     expect(drop).toBeDefined();
     expect(drop!.amount).toBe(1);
 

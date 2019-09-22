@@ -14,7 +14,7 @@ export const exportData = async (args: CommandArguments): Promise<CommandRespons
       return { content: `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!` };
     }
 
-    const server = await Server.findOne({ where: { discordId: args.message.guild.id }, cache: true });
+    const server = await Server.findOne({ where: { discordId: args.message.guild.id } });
 
     if (!server) {
       throw new Error('Could not find server.');
@@ -31,7 +31,7 @@ export const exportData = async (args: CommandArguments): Promise<CommandRespons
     const fields = ['Server ID', 'User ID', 'Member ID', 'Balance', 'Earned', 'Given', 'Shamed'];
     const data: any = [];
 
-    const members = await Member.find({ where: { server }, relations: ['user'], cache: true });
+    const members = await Member.find({ where: { server }, relations: ['user'] });
 
     // eslint-disable-next-line no-restricted-syntax
     for (const member of members) {

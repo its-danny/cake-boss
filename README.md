@@ -4,10 +4,14 @@
 
 [![Discord Bots](https://discordbots.org/api/widget/status/611013950942871562.svg)](https://discordbots.org/bot/611013950942871562)
 [![Discord Bots](https://discordbots.org/api/widget/lib/611013950942871562.svg)](https://discordbots.org/bot/611013950942871562)
-[![Build Status](https://travis-ci.com/dannytatom/cake-boss.svg?branch=master)](https://travis-ci.com/dannytatom/cake-boss)
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/dannytatom/cake-boss)
 ![GitHub last commit](https://img.shields.io/github/last-commit/dannytatom/cake-boss?color=blue)
 ![Maintenance](https://img.shields.io/maintenance/yes/2019?color=blue)
+
+[![Build Status](https://travis-ci.com/dannytatom/cake-boss.svg?branch=master)](https://travis-ci.com/dannytatom/cake-boss)
+[![Sonarcloud Status](https://sonarcloud.io/api/project_badges/measure?project=dannytatom_cake-boss&metric=alert_status)](https://sonarcloud.io/dashboard?id=dannytatom_cake-boss)
+[![SonarCloud Bugs](https://sonarcloud.io/api/project_badges/measure?project=dannytatom_cake-boss&metric=bugs)](https://sonarcloud.io/component_measures/metric/reliability_rating/list?id=dannytatom_cake-boss)
+[![SonarCloud Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=dannytatom_cake-boss&metric=vulnerabilities)](https://sonarcloud.io/component_measures/metric/security_rating/list?id=dannytatom_cake-boss)
 
 ## Features
 
@@ -31,7 +35,7 @@ There's not a lot to say about this. Who doesn't want to shove their rank in eve
 
 ## Get Started
 
-Check the [docs](https://dannytatom.github.io/cake-boss/) for how to use it then [add Cake Boss](https://discordapp.com/oauth2/authorize?client_id=611013950942871562&scope=bot&permissions=335588416) to your Discord server. 
+Check the [docs](https://dannytatom.github.io/cake-boss/) for how to use it then [add Cake Boss](https://discordapp.com/oauth2/authorize?client_id=611013950942871562&scope=bot&permissions=335588416) to your Discord server.
 
 If you have any questions, feel free to ask in the [Discord](https://discord.gg/2AG9fKt).
 
