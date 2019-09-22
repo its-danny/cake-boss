@@ -249,29 +249,37 @@ createConnection()
     fs.writeFileSync(`${process.cwd()}/.uptime`, moment().utc(), 'utf8');
 
     schedule.scheduleJob('0 * * * *', async () => {
-      const servers = await Server.find({ where: { active: true } });
+      try {
+        const servers = await Server.find({ where: { active: true } });
 
-      servers.forEach(async server => {
-        // eslint-disable-next-line no-param-reassign
-        server.timeSinceLastReset += 1;
-
-        if (server.timeSinceLastReset >= server.config.giveLimitHourReset) {
+        servers.forEach(async server => {
           // eslint-disable-next-line no-param-reassign
-          server.timeSinceLastReset = 0;
+          server.timeSinceLastReset += 1;
 
-          server.members.forEach(async member => {
+          if (server.timeSinceLastReset >= server.config.giveLimitHourReset) {
             // eslint-disable-next-line no-param-reassign
-            member.givenSinceReset = 0;
-            await member.save();
-          });
-        }
+            server.timeSinceLastReset = 0;
 
-        await server.save();
-      });
+            server.members.forEach(async member => {
+              // eslint-disable-next-line no-param-reassign
+              member.givenSinceReset = 0;
+              await member.save();
+            });
+          }
+
+          await server.save();
+        });
+      } catch (error) {
+        handleError(error, null);
+      }
     });
 
     schedule.scheduleJob('*/10 * * * *', async () => {
-      await fsExtra.emptyDir(`${process.cwd()}/tmp/`);
+      try {
+        await fsExtra.emptyDir(`${process.cwd()}/tmp/`);
+      } catch (error) {
+        handleError(error, null);
+      }
     });
 
     schedule.scheduleJob('0 * * * *', async () => {
@@ -279,28 +287,28 @@ createConnection()
       const SUPPORT_CHANNEL_ID: string = process.env.SUPPORT_CHANNEL_ID as string;
 
       if (SUPPORT_SERVER_ID && SUPPORT_CHANNEL_ID) {
-        const supportGuild = client.guilds.find(guild => guild.id === SUPPORT_SERVER_ID);
+        try {
+          const supportGuild = client.guilds.find(guild => guild.id === SUPPORT_SERVER_ID);
 
-        if (supportGuild) {
-          const supportChannel = supportGuild.channels.find(guild => guild.id === SUPPORT_CHANNEL_ID);
+          if (supportGuild) {
+            const supportChannel = supportGuild.channels.find(guild => guild.id === SUPPORT_CHANNEL_ID);
 
-          if (supportChannel) {
-            const servers = await Server.count();
-            const users = await User.count();
-            const cakes = (await Server.find()).map(s => s.totalEarnedByMembers()).reduce((a, b) => a + b);
+            if (supportChannel) {
+              const servers = await Server.count();
+              const users = await User.count();
+              const cakes = (await Server.find()).map(s => s.totalEarnedByMembers()).reduce((a, b) => a + b);
 
-            await supportChannel.setTopic(
-              `${EMOJI_WORKING_HARD} ${servers} servers, ${users} users, ${cakes} cakes given!`,
-            );
+              await supportChannel.setTopic(
+                `${EMOJI_WORKING_HARD} ${servers} servers, ${users} users, ${cakes} cakes given!`,
+              );
+            }
           }
+        } catch (error) {
+          handleError(error, null);
         }
       }
     });
   })
   .catch(error => {
-    if (NODE_ENV === 'production' && !SENTRY_DISABLED) {
-      Sentry.captureException(error);
-    } else {
-      console.error(error);
-    }
+    handleError(error, null);
   });
