@@ -293,6 +293,29 @@ createConnection()
     schedule.scheduleJob('*/10 * * * *', async () => {
       await fsExtra.emptyDir(`${process.cwd()}/tmp/`);
     });
+
+    schedule.scheduleJob('0 * * * *', async () => {
+      const SUPPORT_SERVER_ID: string = process.env.SUPPORT_SERVER_ID as string;
+      const SUPPORT_CHANNEL_ID: string = process.env.SUPPORT_CHANNEL_ID as string;
+
+      if (SUPPORT_SERVER_ID) {
+        const supportGuild = client.guilds.find(guild => guild.id === SUPPORT_SERVER_ID);
+
+        if (supportGuild) {
+          const supportChannel = supportGuild.channels.find(guild => guild.id === SUPPORT_CHANNEL_ID);
+
+          if (supportChannel) {
+            const servers = await Server.count();
+            const users = await User.count();
+            const cakes = (await Server.find()).map(s => s.totalEarnedByMembers()).reduce((a, b) => a + b);
+
+            await supportChannel.setTopic(
+              `${EMOJI_WORKING_HARD} ${servers} servers, ${users} users, ${cakes} cakes given!`,
+            );
+          }
+        }
+      }
+    });
   })
   .catch(error => {
     if (NODE_ENV === 'production' && !SENTRY_DISABLED) {
