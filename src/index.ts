@@ -16,7 +16,8 @@ import Member from './entity/member';
 import Server from './entity/server';
 import User from './entity/user';
 import { CommandArguments, CommandResponse } from './utils/command-interfaces';
-import { EMOJI_JOB_WELL_DONE, EMOJI_WORKING_HARD, EMOJI_THINKING, EMOJI_CAKE, EMOJI_ERROR } from './utils/emoji';
+import { EMOJI_JOB_WELL_DONE, EMOJI_WORKING_HARD, EMOJI_THINKING, EMOJI_CAKE } from './utils/emoji';
+import { handleError } from './utils/errors';
 
 dotenv.config({ path: `./.env` });
 
@@ -52,16 +53,6 @@ interface WatchedMessage {
 }
 
 const messagesToWatch: WatchedMessage[] = [];
-
-const handleError = async (error: Error, message: Message) => {
-  message.channel.send(`\u200B${EMOJI_ERROR} Uh oh, something broke!`);
-
-  if (NODE_ENV === 'production' && !SENTRY_DISABLED) {
-    Sentry.captureException(error);
-  } else {
-    console.error(error);
-  }
-};
 
 client.on('ready', async () => {
   client.user.setActivity(`in the kitchen! ${EMOJI_WORKING_HARD}`);
