@@ -27,13 +27,14 @@ It's a [quick read](https://guides.github.com/introduction/flow/index.html) and 
 - Fork the repo
 - Create a feature branch off `master`
 - Write your code, add tests if it makes sense
-- Make sure tests pass (`npm test`)
-- Run linter & prettier (`npm run lint` & `npm run pretty`)
+- Make sure tests pass (`yarn test`)
+- Run linter & prettier (`yarn run lint` & `yarn run pretty`)
+- Commit via `yarn run commit` for commitizen goodness
 - Open a pull request
 
 ## Consistent Coding Style
 
-Just let `npm run lint` & `npm run pretty` do all the work.
+Just let `yarn run lint` & `yarn run pretty` do all the work, tbh.
 
 ## License
 
