@@ -10,51 +10,56 @@ import {
 } from '../../../utils/emoji';
 import { logEvent } from '../../../utils/logger';
 import { CommandArguments, CommandResponse } from '../../../utils/command-interfaces';
+import { handleError } from '../../../utils/errors';
 
 export interface Arguments extends CommandArguments {
   member: string;
 }
 
 export const unshameMember = async (args: Arguments): Promise<CommandResponse | void> => {
-  if (!(await canManage(args.message))) {
-    return { content: `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!` };
+  try {
+    if (!(await canManage(args.message))) {
+      return { content: `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!` };
+    }
+
+    const server = await Server.findOne({ where: { discordId: args.message.guild.id }, cache: true });
+
+    if (!server) {
+      throw new Error('Could not find server.');
+    }
+
+    const memberId = args.member.replace(/^<@!?/, '').replace(/>$/, '');
+    const discordMember = args.message.guild.members.get(memberId);
+
+    if (!discordMember) {
+      return { content: `${EMOJI_RECORD_NOT_FOUND} Uh oh, I couldn't find them.` };
+    }
+
+    const member = await Member.findOne({ where: { discordId: discordMember.id }, cache: true });
+
+    if (!member) {
+      throw new Error('Could not find member.');
+    }
+
+    member.shamed = false;
+    await member.save();
+
+    logEvent(
+      args.client,
+      args.message,
+      `${EMOJI_SHAME} \`${args.message.author.tag}\` removed \`${discordMember.user.tag}\` from the shame list.`,
+    );
+
+    if (server.config.quietMode) {
+      args.message.react(EMOJI_JOB_WELL_DONE);
+
+      return undefined;
+    }
+
+    return { content: `${EMOJI_JOB_WELL_DONE} Done!` };
+  } catch (error) {
+    return handleError(error, args.message);
   }
-
-  const server = await Server.findOne({ where: { discordId: args.message.guild.id }, cache: true });
-
-  if (!server) {
-    throw new Error('Could not find server.');
-  }
-
-  const memberId = args.member.replace(/^<@!?/, '').replace(/>$/, '');
-  const discordMember = args.message.guild.members.get(memberId);
-
-  if (!discordMember) {
-    return { content: `${EMOJI_RECORD_NOT_FOUND} Uh oh, I couldn't find them.` };
-  }
-
-  const member = await Member.findOne({ where: { discordId: discordMember.id }, cache: true });
-
-  if (!member) {
-    throw new Error('Could not find member.');
-  }
-
-  member.shamed = false;
-  await member.save();
-
-  logEvent(
-    args.client,
-    args.message,
-    `${EMOJI_SHAME} \`${args.message.author.tag}\` removed \`${discordMember.user.tag}\` from the shame list.`,
-  );
-
-  if (server.config.quietMode) {
-    args.message.react(EMOJI_JOB_WELL_DONE);
-
-    return undefined;
-  }
-
-  return { content: `${EMOJI_JOB_WELL_DONE} Done!` };
 };
 
 export const command = 'remove <member>';

@@ -5,6 +5,7 @@ import Prize from '../../../entity/prize';
 import { logEvent } from '../../../utils/logger';
 import { EMOJI_ERROR, EMOJI_JOB_WELL_DONE, EMOJI_INCORRECT_PERMISSIONS, EMOJI_CONFIG } from '../../../utils/emoji';
 import { CommandArguments, CommandResponse } from '../../../utils/command-interfaces';
+import { handleError } from '../../../utils/errors';
 
 export interface Arguments extends CommandArguments {
   id: number;
@@ -15,75 +16,79 @@ export interface Arguments extends CommandArguments {
 }
 
 export const editPrize = async (args: Arguments): Promise<CommandResponse | void> => {
-  if (!(await canManage(args.message))) {
-    return { content: `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!` };
-  }
+  try {
+    if (!(await canManage(args.message))) {
+      return { content: `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!` };
+    }
 
-  const server = await Server.findOne({ where: { discordId: args.message.guild.id }, cache: true });
+    const server = await Server.findOne({ where: { discordId: args.message.guild.id }, cache: true });
 
-  if (!server) {
-    throw new Error('Could not find server.');
-  }
+    if (!server) {
+      throw new Error('Could not find server.');
+    }
 
-  if (!server.config.redeemChannelId || server.config.redeemChannelId === '') {
-    return { content: `${EMOJI_ERROR} You need to set the \`redeem-channel\` config before using prizes.` };
-  }
+    if (!server.config.redeemChannelId || server.config.redeemChannelId === '') {
+      return { content: `${EMOJI_ERROR} You need to set the \`redeem-channel\` config before using prizes.` };
+    }
 
-  if (args.description.trim() === '') {
-    return { content: `${EMOJI_ERROR} Description required!` };
-  }
+    if (args.description.trim() === '') {
+      return { content: `${EMOJI_ERROR} Description required!` };
+    }
 
-  if (args.reactionEmoji.trim() === '') {
-    return { content: `${EMOJI_ERROR} Reaction emoji required!` };
-  }
+    if (args.reactionEmoji.trim() === '') {
+      return { content: `${EMOJI_ERROR} Reaction emoji required!` };
+    }
 
-  if (args.price <= 0) {
-    return { content: `${EMOJI_ERROR} Price must be 1 or more!` };
-  }
+    if (args.price <= 0) {
+      return { content: `${EMOJI_ERROR} Price must be 1 or more!` };
+    }
 
-  const prize = await Prize.findOne({ server, id: args.id });
+    const prize = await Prize.findOne({ server, id: args.id });
 
-  if (!prize) {
-    return { content: `${EMOJI_ERROR} Couldn't find that prize, are you sure \`${args.id}\` is the right ID?` };
-  }
+    if (!prize) {
+      return { content: `${EMOJI_ERROR} Couldn't find that prize, are you sure \`${args.id}\` is the right ID?` };
+    }
 
-  prize.description = args.description;
-  prize.reactionEmoji = args.reactionEmoji;
-  prize.price = args.price;
+    prize.description = args.description;
+    prize.reactionEmoji = args.reactionEmoji;
+    prize.price = args.price;
 
-  if (args.roles) {
-    if (args.roles === 'none') {
-      prize.roleIds = [];
-    } else {
-      const foundRolesIds = args.roles
-        .split(',')
-        .map(g => g.trim())
-        .filter(roleName => {
-          return args.message.guild.roles.find(role => role.name === roleName.trim());
-        })
-        .map(roleName => args.message.guild.roles.find(role => role.name === roleName.trim()).id);
+    if (args.roles) {
+      if (args.roles === 'none') {
+        prize.roleIds = [];
+      } else {
+        const foundRolesIds = args.roles
+          .split(',')
+          .map(g => g.trim())
+          .filter(roleName => {
+            return args.message.guild.roles.find(role => role.name === roleName.trim());
+          })
+          .map(roleName => args.message.guild.roles.find(role => role.name === roleName.trim()).id);
 
-      if (foundRolesIds.length > 0) {
-        prize.roleIds = foundRolesIds;
+        if (foundRolesIds.length > 0) {
+          prize.roleIds = foundRolesIds;
+        }
       }
     }
+
+    await prize.save();
+
+    logEvent(
+      args.client,
+      args.message,
+      `${EMOJI_CONFIG} \`${args.message.author.tag}\` edited prize: \`${prize.description}\``,
+    );
+
+    if (server.config.quietMode) {
+      args.message.react(EMOJI_JOB_WELL_DONE);
+
+      return undefined;
+    }
+
+    return { content: `${EMOJI_JOB_WELL_DONE} Done!` };
+  } catch (error) {
+    return handleError(error, args.message);
   }
-
-  await prize.save();
-
-  logEvent(
-    args.client,
-    args.message,
-    `${EMOJI_CONFIG} \`${args.message.author.tag}\` edited prize: \`${prize.description}\``,
-  );
-
-  if (server.config.quietMode) {
-    args.message.react(EMOJI_JOB_WELL_DONE);
-
-    return undefined;
-  }
-
-  return { content: `${EMOJI_JOB_WELL_DONE} Done!` };
 };
 
 export const command = 'edit <id> <description> <reactionEmoji> <price> [roles]';
