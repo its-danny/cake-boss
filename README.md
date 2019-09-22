@@ -12,6 +12,8 @@
 [![Sonarcloud Status](https://sonarcloud.io/api/project_badges/measure?project=dannytatom_cake-boss&metric=alert_status)](https://sonarcloud.io/dashboard?id=dannytatom_cake-boss)
 [![SonarCloud Bugs](https://sonarcloud.io/api/project_badges/measure?project=dannytatom_cake-boss&metric=bugs)](https://sonarcloud.io/component_measures/metric/reliability_rating/list?id=dannytatom_cake-boss)
 [![SonarCloud Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=dannytatom_cake-boss&metric=vulnerabilities)](https://sonarcloud.io/component_measures/metric/security_rating/list?id=dannytatom_cake-boss)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=dannytatom_cake-boss&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=dannytatom_cake-boss)
+[![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=dannytatom_cake-boss&metric=sqale_index)](https://sonarcloud.io/dashboard?id=dannytatom_cake-boss)
 
 ## Features
 
