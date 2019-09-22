@@ -4,7 +4,7 @@ import Server from './src/entity/server';
 import Member from './src/entity/member';
 
 if (process.argv.length < 3) {
-  console.log(`Missing file: npm run import <path-to-csv-file>`);
+  console.log(`Missing file: yarn run import <path-to-csv-file>`);
 }
 
 const file = process.argv[2];
