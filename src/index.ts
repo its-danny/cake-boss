@@ -10,7 +10,6 @@ import fsExtra from 'fs-extra';
 import schedule from 'node-schedule';
 import Koa from 'koa';
 import Router from 'koa-router';
-import IO from 'koa-socket-2';
 import cors from '@koa/cors';
 import Member from './entity/member';
 import Server from './entity/server';
@@ -224,34 +223,15 @@ client.on('message', async (message: Message) => {
 
 const api = new Koa();
 const router = new Router();
-const io = new IO();
 
 api.use(cors());
 api.use(router.routes());
 api.use(router.allowedMethods());
 
-io.attach(api);
-
 router.get('/ping', context => {
   // eslint-disable-next-line no-param-reassign
   context.body = 'ONLINE';
 });
-
-io.on('join', async () => {
-  return {
-    servers: await Server.count(),
-    users: await User.count(),
-    cakes: (await Server.find()).map(s => s.totalEarnedByMembers()).reduce((a, b) => a + b),
-  };
-});
-
-setInterval(async () => {
-  io.broadcast('live', {
-    servers: await Server.count(),
-    users: await User.count(),
-    cakes: (await Server.find()).map(s => s.totalEarnedByMembers()).reduce((a, b) => a + b),
-  });
-}, 3 * 1000);
 
 // Start it all up
 
@@ -298,7 +278,7 @@ createConnection()
       const SUPPORT_SERVER_ID: string = process.env.SUPPORT_SERVER_ID as string;
       const SUPPORT_CHANNEL_ID: string = process.env.SUPPORT_CHANNEL_ID as string;
 
-      if (SUPPORT_SERVER_ID) {
+      if (SUPPORT_SERVER_ID && SUPPORT_CHANNEL_ID) {
         const supportGuild = client.guilds.find(guild => guild.id === SUPPORT_SERVER_ID);
 
         if (supportGuild) {

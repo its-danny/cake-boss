@@ -86,19 +86,6 @@ header {
   margin: 0 10px 0 0;
 }
 
-#live {
-  margin-top: 15px;
-}
-
-#live .badge {
-  font-weight: normal;
-  background-color: #57a2a2;
-}
-
-#live .badge .count {
-  font-weight: bold;
-}
-
 #what,
 #commands {
   margin: 2.5rem 0;
