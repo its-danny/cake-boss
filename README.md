@@ -47,6 +47,19 @@ If you have any questions, feel free to ask in the [Discord](https://discord.gg/
 
 I'm too lazy to dive into this, but if you've used Node & PostgreSQL then it shouldn't take too much to get it going. Just copy `.env.sample` to `.env`, take a look at `package.json`, and go from there.
 
+I also use this little shell script to keep it updated:
+
+```zsh
+# update-cake-boss.sh
+
+cd cake-boss
+git pull origin master
+yarn install --production
+yarn run typeorm migration:run
+yarn run build
+pm2 start "cake-boss" --update-env
+```
+
 ## Contributing
 
 Contributions are welcome. Check the [guidelines](https://github.com/dannytatom/cake-boss/blob/master/CONTRIBUTING.md) and get at it!
