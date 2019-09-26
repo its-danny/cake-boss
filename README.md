@@ -37,7 +37,7 @@ There's not a lot to say about this. Who doesn't want to shove their rank in eve
 
 ## Get Started
 
-Check the [docs](https://dannytatom.github.io/cake-boss/) for how to use it then [add Cake Boss](https://discordapp.com/oauth2/authorize?client_id=611013950942871562&scope=bot&permissions=335588416) to your Discord server.
+Check the [docs](https://cake-boss.js.org/) for how to use it then [add Cake Boss](https://discordapp.com/oauth2/authorize?client_id=611013950942871562&scope=bot&permissions=335588416) to your Discord server.
 
 If you have any questions, feel free to ask in the [Discord](https://discord.gg/2AG9fKt).
 

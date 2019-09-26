@@ -13,7 +13,7 @@ export const handler = (args: CommandArguments) => {
         Cake Boss is a discord bot that lets users reward each other cakes for being helpful, and redeem those cakes for prizes.
 
         GitHub: <https://github.com/dannytatom/cake-boss>
-        Docs: <https://dannytatom.github.io/cake-boss/>
+        Docs: <https://cake-boss.js.org/>
         Support: <https://discord.gg/2AG9fKt>
       `
         .split('\n')

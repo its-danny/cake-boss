@@ -12,7 +12,7 @@ interface Arguments extends CommandArguments {
   value: string;
 }
 
-export const ERROR_MESSAGE = `Incorrect arguments, sorry! Maybe you need the docs? <https://dannytatom.github.io/cake-boss/>`;
+export const ERROR_MESSAGE = `Incorrect arguments, sorry! Maybe you need the docs? <https://cake-boss.js.org/>`;
 
 export const setConfig = async (args: Arguments): Promise<CommandResponse | void> => {
   try {
