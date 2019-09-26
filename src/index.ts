@@ -152,7 +152,7 @@ client.on('message', async (message: Message) => {
           if (error) {
             if (error.name === 'YError') {
               message.channel.send(
-                `\u200B${EMOJI_WORKING_HARD} Looks like you need some help! Check the commands here: <https://dannytatom.github.io/cake-boss/>`,
+                `\u200B${EMOJI_WORKING_HARD} Looks like you need some help! Check the commands here: <https://cake-boss.js.org/>`,
               );
             } else {
               handleError(error, message);
@@ -171,7 +171,7 @@ client.on('message', async (message: Message) => {
 
           if (argv.help) {
             message.channel.send(
-              `\u200B${EMOJI_WORKING_HARD} Looks like you need some help! Check the commands here: <https://dannytatom.github.io/cake-boss/>`,
+              `\u200B${EMOJI_WORKING_HARD} Looks like you need some help! Check the commands here: <https://cake-boss.js.org/>`,
             );
           }
 
