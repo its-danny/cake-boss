@@ -2,6 +2,9 @@
   "name": "cake-boss",
   "version": "1.0.0",
   "description": "A Discord bot that lets users reward each other cakes for being helpful, and redeem those cakes for prizes.",
+  "author": "Danny Tatom",
+  "license": "MIT",
+  "private": true,
   "scripts": {
     "dev": "NODE_ENV=development yarn run nodemon --watch 'src/**/*.ts' --ignore 'src/**/*.test.ts' --exec 'yarn run ts-node' src/index.ts",
     "build": "NODE_ENV=production yarn run tsc",
@@ -10,12 +13,13 @@
     "lint": "yarn run eslint --ext .ts ./",
     "pretty": "yarn run eslint --ext .ts ./ --fix && yarn run pretty-quick --staged",
     "typeorm": "yarn run ts-node ./node_modules/.bin/typeorm",
-    "import": "yarn run ts-node import.ts",
     "commit": "npx git-cz"
   },
-  "author": "Danny Tatom",
-  "license": "MIT",
-  "private": true,
+  "husky": {
+    "hooks": {
+      "pre-commit": "yarn run pretty"
+    }
+  },
   "devDependencies": {
     "@types/cli-table": "^0.3.0",
     "@types/dotenv": "^6.1.1",
@@ -68,10 +72,5 @@
     "typescript": "^3.6.3",
     "underscore.string": "^3.3.5",
     "yargs": "^14.0.0"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "yarn run pretty"
-    }
   }
 }
