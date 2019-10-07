@@ -6,7 +6,7 @@ module.exports = {
   username: process.env.ORM_USER,
   password: process.env.ORM_PASS,
   database: process.env.ORM_DATABASE,
-  synchronize: true,
+  synchronize: false,
   logging: false,
 
   entities: [process.env.NODE_ENV === 'production' ? 'dist/entity/**/*.js' : 'src/entity/**/!(*.test.ts)'],
