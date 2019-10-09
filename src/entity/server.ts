@@ -39,8 +39,8 @@ export default class Server extends BaseEntity {
   @JoinColumn()
   config!: Config;
 
-  @OneToMany(() => Member, member => member.server, { eager: true })
-  members!: Member[];
+  @OneToMany(() => Member, member => member.server)
+  members!: Promise<Member[]>;
 
   @OneToMany(() => Prize, prize => prize.server, { eager: true })
   prizes!: Prize[];
@@ -78,11 +78,12 @@ export default class Server extends BaseEntity {
     }
   }
 
-  totalEarnedByMembers(): number {
+  async totalEarnedByMembers(): Promise<number> {
     let totalEarned = 0;
+    const members = await this.members;
 
-    if (this.members) {
-      this.members.forEach(m => {
+    if (members) {
+      members.forEach(m => {
         totalEarned += m.earned;
       });
     }

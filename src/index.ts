@@ -264,7 +264,8 @@ createConnection()
             // eslint-disable-next-line no-param-reassign
             server.timeSinceLastReset = 0;
 
-            server.members.forEach(async member => {
+            const members = await server.members;
+            members.forEach(async member => {
               // eslint-disable-next-line no-param-reassign
               member.givenSinceReset = 0;
               await member.save();
@@ -300,7 +301,9 @@ createConnection()
             if (supportChannel) {
               const servers = await Server.count();
               const users = await User.count();
-              const cakes = (await Server.find()).map(s => s.totalEarnedByMembers()).reduce((a, b) => a + b);
+              const cakes = (await Server.find())
+                .map(s => s.totalEarnedByMembers())
+                .reduce(async (a, b) => (await a) + (await b));
 
               await supportChannel.setTopic(
                 `${EMOJI_WORKING_HARD} ${servers} servers, ${users} users, ${cakes} cakes given!`,

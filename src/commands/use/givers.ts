@@ -14,7 +14,9 @@ export const getTopGivers = async (args: CommandArguments): Promise<CommandRespo
       throw new Error('Could not find server.');
     }
 
-    const sorted = server.members
+    const members = await server.members;
+
+    const sorted = members
       .concat()
       .sort((a, b) => b.given - a.given)
       .slice(0, 10)

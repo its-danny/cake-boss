@@ -24,14 +24,16 @@ export const getLedger = async (args: CommandArguments): Promise<CommandResponse
       return { content: `${EMOJI_ERROR} I need permission to \`attach files\`!` };
     }
 
-    if (server.members.length === 0) {
+    const members = await server.members;
+
+    if (members.length === 0) {
       return { content: `${EMOJI_WORKING_HARD} Nobody has ${server.config.cakeNamePlural} yet!` };
     }
 
     const fields = ['Name/ID', 'Balance', 'Earned', 'Date Added'];
     const data: any = [];
 
-    server.members.forEach(member => {
+    members.forEach(member => {
       const discordMember = args.message.guild.members.get(member.discordId);
 
       data.push({
