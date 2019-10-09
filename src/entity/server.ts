@@ -53,6 +53,9 @@ export default class Server extends BaseEntity {
       const foundServer = await Server.findOne({ where: { discordId: guildId } });
 
       if (foundServer) {
+        if (foundServer.active) {
+          return foundServer;
+        }
         foundServer.active = true;
         return foundServer.save();
       }
@@ -70,9 +73,7 @@ export default class Server extends BaseEntity {
       server.active = true;
       server.config = config;
 
-      await server.save();
-
-      return server;
+      return server.save();
     } catch (error) {
       return handleError(error, null);
     }

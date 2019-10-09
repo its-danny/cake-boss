@@ -52,6 +52,12 @@ export default class Member extends BaseEntity {
     discordMemberId: string,
   ): Promise<Member | void> {
     try {
+      const foundMember = await Member.findOne({ where: { discordId: discordMemberId } });
+
+      if (foundMember) {
+        return foundMember;
+      }
+
       const server = await Server.findOne({ where: { discordId: serverDiscordId } });
 
       if (!server) {
