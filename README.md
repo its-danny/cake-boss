@@ -56,8 +56,8 @@ cd cake-boss
 git pull origin master
 yarn install --production
 yarn run typeorm migration:run
-yarn run build
-pm2 start "cake-boss" --update-env
+yarn build
+yarn start
 ```
 
 ## Contributing

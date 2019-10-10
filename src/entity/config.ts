@@ -338,44 +338,24 @@ export default class Config extends BaseEntity {
     const logChannel = this.logChannelId ? guild.channels.get(this.logChannelId) : null;
     const redeemChannel = this.redeemChannelId ? guild.channels.get(this.redeemChannelId) : null;
 
-    const managerRoles: string[] = chain(this.managerRoleIds)
-      .map(roleId => {
-        const role = guild.roles.get(roleId);
+    const getRoles = (ids: string[]): string[] => {
+      return chain(ids)
+        .map(roleId => {
+          const role = guild.roles.get(roleId);
 
-        if (role) {
-          return role.name;
-        }
+          if (role) {
+            return role.name;
+          }
 
-        return undefined;
-      })
-      .compact()
-      .value();
+          return undefined;
+        })
+        .compact()
+        .value();
+    };
 
-    const blesserRoles: string[] = chain(this.blesserRoleIds)
-      .map(roleId => {
-        const role = guild.roles.get(roleId);
-
-        if (role) {
-          return role.name;
-        }
-
-        return undefined;
-      })
-      .compact()
-      .value();
-
-    const dropperRoles: string[] = chain(this.dropperRoleIds)
-      .map(roleId => {
-        const role = guild.roles.get(roleId);
-
-        if (role) {
-          return role.name;
-        }
-
-        return undefined;
-      })
-      .compact()
-      .value();
+    const managerRoles = getRoles(this.managerRoleIds);
+    const blesserRoles = getRoles(this.blesserRoleIds);
+    const dropperRoles = getRoles(this.dropperRoleIds);
 
     switch (config) {
       case 'command-prefix':

@@ -39,8 +39,8 @@ export default class Server extends BaseEntity {
   @JoinColumn()
   config!: Config;
 
-  @OneToMany(() => Member, member => member.server, { eager: true })
-  members!: Member[];
+  @OneToMany(() => Member, member => member.server)
+  members!: Promise<Member[]>;
 
   @OneToMany(() => Prize, prize => prize.server, { eager: true })
   prizes!: Prize[];
@@ -53,6 +53,9 @@ export default class Server extends BaseEntity {
       const foundServer = await Server.findOne({ where: { discordId: guildId } });
 
       if (foundServer) {
+        if (foundServer.active) {
+          return foundServer;
+        }
         foundServer.active = true;
         return foundServer.save();
       }
@@ -70,19 +73,18 @@ export default class Server extends BaseEntity {
       server.active = true;
       server.config = config;
 
-      await server.save();
-
-      return server;
+      return server.save();
     } catch (error) {
       return handleError(error, null);
     }
   }
 
-  totalEarnedByMembers(): number {
+  async totalEarnedByMembers(): Promise<number> {
     let totalEarned = 0;
+    const members = await this.members;
 
-    if (this.members) {
-      this.members.forEach(m => {
+    if (members) {
+      members.forEach(m => {
         totalEarned += m.earned;
       });
     }

@@ -81,17 +81,21 @@ client.on('guildDelete', async (guild: Guild) => {
   }
 });
 
-client.on('messageReactionAdd', (reaction, user) => {
-  messagesToWatch.forEach(async (watching, index) => {
-    if (user.id === watching.userId && Object.hasOwnProperty.call(watching.reactions, reaction.emoji.toString())) {
-      watching.reactions[reaction.emoji.toString()]();
-      watching.message.edit(`${EMOJI_JOB_WELL_DONE} Prize redeemed!`);
+client.on('messageReactionAdd', async (reaction, user) => {
+  const index = messagesToWatch.findIndex(m => m.message.id === reaction.message.id);
+
+  if (index > -1) {
+    const message = messagesToWatch[index];
+
+    if (user.id === message.userId && Object.hasOwnProperty.call(message.reactions, reaction.emoji.toString())) {
+      message.reactions[reaction.emoji.toString()]();
+      message.message.edit(`${EMOJI_JOB_WELL_DONE} Prize redeemed!`);
       messagesToWatch.splice(index, 1);
 
-      const server = await Server.findOne({ where: { discordId: watching.message.guild.id } });
+      const server = await Server.findOne({ where: { discordId: message.message.guild.id } });
 
       if (server && server.config.redeemChannelId && server.config.redeemPingRoleIds.length > 0) {
-        const discordChannel = watching.message.guild.channels.get(server.config.redeemChannelId) as TextChannel;
+        const discordChannel = message.message.guild.channels.get(server.config.redeemChannelId) as TextChannel;
 
         if (discordChannel) {
           const mentions = server.config.redeemPingRoleIds.map(id => `<@&${id}>`);
@@ -99,121 +103,121 @@ client.on('messageReactionAdd', (reaction, user) => {
         }
       }
     }
-  });
+  }
 });
 
 client.on('message', async (message: Message) => {
-  const cleanContent = message.content
-    .trim()
-    .split(' ')
-    .map((s, i) => (i === 0 ? s.toLowerCase() : s))
-    .join(' ');
+  if (message.author.id !== client.user.id && !message.author.bot) {
+    const server = await Server.findOrCreate(message.guild.id);
 
-  const server = await Server.findOrCreate(message.guild.id);
+    if (server) {
+      const { commandPrefix } = server.config;
 
-  if (server) {
-    const { commandPrefix } = server.config;
+      const cleanContent = message.content
+        .trim()
+        .split(' ')
+        .map((s, i) => (i === 0 ? s.toLowerCase() : s))
+        .join(' ');
 
-    if (
-      message.author.id !== client.user.id &&
-      !message.author.bot &&
-      (cleanContent.startsWith(`${commandPrefix}`) || message.isMemberMentioned(client.user))
-    ) {
-      try {
-        await Member.findOrCreate(server.discordId, message.author.id, message.member.id);
+      if (cleanContent.startsWith(`${commandPrefix}`) || message.isMemberMentioned(client.user)) {
+        try {
+          await Member.findOrCreate(server.discordId, message.author.id, message.member.id);
 
-        // eslint-disable-next-line no-restricted-syntax
-        for (const member of message.mentions.members) {
-          // eslint-disable-next-line no-await-in-loop
-          if ((await Member.count({ where: { discordId: member[1].id } })) === 0) {
+          // eslint-disable-next-line no-restricted-syntax
+          for (const member of message.mentions.members) {
             // eslint-disable-next-line no-await-in-loop
-            await Member.findOrCreate(server.discordId, member[1].user.id, member[1].id);
+            if ((await Member.count({ where: { discordId: member[1].id } })) === 0) {
+              // eslint-disable-next-line no-await-in-loop
+              await Member.findOrCreate(server.discordId, member[1].user.id, member[1].id);
+            }
           }
-        }
 
-        const context: CommandArguments = {
-          client,
-          message,
-          deleteCaller: false,
-          needsFetch: false,
-          careAboutQuietMode: false,
-          promisedOutput: null,
-          reactions: null,
-        };
+          const context: CommandArguments = {
+            client,
+            message,
+            deleteCaller: false,
+            needsFetch: false,
+            careAboutQuietMode: false,
+            promisedOutput: null,
+            reactions: null,
+          };
 
-        let command = cleanContent.replace(commandPrefix, '');
+          let command = cleanContent.replace(commandPrefix, '');
 
-        if (message.isMemberMentioned(client.user) && message.mentions.members.get(client.user.id)) {
-          const mentionRegex = new RegExp(`<@!?${message.mentions.members.get(client.user.id)!.id}>`);
-          command = command.replace(mentionRegex, '');
-        }
+          if (message.isMemberMentioned(client.user) && message.mentions.members.get(client.user.id)) {
+            const mentionRegex = new RegExp(`<@!?${message.mentions.members.get(client.user.id)!.id}>`);
+            command = command.replace(mentionRegex, '');
+          }
 
-        commandParser.parse(command, context, async (error, argv) => {
-          if (error) {
-            if (error.name === 'YError') {
+          commandParser.parse(command, context, async (error, argv) => {
+            if (error) {
+              if (error.name === 'YError') {
+                message.channel.send(
+                  `\u200B${EMOJI_WORKING_HARD} Looks like you need some help! Check the commands here: <https://cake-boss.js.org/>`,
+                );
+              } else {
+                handleError(error, message);
+              }
+            }
+
+            if (argv.deleteCaller) {
+              message.delete();
+            }
+
+            let sentMessage: Message | null = null;
+
+            if (argv.needsFetch && (!server.config.quietMode || !argv.careAboutQuietMode)) {
+              sentMessage = (await message.channel.send(`\u200B${EMOJI_THINKING}`)) as Message;
+            }
+
+            if (argv.help) {
               message.channel.send(
                 `\u200B${EMOJI_WORKING_HARD} Looks like you need some help! Check the commands here: <https://cake-boss.js.org/>`,
               );
-            } else {
-              handleError(error, message);
-            }
-          }
-
-          if (argv.deleteCaller) {
-            message.delete();
-          }
-
-          let sentMessage: Message | null = null;
-
-          if (argv.needsFetch && (!server.config.quietMode || !argv.careAboutQuietMode)) {
-            sentMessage = (await message.channel.send(`\u200B${EMOJI_THINKING}`)) as Message;
-          }
-
-          if (argv.help) {
-            message.channel.send(
-              `\u200B${EMOJI_WORKING_HARD} Looks like you need some help! Check the commands here: <https://cake-boss.js.org/>`,
-            );
-          }
-
-          if (argv.promisedOutput) {
-            const commandResponse: CommandResponse = (await argv.promisedOutput) as CommandResponse;
-
-            if (sentMessage) {
-              await sentMessage.edit(
-                `\u200B${commandResponse.content}`,
-                commandResponse.messageOptions || commandResponse.richEmbed,
-              );
-            } else {
-              sentMessage = (await message.channel.send(
-                `\u200B${commandResponse.content}`,
-                commandResponse.messageOptions || commandResponse.richEmbed || commandResponse.attachment,
-              )) as Message;
             }
 
-            const reactions = argv.reactions as { [key: string]: () => void } | null;
+            if (argv.promisedOutput) {
+              const commandResponse: CommandResponse = (await argv.promisedOutput) as CommandResponse;
 
-            if (sentMessage && reactions) {
-              Object.keys(reactions).forEach(emoji => {
-                let react: string;
+              if (sentMessage) {
+                await sentMessage.edit(
+                  `\u200B${commandResponse.content}`,
+                  commandResponse.messageOptions || commandResponse.richEmbed,
+                );
+              } else {
+                sentMessage = (await message.channel.send(
+                  `\u200B${commandResponse.content}`,
+                  commandResponse.messageOptions || commandResponse.richEmbed || commandResponse.attachment,
+                )) as Message;
+              }
 
-                if (/\b:\d{18}/.test(emoji)) {
-                  [react] = emoji.match(/\d{18}/)!;
-                } else {
-                  react = emoji;
-                }
+              const reactions = argv.reactions as { [key: string]: () => void } | null;
 
-                sentMessage!.react(react);
-              });
+              if (sentMessage && reactions) {
+                Object.keys(reactions).forEach(emoji => {
+                  let react: string;
 
-              const toWatch = { message: sentMessage, reactions, userId: message.author.id };
-              messagesToWatch.push(toWatch);
-              const toWatchIndex = messagesToWatch.indexOf(toWatch);
-              sentMessage.delete(1000 * server.config.redeemTimer).then(() => messagesToWatch.splice(toWatchIndex, 1));
+                  if (/\b:\d{18}/.test(emoji)) {
+                    [react] = emoji.match(/\d{18}/)!;
+                  } else {
+                    react = emoji;
+                  }
+
+                  sentMessage!.react(react);
+                });
+
+                const toWatch = { message: sentMessage, reactions, userId: message.author.id };
+                messagesToWatch.push(toWatch);
+                const toWatchIndex = messagesToWatch.indexOf(toWatch);
+                sentMessage
+                  .delete(1000 * server.config.redeemTimer)
+                  .then(() => messagesToWatch.splice(toWatchIndex, 1));
+              }
             }
-          }
-        });
-      } catch (error) {
-        handleError(error, message);
+          });
+        } catch (error) {
+          handleError(error, message);
+        }
       }
     }
   }
@@ -260,7 +264,8 @@ createConnection()
             // eslint-disable-next-line no-param-reassign
             server.timeSinceLastReset = 0;
 
-            server.members.forEach(async member => {
+            const members = await server.members;
+            members.forEach(async member => {
               // eslint-disable-next-line no-param-reassign
               member.givenSinceReset = 0;
               await member.save();
@@ -296,7 +301,9 @@ createConnection()
             if (supportChannel) {
               const servers = await Server.count();
               const users = await User.count();
-              const cakes = (await Server.find()).map(s => s.totalEarnedByMembers()).reduce((a, b) => a + b);
+              const cakes = (await Server.find())
+                .map(s => s.totalEarnedByMembers())
+                .reduce(async (a, b) => (await a) + (await b));
 
               await supportChannel.setTopic(
                 `${EMOJI_WORKING_HARD} ${servers} servers, ${users} users, ${cakes} cakes given!`,

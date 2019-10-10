@@ -14,7 +14,9 @@ export const getTopEarners = async (args: CommandArguments): Promise<CommandResp
       throw new Error('Could not find server.');
     }
 
-    const sorted = server.members
+    const members = await server.members;
+
+    const sorted = members
       .concat()
       .sort((a, b) => b.earned - a.earned)
       .slice(0, 10)
