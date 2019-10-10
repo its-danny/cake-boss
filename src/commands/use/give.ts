@@ -1,4 +1,5 @@
 import { Argv } from 'yargs';
+import moment from 'moment';
 import Server from '../../entity/server';
 import { canGive, isShamed } from '../../utils/permissions';
 import Member from '../../entity/member';
@@ -8,7 +9,6 @@ import {
   EMOJI_INCORRECT_PERMISSIONS,
   EMOJI_RECORD_NOT_FOUND,
   EMOJI_WORKING_HARD,
-  EMOJI_ERROR,
 } from '../../utils/emoji';
 import { CommandArguments, CommandResponse } from '../../utils/command-interfaces';
 import { handleError } from '../../utils/errors';
@@ -66,13 +66,28 @@ export const giveCakeToMember = async (args: Arguments): Promise<CommandResponse
     }
 
     if (!(await canGive(args.message))) {
+      if (givingMember.earned < server.config.requirementToGive) {
+        return {
+          content: `${EMOJI_INCORRECT_PERMISSIONS} You need to earn ${server.config.requirementToGive} ${server.config.cakeNamePlural} first!`,
+        };
+      }
+      if (givingMember.givenSinceReset >= server.config.giveLimit) {
+        const remaining = server.config.giveLimitHourReset - server.timeSinceLastReset;
+        const date = moment().add(remaining, 'hours');
+
+        return {
+          content: `${EMOJI_INCORRECT_PERMISSIONS} You're out of ${
+            server.config.cakeNamePlural
+          }! You can give more ${date.fromNow()}.`,
+        };
+      }
       return { content: `${EMOJI_INCORRECT_PERMISSIONS} You can't do that yet!` };
     }
 
     let amount = args.amount ? args.amount : 1;
 
-    if (!Number.isInteger(amount) && amount <= 0) {
-      return { content: `${EMOJI_ERROR} Invalid amount, sorry!` };
+    if (!Number.isInteger(amount) || amount <= 0) {
+      amount = 1;
     }
 
     if (amount > server.config.giveLimit) {
@@ -98,7 +113,7 @@ export const giveCakeToMember = async (args: Arguments): Promise<CommandResponse
       args.message,
       `${server.config.cakeEmoji}  \`${args.message.author.tag}\` gave \`${
         receivingDiscordMember.user.tag
-      }\` ${amount} ${amount > 1 ? server.config.cakeNamePlural : server.config.cakeNameSingular}!`,
+      }\` ${amount} ${amount > 1 ? server.config.cakeNamePlural : server.config.cakeNameSingular} for!`,
     );
 
     if (server.config.quietMode) {
