@@ -13,6 +13,8 @@ import {
 import { CommandArguments, CommandResponse } from '../../utils/command-interfaces';
 import { handleError } from '../../utils/errors';
 
+import moment = require('moment');
+
 export interface Arguments extends CommandArguments {
   member: string;
   amount?: number;
@@ -66,6 +68,21 @@ export const giveCakeToMember = async (args: Arguments): Promise<CommandResponse
     }
 
     if (!(await canGive(args.message))) {
+      if (givingMember.earned < server.config.requirementToGive) {
+        return {
+          content: `${EMOJI_INCORRECT_PERMISSIONS} You need to earn ${server.config.requirementToGive} ${server.config.cakeNamePlural} first!`,
+        };
+      }
+      if (givingMember.givenSinceReset >= server.config.giveLimit) {
+        const remaining = server.config.giveLimitHourReset - server.timeSinceLastReset;
+        const date = moment().add(remaining, 'hours');
+
+        return {
+          content: `${EMOJI_INCORRECT_PERMISSIONS} You're out of ${
+            server.config.cakeNamePlural
+          }! You can give more ${date.fromNow()}.`,
+        };
+      }
       return { content: `${EMOJI_INCORRECT_PERMISSIONS} You can't do that yet!` };
     }
 

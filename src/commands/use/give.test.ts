@@ -166,7 +166,9 @@ describe('commands/use/give', () => {
     };
 
     const response = (await giveCakeToMember(args)) as CommandResponse;
-    expect(response.content).toBe(`${EMOJI_INCORRECT_PERMISSIONS} You can't do that yet!`);
+    expect(response.content).toBe(
+      `${EMOJI_INCORRECT_PERMISSIONS} You're out of ${server.config.cakeNamePlural}! You can give more in an hour.`,
+    );
 
     done();
   });
