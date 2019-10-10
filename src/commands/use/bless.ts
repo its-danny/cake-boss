@@ -3,12 +3,7 @@ import Server from '../../entity/server';
 import { canBless, isShamed } from '../../utils/permissions';
 import Member from '../../entity/member';
 import { logEvent } from '../../utils/logger';
-import {
-  EMOJI_DONT_DO_THAT,
-  EMOJI_INCORRECT_PERMISSIONS,
-  EMOJI_RECORD_NOT_FOUND,
-  EMOJI_ERROR,
-} from '../../utils/emoji';
+import { EMOJI_DONT_DO_THAT, EMOJI_INCORRECT_PERMISSIONS, EMOJI_RECORD_NOT_FOUND } from '../../utils/emoji';
 import { CommandArguments, CommandResponse } from '../../utils/command-interfaces';
 import { handleError } from '../../utils/errors';
 
@@ -49,10 +44,10 @@ export const blessMember = async (args: Arguments): Promise<CommandResponse | vo
       throw new Error('Could not find member.');
     }
 
-    const amount = args.amount ? args.amount : 1;
+    let amount = args.amount ? args.amount : 1;
 
-    if (!Number.isInteger(amount) && amount <= 0) {
-      return { content: `${EMOJI_ERROR} Invalid amount, sorry!` };
+    if (!Number.isInteger(amount) || amount <= 0) {
+      amount = 1;
     }
 
     receivingMember.earned += amount;

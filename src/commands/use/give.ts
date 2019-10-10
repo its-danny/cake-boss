@@ -1,4 +1,5 @@
 import { Argv } from 'yargs';
+import moment from 'moment';
 import Server from '../../entity/server';
 import { canGive, isShamed } from '../../utils/permissions';
 import Member from '../../entity/member';
@@ -8,12 +9,9 @@ import {
   EMOJI_INCORRECT_PERMISSIONS,
   EMOJI_RECORD_NOT_FOUND,
   EMOJI_WORKING_HARD,
-  EMOJI_ERROR,
 } from '../../utils/emoji';
 import { CommandArguments, CommandResponse } from '../../utils/command-interfaces';
 import { handleError } from '../../utils/errors';
-
-import moment = require('moment');
 
 export interface Arguments extends CommandArguments {
   member: string;
@@ -88,8 +86,8 @@ export const giveCakeToMember = async (args: Arguments): Promise<CommandResponse
 
     let amount = args.amount ? args.amount : 1;
 
-    if (!Number.isInteger(amount) && amount <= 0) {
-      return { content: `${EMOJI_ERROR} Invalid amount, sorry!` };
+    if (!Number.isInteger(amount) || amount <= 0) {
+      amount = 1;
     }
 
     if (amount > server.config.giveLimit) {
@@ -115,7 +113,7 @@ export const giveCakeToMember = async (args: Arguments): Promise<CommandResponse
       args.message,
       `${server.config.cakeEmoji}  \`${args.message.author.tag}\` gave \`${
         receivingDiscordMember.user.tag
-      }\` ${amount} ${amount > 1 ? server.config.cakeNamePlural : server.config.cakeNameSingular}!`,
+      }\` ${amount} ${amount > 1 ? server.config.cakeNamePlural : server.config.cakeNameSingular} for!`,
     );
 
     if (server.config.quietMode) {
