@@ -356,6 +356,7 @@ export default class Config extends BaseEntity {
     const managerRoles = getRoles(this.managerRoleIds);
     const blesserRoles = getRoles(this.blesserRoleIds);
     const dropperRoles = getRoles(this.dropperRoleIds);
+    const redeemPingRoles = getRoles(this.redeemPingRoleIds);
 
     switch (config) {
       case 'command-prefix':
@@ -374,6 +375,8 @@ export default class Config extends BaseEntity {
         return { default: 'none', value: isEmpty(blesserRoles) ? 'none' : toSentenceSerial(blesserRoles) };
       case 'dropper-roles':
         return { default: 'none', value: isEmpty(dropperRoles) ? 'none' : toSentenceSerial(dropperRoles) };
+      case 'redeem-ping-roles':
+        return { default: 'none', value: isEmpty(redeemPingRoles) ? 'none' : toSentenceSerial(redeemPingRoles) };
       case 'nickname':
         return { default: 'CAKE BOSS!', value: this.nickname || '' };
       case 'cake-emoji':
