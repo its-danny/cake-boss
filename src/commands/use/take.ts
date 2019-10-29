@@ -6,7 +6,7 @@ import Drop from '../../entity/drop';
 import { logEvent } from '../../utils/logger';
 import Member from '../../entity/member';
 import { isShamed } from '../../utils/permissions';
-import { EMOJI_DONT_DO_THAT, EMOJI_RECORD_NOT_FOUND, EMOJI_JOB_WELL_DONE } from '../../utils/emoji';
+import { EMOJI_DONT_DO_THAT, EMOJI_RECORD_NOT_FOUND, EMOJI_JOB_WELL_DONE, EMOJI_MILESTONE } from '../../utils/emoji';
 import { CommandArguments, CommandResponse } from '../../utils/command-interfaces';
 import { handleError } from '../../utils/errors';
 
@@ -60,6 +60,21 @@ export const takeCake = async (args: CommandArguments): Promise<CommandResponse 
       args.message,
       `${server.config.cakeEmoji} \`${args.message.author.tag}\` took a ${server.config.cakeNameSingular} from \`#${discordChannel.name}\`!`,
     );
+
+    server.milestones.forEach(milestone => {
+      if (member.earned >= milestone.amount) {
+        const roles = milestone.roleIds.map(roleId => args.message.guild.roles.find(role => role.id === roleId));
+        args.message.member.addRoles(roles);
+
+        logEvent(
+          args.client,
+          args.message,
+          `${EMOJI_MILESTONE} \`${args.message.member.user.tag}\` reached ${milestone.amount} ${
+            server.config.cakeNamePlural
+          } and got the following roles: ${roles.map(role => role.name)}!`,
+        );
+      }
+    });
 
     if (server.config.quietMode) {
       let react: string;

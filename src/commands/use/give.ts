@@ -9,6 +9,7 @@ import {
   EMOJI_INCORRECT_PERMISSIONS,
   EMOJI_RECORD_NOT_FOUND,
   EMOJI_WORKING_HARD,
+  EMOJI_MILESTONE,
 } from '../../utils/emoji';
 import { CommandArguments, CommandResponse } from '../../utils/command-interfaces';
 import { handleError } from '../../utils/errors';
@@ -115,6 +116,21 @@ export const giveCakeToMember = async (args: Arguments): Promise<CommandResponse
         receivingDiscordMember.user.tag
       }\` ${amount} ${amount > 1 ? server.config.cakeNamePlural : server.config.cakeNameSingular} for!`,
     );
+
+    server.milestones.forEach(milestone => {
+      if (receivingMember.earned >= milestone.amount) {
+        const roles = milestone.roleIds.map(roleId => args.message.guild.roles.find(role => role.id === roleId));
+        receivingDiscordMember.addRoles(roles);
+
+        logEvent(
+          args.client,
+          args.message,
+          `${EMOJI_MILESTONE} \`${receivingDiscordMember.user.tag}\` reached ${milestone.amount} ${
+            server.config.cakeNamePlural
+          } and got the following roles: ${roles.map(role => role.name)}!`,
+        );
+      }
+    });
 
     if (server.config.quietMode) {
       let react: string;

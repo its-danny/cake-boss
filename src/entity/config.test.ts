@@ -2,12 +2,7 @@ import { createConnection, getConnection } from 'typeorm';
 import faker from 'faker';
 import { Role } from 'discord.js';
 import Config from './config';
-import Drop from './drop';
-import Member from './member';
-import Server from './server';
-import Prize from './prize';
-import User from './user';
-import { createServer, createMessage, createChannel } from '../../test/test-helpers';
+import { createServer, createMessage, createChannel, ENTITIES } from '../../test/test-helpers';
 
 describe('entities/config', () => {
   beforeEach(async done => {
@@ -15,7 +10,7 @@ describe('entities/config', () => {
       type: 'sqlite',
       database: ':memory:',
       dropSchema: true,
-      entities: [Config, Drop, Member, Prize, Server, User],
+      entities: ENTITIES,
       synchronize: true,
       logging: false,
     });

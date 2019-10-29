@@ -1,10 +1,14 @@
 import faker from 'faker';
 import { Message, Guild, GuildMember, Client, TextChannel, Role } from 'discord.js';
 import Config from '../src/entity/config';
+import Drop from '../src/entity/drop';
 import Server from '../src/entity/server';
 import User from '../src/entity/user';
 import Member from '../src/entity/member';
 import Prize from '../src/entity/prize';
+import Milestone from '../src/entity/milestone';
+
+export const ENTITIES = [Config, Drop, Member, Milestone, Prize, Server, User];
 
 export interface ServerOptions {
   noGiving?: boolean;
@@ -31,6 +35,13 @@ export const createPrize = async (server: Server): Promise<Prize> => {
   prize.server = server;
 
   return prize.save();
+};
+
+export const createMilestone = async (server: Server): Promise<Milestone> => {
+  const milestone = new Milestone();
+  milestone.server = server;
+
+  return milestone.save();
 };
 
 export const createUser = async (): Promise<User> => {
