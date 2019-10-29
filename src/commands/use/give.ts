@@ -114,7 +114,7 @@ export const giveCakeToMember = async (args: Arguments): Promise<CommandResponse
       args.message,
       `${server.config.cakeEmoji}  \`${args.message.author.tag}\` gave \`${
         receivingDiscordMember.user.tag
-      }\` ${amount} ${amount > 1 ? server.config.cakeNamePlural : server.config.cakeNameSingular} for!`,
+      }\` ${amount} ${amount > 1 ? server.config.cakeNamePlural : server.config.cakeNameSingular}!`,
     );
 
     server.milestones.forEach(milestone => {
