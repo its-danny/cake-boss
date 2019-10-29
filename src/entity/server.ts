@@ -84,15 +84,8 @@ export default class Server extends BaseEntity {
   }
 
   async totalEarnedByMembers(): Promise<number> {
-    let totalEarned = 0;
     const members = await this.members;
 
-    if (members) {
-      members.forEach(m => {
-        totalEarned += m.earned;
-      });
-    }
-
-    return totalEarned;
+    return members.map(m => m.earned).reduce((a, c) => a + c);
   }
 }
