@@ -299,14 +299,13 @@ createConnection()
             const supportChannel = supportGuild.channels.find(guild => guild.id === SUPPORT_CHANNEL_ID);
 
             if (supportChannel) {
-              const servers = await Server.count();
-              const users = await User.count();
-              const cakes = (await Server.find())
-                .map(s => s.totalEarnedByMembers())
-                .reduce(async (a, b) => (await a) + (await b));
+              const servers = await Server.find();
+              const userCount = await User.count();
+              const cakeTotalsByServer = Promise.all(servers.map(s => s.totalEarnedByMembers()));
+              const cakeTotalsCombined = (await cakeTotalsByServer).reduce((a, b) => a + b);
 
               await supportChannel.setTopic(
-                `${EMOJI_WORKING_HARD} ${servers} servers, ${users} users, ${cakes} cakes given!`,
+                `${EMOJI_WORKING_HARD} ${servers.length} servers, ${userCount} users, ${cakeTotalsCombined} cakes given!`,
               );
             }
           }
