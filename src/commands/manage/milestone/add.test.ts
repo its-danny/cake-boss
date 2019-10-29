@@ -1,17 +1,11 @@
 import { createConnection, getConnection } from 'typeorm';
-import {
-  createServer,
-  createClient,
-  createMessage,
-  createChannel,
-  createPrize,
-  ENTITIES,
-} from '../../../../test/test-helpers';
-import { removePrize, Arguments } from './remove';
+import { Role } from 'discord.js';
+import { createServer, createClient, createMessage, ENTITIES } from '../../../../test/test-helpers';
+import { addMilestone, Arguments } from './add';
 import { EMOJI_ERROR, EMOJI_INCORRECT_PERMISSIONS, EMOJI_JOB_WELL_DONE } from '../../../utils/emoji';
 import { CommandResponse } from '../../../utils/command-interfaces';
 
-describe('commands/manage/prize/remove', () => {
+describe('commands/manage/milestone/add', () => {
   beforeEach(async done => {
     await createConnection({
       type: 'sqlite',
@@ -34,91 +28,84 @@ describe('commands/manage/prize/remove', () => {
 
   it(`should require permissions`, async done => {
     const server = await createServer();
-    const prize = await createPrize(server);
 
     const args: Arguments = {
       client: createClient(),
       message: await createMessage({ server }),
-      id: prize.id,
+      amount: 3,
+      roles: 'Cool Dude',
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
       reactions: {},
     };
 
-    const response = (await removePrize(args)) as CommandResponse;
+    const response = (await addMilestone(args)) as CommandResponse;
     expect(response.content).toBe(`${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`);
 
     done();
   });
 
-  it('should require redeem-channel being set', async done => {
+  it('should require amount of 1 or more', async done => {
     const server = await createServer();
-    const prize = await createPrize(server);
 
     const args: Arguments = {
       client: createClient(),
       message: await createMessage({ server, permission: 'ADMINISTRATOR' }),
-      id: prize.id,
+      amount: 0,
+      roles: 'Cool Dude',
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
       reactions: {},
     };
 
-    const response = (await removePrize(args)) as CommandResponse;
-    expect(response.content).toBe(`${EMOJI_ERROR} You need to set the \`redeem-channel\` config before using prizes.`);
+    const response = (await addMilestone(args)) as CommandResponse;
+    expect(response.content).toBe(`${EMOJI_ERROR} Amount must be 1 or more!`);
 
     done();
   });
 
-  it('should require a valid id', async done => {
+  it('should require 1 or more roles', async done => {
     const server = await createServer();
-    const channel = createChannel('redeem');
-
-    server.config.redeemChannelId = channel.id;
-    await server.config.save();
 
     const args: Arguments = {
       client: createClient(),
-      message: await createMessage({ server, serverChannels: [channel], permission: 'ADMINISTRATOR' }),
-      id: 7,
+      message: await createMessage({ server, permission: 'ADMINISTRATOR' }),
+      amount: 3,
+      roles: '',
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
       reactions: {},
     };
 
-    const response = (await removePrize(args)) as CommandResponse;
-    expect(response.content).toBe(
-      `${EMOJI_ERROR} Couldn't find that prize, are you sure \`${args.id}\` is the right ID?`,
-    );
+    const response = (await addMilestone(args)) as CommandResponse;
+    expect(response.content).toBe(`${EMOJI_ERROR} Must give 1 or more valid roles!`);
 
     done();
   });
 
-  it('should remove the prize', async done => {
+  it('should add the milestone', async done => {
     const server = await createServer();
-    const channel = createChannel('redeem');
-    const prize = await createPrize(server);
 
-    server.config.redeemChannelId = channel.id;
-    await server.config.save();
+    const role = { id: '123', name: 'Cool Dude' } as Role;
 
     const args: Arguments = {
       client: createClient(),
-      message: await createMessage({ server, serverChannels: [channel], permission: 'ADMINISTRATOR' }),
-      id: prize.id,
+      message: await createMessage({ server, serverRoles: [role], permission: 'ADMINISTRATOR' }),
+      amount: 3,
+      roles: 'Cool Dude',
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
       reactions: {},
     };
 
-    const response = (await removePrize(args)) as CommandResponse;
+    const response = (await addMilestone(args)) as CommandResponse;
     expect(response.content).toBe(`${EMOJI_JOB_WELL_DONE} Done!`);
     await server.reload();
-    expect(server.prizes).toHaveLength(0);
+    expect(server.milestones).toHaveLength(1);
 
     done();
   });

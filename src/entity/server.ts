@@ -13,6 +13,7 @@ import Config from './config';
 import Member from './member';
 import Drop from './drop';
 import Prize from './prize';
+import Milestone from './milestone';
 import { handleError } from '../utils/errors';
 
 @Entity()
@@ -47,6 +48,9 @@ export default class Server extends BaseEntity {
 
   @OneToMany(() => Drop, drop => drop.server, { eager: true })
   drops!: Drop[];
+
+  @OneToMany(() => Milestone, milestone => milestone.server, { eager: true })
+  milestones!: Milestone[];
 
   static async findOrCreate(guildId: string): Promise<Server | void> {
     try {

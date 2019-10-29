@@ -6,6 +6,7 @@ export const EMOJI_RECORD_NOT_FOUND = '😢';
 
 export const EMOJI_CONFIG = '⚙️';
 export const EMOJI_PRIZE = '🎁';
+export const EMOJI_MILESTONE = '🏅';
 
 export const EMOJI_THINKING = '🤔';
 export const EMOJI_WORKING_HARD = '😅';

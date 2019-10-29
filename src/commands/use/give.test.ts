@@ -1,6 +1,6 @@
 import { createConnection, getConnection } from 'typeorm';
 import { giveCakeToMember, Arguments } from './give';
-import { createServer, createMember, createMessage, createClient } from '../../../test/test-helpers';
+import { createServer, createMember, createMessage, createClient, ENTITIES } from '../../../test/test-helpers';
 import {
   EMOJI_INCORRECT_PERMISSIONS,
   EMOJI_RECORD_NOT_FOUND,
@@ -8,12 +8,6 @@ import {
   EMOJI_DONT_DO_THAT,
   EMOJI_WORKING_HARD,
 } from '../../utils/emoji';
-import Config from '../../entity/config';
-import Drop from '../../entity/drop';
-import Member from '../../entity/member';
-import Server from '../../entity/server';
-import Prize from '../../entity/prize';
-import User from '../../entity/user';
 import { CommandResponse } from '../../utils/command-interfaces';
 
 describe('commands/use/give', () => {
@@ -22,7 +16,7 @@ describe('commands/use/give', () => {
       type: 'sqlite',
       database: ':memory:',
       dropSchema: true,
-      entities: [Config, Drop, Member, Prize, Server, User],
+      entities: ENTITIES,
       synchronize: true,
       logging: false,
     });

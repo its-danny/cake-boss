@@ -1,13 +1,7 @@
 import { createConnection, getConnection } from 'typeorm';
 import { blessMember, Arguments } from './bless';
-import { createServer, createMember, createMessage, createClient } from '../../../test/test-helpers';
+import { createServer, createMember, createMessage, createClient, ENTITIES } from '../../../test/test-helpers';
 import { EMOJI_INCORRECT_PERMISSIONS, EMOJI_RECORD_NOT_FOUND, EMOJI_CAKE } from '../../utils/emoji';
-import Config from '../../entity/config';
-import Drop from '../../entity/drop';
-import Member from '../../entity/member';
-import Server from '../../entity/server';
-import Prize from '../../entity/prize';
-import User from '../../entity/user';
 import { CommandResponse } from '../../utils/command-interfaces';
 
 describe('commands/use/bless', () => {
@@ -16,7 +10,7 @@ describe('commands/use/bless', () => {
       type: 'sqlite',
       database: ':memory:',
       dropSchema: true,
-      entities: [Config, Drop, Member, Prize, Server, User],
+      entities: ENTITIES,
       synchronize: true,
       logging: false,
     });

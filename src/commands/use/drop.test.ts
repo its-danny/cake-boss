@@ -1,13 +1,8 @@
 import { createConnection, getConnection } from 'typeorm';
 import { dropCakes, Arguments } from './drop';
-import { createServer, createMessage, createClient, createChannel } from '../../../test/test-helpers';
+import { createServer, createMessage, createClient, createChannel, ENTITIES } from '../../../test/test-helpers';
 import { EMOJI_INCORRECT_PERMISSIONS, EMOJI_JOB_WELL_DONE } from '../../utils/emoji';
-import Config from '../../entity/config';
 import Drop from '../../entity/drop';
-import Member from '../../entity/member';
-import Server from '../../entity/server';
-import Prize from '../../entity/prize';
-import User from '../../entity/user';
 import { CommandResponse } from '../../utils/command-interfaces';
 
 describe('commands/use/drop', () => {
@@ -16,7 +11,7 @@ describe('commands/use/drop', () => {
       type: 'sqlite',
       database: ':memory:',
       dropSchema: true,
-      entities: [Config, Drop, Member, Prize, Server, User],
+      entities: ENTITIES,
       synchronize: true,
       logging: false,
     });

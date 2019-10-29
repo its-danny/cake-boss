@@ -1,14 +1,8 @@
 import { createConnection, getConnection } from 'typeorm';
 import { getTopEarners } from './leaders';
-import { createServer, createMember, createMessage, createClient } from '../../../test/test-helpers';
+import { createServer, createMember, createMessage, createClient, ENTITIES } from '../../../test/test-helpers';
 import { EMOJI_CAKE, EMOJI_WORKING_HARD } from '../../utils/emoji';
 import { CommandArguments, CommandResponse } from '../../utils/command-interfaces';
-import Config from '../../entity/config';
-import Drop from '../../entity/drop';
-import Member from '../../entity/member';
-import Server from '../../entity/server';
-import Prize from '../../entity/prize';
-import User from '../../entity/user';
 
 describe('commands/use/leaders', () => {
   beforeEach(async done => {
@@ -16,7 +10,7 @@ describe('commands/use/leaders', () => {
       type: 'sqlite',
       database: ':memory:',
       dropSchema: true,
-      entities: [Config, Drop, Member, Prize, Server, User],
+      entities: ENTITIES,
       synchronize: true,
       logging: false,
     });
