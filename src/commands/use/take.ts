@@ -6,7 +6,7 @@ import Drop from '../../entity/drop';
 import { logEvent, logMilestone } from '../../utils/logger';
 import Member from '../../entity/member';
 import { isShamed } from '../../utils/permissions';
-import { EMOJI_DONT_DO_THAT, EMOJI_RECORD_NOT_FOUND, EMOJI_JOB_WELL_DONE } from '../../utils/emoji';
+import { EMOJI_DONT_DO_THAT, EMOJI_RECORD_NOT_FOUND, EMOJI_JOB_WELL_DONE, EMOJI_CAKE } from '../../utils/emoji';
 import { CommandArguments, CommandResponse } from '../../utils/command-interfaces';
 import { handleError } from '../../utils/errors';
 
@@ -70,6 +70,12 @@ export const takeCake = async (args: CommandArguments): Promise<CommandResponse 
         logMilestone(args.client, args.message, milestone, args.message.member, roles);
       }
     });
+
+    if (previousEarned < server.config.requirementToGive && member.earned >= server.config.requirementToGive) {
+      args.message.channel.send(
+        `${EMOJI_CAKE} You can now give ${server.config.cakeNameSingular}, <@${args.message.member.id}>!`,
+      );
+    }
 
     if (server.config.quietMode) {
       let react: string;

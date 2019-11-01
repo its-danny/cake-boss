@@ -9,6 +9,7 @@ import {
   EMOJI_INCORRECT_PERMISSIONS,
   EMOJI_RECORD_NOT_FOUND,
   EMOJI_WORKING_HARD,
+  EMOJI_CAKE,
 } from '../../utils/emoji';
 import { CommandArguments, CommandResponse } from '../../utils/command-interfaces';
 import { handleError } from '../../utils/errors';
@@ -125,6 +126,12 @@ export const giveCakeToMember = async (args: Arguments): Promise<CommandResponse
         logMilestone(args.client, args.message, milestone, receivingDiscordMember, roles);
       }
     });
+
+    if (previousEarned < server.config.requirementToGive && receivingMember.earned >= server.config.requirementToGive) {
+      args.message.channel.send(
+        `${EMOJI_CAKE} You can now give ${server.config.cakeNameSingular}, <@${receivingDiscordMember.id}>!`,
+      );
+    }
 
     if (server.config.quietMode) {
       let react: string;

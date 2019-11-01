@@ -3,7 +3,7 @@ import Server from '../../entity/server';
 import { canBless, isShamed } from '../../utils/permissions';
 import Member from '../../entity/member';
 import { logEvent, logMilestone } from '../../utils/logger';
-import { EMOJI_DONT_DO_THAT, EMOJI_INCORRECT_PERMISSIONS, EMOJI_RECORD_NOT_FOUND } from '../../utils/emoji';
+import { EMOJI_DONT_DO_THAT, EMOJI_INCORRECT_PERMISSIONS, EMOJI_RECORD_NOT_FOUND, EMOJI_CAKE } from '../../utils/emoji';
 import { CommandArguments, CommandResponse } from '../../utils/command-interfaces';
 import { handleError } from '../../utils/errors';
 
@@ -73,6 +73,12 @@ export const blessMember = async (args: Arguments): Promise<CommandResponse | vo
       }
     });
 
+    if (previousEarned < server.config.requirementToGive && receivingMember.earned >= server.config.requirementToGive) {
+      args.message.channel.send(
+        `${EMOJI_CAKE} You can now give ${server.config.cakeNameSingular}, <@${receivingDiscordMember.id}>!`,
+      );
+    }
+
     if (server.config.quietMode) {
       let react: string;
 
@@ -140,6 +146,12 @@ export const blessRole = async (args: Arguments): Promise<CommandResponse | void
               logMilestone(args.client, args.message, milestone, discordMember, roles);
             }
           });
+
+          if (previousEarned < server.config.requirementToGive && member.earned >= server.config.requirementToGive) {
+            args.message.channel.send(
+              `${EMOJI_CAKE} You can now give ${server.config.cakeNameSingular}, <@${discordMember.id}>!`,
+            );
+          }
         }
       }
     }
