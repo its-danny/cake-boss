@@ -48,6 +48,7 @@ export const takeCake = async (args: CommandArguments): Promise<CommandResponse 
       throw new Error('Could not find member.');
     }
 
+    const previousEarned = member.earned;
     member.earned += 1;
     member.balance += 1;
 
@@ -62,7 +63,7 @@ export const takeCake = async (args: CommandArguments): Promise<CommandResponse 
     );
 
     server.milestones.forEach(milestone => {
-      if (member.earned >= milestone.amount) {
+      if (previousEarned < milestone.amount && member.earned >= milestone.amount) {
         const roles = milestone.roleIds.map(roleId => args.message.guild.roles.find(role => role.id === roleId));
         args.message.member.addRoles(roles);
 

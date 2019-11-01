@@ -99,6 +99,7 @@ export const giveCakeToMember = async (args: Arguments): Promise<CommandResponse
       amount -= server.config.giveLimit - givingMember.givenSinceReset;
     }
 
+    const previousEarned = receivingMember.earned;
     receivingMember.earned += amount;
     receivingMember.balance += amount;
 
@@ -118,7 +119,7 @@ export const giveCakeToMember = async (args: Arguments): Promise<CommandResponse
     );
 
     server.milestones.forEach(milestone => {
-      if (receivingMember.earned >= milestone.amount) {
+      if (previousEarned < milestone.amount && receivingMember.earned >= milestone.amount) {
         const roles = milestone.roleIds.map(roleId => args.message.guild.roles.find(role => role.id === roleId));
         receivingDiscordMember.addRoles(roles);
 
