@@ -2,13 +2,8 @@ import { Argv } from 'yargs';
 import Server from '../../entity/server';
 import { canBless, isShamed } from '../../utils/permissions';
 import Member from '../../entity/member';
-import { logEvent } from '../../utils/logger';
-import {
-  EMOJI_DONT_DO_THAT,
-  EMOJI_INCORRECT_PERMISSIONS,
-  EMOJI_RECORD_NOT_FOUND,
-  EMOJI_MILESTONE,
-} from '../../utils/emoji';
+import { logEvent, logMilestone } from '../../utils/logger';
+import { EMOJI_DONT_DO_THAT, EMOJI_INCORRECT_PERMISSIONS, EMOJI_RECORD_NOT_FOUND } from '../../utils/emoji';
 import { CommandArguments, CommandResponse } from '../../utils/command-interfaces';
 import { handleError } from '../../utils/errors';
 
@@ -55,6 +50,7 @@ export const blessMember = async (args: Arguments): Promise<CommandResponse | vo
       amount = 1;
     }
 
+    const previousEarned = receivingMember.earned;
     receivingMember.earned += amount;
     receivingMember.balance += amount;
 
@@ -69,17 +65,11 @@ export const blessMember = async (args: Arguments): Promise<CommandResponse | vo
     );
 
     server.milestones.forEach(milestone => {
-      if (receivingMember.earned >= milestone.amount) {
+      if (previousEarned < milestone.amount && receivingMember.earned >= milestone.amount) {
         const roles = milestone.roleIds.map(roleId => args.message.guild.roles.find(role => role.id === roleId));
         receivingDiscordMember.addRoles(roles);
 
-        logEvent(
-          args.client,
-          args.message,
-          `${EMOJI_MILESTONE} \`${receivingDiscordMember.user.tag}\` reached ${milestone.amount} ${
-            server.config.cakeNamePlural
-          } and got the following roles: ${roles.map(role => role.name)}!`,
-        );
+        logMilestone(args.client, args.message, milestone, receivingDiscordMember, roles);
       }
     });
 
@@ -135,11 +125,21 @@ export const blessRole = async (args: Arguments): Promise<CommandResponse | void
         const member = await Member.findOne({ where: { discordId: discordMember.id } });
 
         if (member) {
+          const previousEarned = member.earned;
           member.earned += amount;
           member.balance += amount;
 
           // eslint-disable-next-line no-await-in-loop
           await member.save();
+
+          server.milestones.forEach(milestone => {
+            if (previousEarned < milestone.amount && member.earned >= milestone.amount) {
+              const roles = milestone.roleIds.map(roleId => args.message.guild.roles.find(role => role.id === roleId));
+              discordMember.addRoles(roles);
+
+              logMilestone(args.client, args.message, milestone, discordMember, roles);
+            }
+          });
         }
       }
     }

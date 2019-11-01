@@ -10,6 +10,7 @@ import { handleError } from '../../../utils/errors';
 export interface Arguments extends CommandArguments {
   amount: number;
   roles: string;
+  announcement?: string;
 }
 
 export const addMilestone = async (args: Arguments): Promise<CommandResponse | void> => {
@@ -50,6 +51,10 @@ export const addMilestone = async (args: Arguments): Promise<CommandResponse | v
       }
     }
 
+    if (args.announcement) {
+      milestone.announcement = args.announcement;
+    }
+
     await milestone.save();
 
     logEvent(
@@ -69,7 +74,7 @@ export const addMilestone = async (args: Arguments): Promise<CommandResponse | v
   }
 };
 
-export const command = 'add <amount> <roles>';
+export const command = 'add <amount> <roles> [announcement]';
 export const describe = 'Add a milestone';
 
 export const builder = (yargs: Argv) => yargs;

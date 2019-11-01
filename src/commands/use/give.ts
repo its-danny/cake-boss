@@ -3,13 +3,12 @@ import moment from 'moment';
 import Server from '../../entity/server';
 import { canGive, isShamed } from '../../utils/permissions';
 import Member from '../../entity/member';
-import { logEvent } from '../../utils/logger';
+import { logEvent, logMilestone } from '../../utils/logger';
 import {
   EMOJI_DONT_DO_THAT,
   EMOJI_INCORRECT_PERMISSIONS,
   EMOJI_RECORD_NOT_FOUND,
   EMOJI_WORKING_HARD,
-  EMOJI_MILESTONE,
 } from '../../utils/emoji';
 import { CommandArguments, CommandResponse } from '../../utils/command-interfaces';
 import { handleError } from '../../utils/errors';
@@ -99,6 +98,7 @@ export const giveCakeToMember = async (args: Arguments): Promise<CommandResponse
       amount -= server.config.giveLimit - givingMember.givenSinceReset;
     }
 
+    const previousEarned = receivingMember.earned;
     receivingMember.earned += amount;
     receivingMember.balance += amount;
 
@@ -118,17 +118,11 @@ export const giveCakeToMember = async (args: Arguments): Promise<CommandResponse
     );
 
     server.milestones.forEach(milestone => {
-      if (receivingMember.earned >= milestone.amount) {
+      if (previousEarned < milestone.amount && receivingMember.earned >= milestone.amount) {
         const roles = milestone.roleIds.map(roleId => args.message.guild.roles.find(role => role.id === roleId));
         receivingDiscordMember.addRoles(roles);
 
-        logEvent(
-          args.client,
-          args.message,
-          `${EMOJI_MILESTONE} \`${receivingDiscordMember.user.tag}\` reached ${milestone.amount} ${
-            server.config.cakeNamePlural
-          } and got the following roles: ${roles.map(role => role.name)}!`,
-        );
+        logMilestone(args.client, args.message, milestone, receivingDiscordMember, roles);
       }
     });
 

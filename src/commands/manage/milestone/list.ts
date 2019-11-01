@@ -51,7 +51,7 @@ export const getMilestoneList = async (args: Arguments): Promise<CommandResponse
     }
 
     const table = new Table({
-      head: ['ID', 'Amount', 'Roles to Give'],
+      head: ['ID', 'Amount', 'Roles to Give', 'Announcement'],
       style: { head: [], border: [] },
       chars: getTableBorder(),
     });
@@ -70,7 +70,12 @@ export const getMilestoneList = async (args: Arguments): Promise<CommandResponse
         .compact()
         .value();
 
-      table.push([milestone.id, milestone.amount, roleNames.length > 0 ? toSentenceSerial(roleNames) : 'none']);
+      table.push([
+        milestone.id,
+        milestone.amount,
+        roleNames.length > 0 ? toSentenceSerial(roleNames) : 'none',
+        milestone.announcement || '',
+      ]);
 
       return false;
     });

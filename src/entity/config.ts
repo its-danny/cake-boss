@@ -11,6 +11,7 @@ export type ConfigCommand =
   | 'log-with-link'
   | 'redeem-channel'
   | 'redeem-timer'
+  | 'milestone-channel'
   | 'manager-roles'
   | 'blesser-roles'
   | 'dropper-roles'
@@ -57,6 +58,9 @@ export default class Config extends BaseEntity {
 
   @Column({ nullable: false, default: 10 })
   redeemTimer!: number;
+
+  @Column({ nullable: true, type: String })
+  milestoneChannelId!: string | null;
 
   @Column('simple-array', { nullable: false, default: '' })
   managerRoleIds!: string[];
@@ -176,6 +180,25 @@ export default class Config extends BaseEntity {
     }
 
     this.redeemTimer = number;
+
+    return true;
+  }
+
+  setMilestoneChannel(channelString: string, guild: Guild): boolean {
+    if (channelString === 'none') {
+      this.milestoneChannelId = null;
+
+      return true;
+    }
+
+    const channelId = channelString.replace(/^<#/, '').replace(/>$/, '');
+    const channel = guild.channels.get(channelId);
+
+    if (!channel) {
+      return false;
+    }
+
+    this.milestoneChannelId = channelId;
 
     return true;
   }
@@ -337,6 +360,7 @@ export default class Config extends BaseEntity {
   getValue(config: ConfigCommand, guild: Guild): { [key: string]: string } | void {
     const logChannel = this.logChannelId ? guild.channels.get(this.logChannelId) : null;
     const redeemChannel = this.redeemChannelId ? guild.channels.get(this.redeemChannelId) : null;
+    const milestoneChannel = this.milestoneChannelId ? guild.channels.get(this.milestoneChannelId) : null;
 
     const getRoles = (ids: string[]): string[] => {
       return chain(ids)
@@ -369,6 +393,10 @@ export default class Config extends BaseEntity {
         return { default: 'false', value: `${this.logWithLink}` };
       case 'redeem-channel':
         return { default: 'none', value: redeemChannel ? `#${redeemChannel.name}` : 'none' };
+      case 'redeem-timer':
+        return { default: '10', value: `${this.redeemTimer}` };
+      case 'milestone-channel':
+        return { default: 'none', value: milestoneChannel ? `#${milestoneChannel.name}` : 'none' };
       case 'manager-roles':
         return { default: 'none', value: isEmpty(managerRoles) ? 'none' : toSentenceSerial(managerRoles) };
       case 'blesser-roles':
