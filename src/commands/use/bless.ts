@@ -2,7 +2,7 @@ import { Argv } from 'yargs';
 import Server from '../../entity/server';
 import { canBless, isShamed } from '../../utils/permissions';
 import Member from '../../entity/member';
-import { logEvent } from '../../utils/logger';
+import { logEvent, logMilestone } from '../../utils/logger';
 import {
   EMOJI_DONT_DO_THAT,
   EMOJI_INCORRECT_PERMISSIONS,
@@ -73,7 +73,7 @@ export const blessMember = async (args: Arguments): Promise<CommandResponse | vo
         const roles = milestone.roleIds.map(roleId => args.message.guild.roles.find(role => role.id === roleId));
         receivingDiscordMember.addRoles(roles);
 
-        logEvent(
+        logMilestone(
           args.client,
           args.message,
           `${EMOJI_MILESTONE} \`${receivingDiscordMember.user.tag}\` reached ${milestone.amount} ${

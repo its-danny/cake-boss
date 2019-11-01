@@ -136,6 +136,26 @@ export const setConfig = async (args: Arguments): Promise<CommandResponse | void
       }
     }
 
+    if (args.config === 'milestone-channel') {
+      if (server.config.setMilestoneChannel(args.value, args.message.guild)) {
+        await server.config.save();
+
+        const channel = args.message.guild.channels.get(args.value.replace(/^<#/, '').replace(/>$/, ''));
+
+        await logEvent(
+          args.client,
+          args.message,
+          `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${
+            channel ? `#${channel.name}` : 'none'
+          }\`.`,
+        );
+
+        configSet = true;
+      } else {
+        return { content: `${EMOJI_ERROR} ${ERROR_MESSAGE}` };
+      }
+    }
+
     if (args.config === 'manager-roles') {
       if (server.config.setRoles(args.value, args.config, args.message.guild)) {
         await server.config.save();

@@ -38,3 +38,19 @@ export const logRedeemed = async (client: Client, message: Message, string: stri
     }
   }
 };
+
+export const logMilestone = async (client: Client, message: Message, string: string) => {
+  const server = await Server.findOne({ where: { discordId: message.guild.id } });
+
+  if (server) {
+    if (!server.config.milestoneChannelId || server.config.milestoneChannelId === '') {
+      return;
+    }
+
+    const channel: TextChannel = client.channels.get(server.config.milestoneChannelId) as TextChannel;
+
+    if (channel) {
+      channel.send(`\u200B${string}`);
+    }
+  }
+};

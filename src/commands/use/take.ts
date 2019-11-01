@@ -3,7 +3,7 @@ import { TextChannel } from 'discord.js';
 import { isEmpty, sample } from 'lodash';
 import Server from '../../entity/server';
 import Drop from '../../entity/drop';
-import { logEvent } from '../../utils/logger';
+import { logEvent, logMilestone } from '../../utils/logger';
 import Member from '../../entity/member';
 import { isShamed } from '../../utils/permissions';
 import { EMOJI_DONT_DO_THAT, EMOJI_RECORD_NOT_FOUND, EMOJI_JOB_WELL_DONE, EMOJI_MILESTONE } from '../../utils/emoji';
@@ -66,7 +66,7 @@ export const takeCake = async (args: CommandArguments): Promise<CommandResponse 
         const roles = milestone.roleIds.map(roleId => args.message.guild.roles.find(role => role.id === roleId));
         args.message.member.addRoles(roles);
 
-        logEvent(
+        logMilestone(
           args.client,
           args.message,
           `${EMOJI_MILESTONE} \`${args.message.member.user.tag}\` reached ${milestone.amount} ${
