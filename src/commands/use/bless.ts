@@ -136,11 +136,27 @@ export const blessRole = async (args: Arguments): Promise<CommandResponse | void
         const member = await Member.findOne({ where: { discordId: discordMember.id } });
 
         if (member) {
+          const previousEarned = member.earned;
           member.earned += amount;
           member.balance += amount;
 
           // eslint-disable-next-line no-await-in-loop
           await member.save();
+
+          server.milestones.forEach(milestone => {
+            if (previousEarned < milestone.amount && member.earned >= milestone.amount) {
+              const roles = milestone.roleIds.map(roleId => args.message.guild.roles.find(role => role.id === roleId));
+              discordMember.addRoles(roles);
+
+              logMilestone(
+                args.client,
+                args.message,
+                `${EMOJI_MILESTONE} \`${discordMember.user.tag}\` reached ${milestone.amount} ${
+                  server.config.cakeNamePlural
+                } and got the following roles: ${roles.map(role => role.name)}!`,
+              );
+            }
+          });
         }
       }
     }
