@@ -43,7 +43,7 @@ export const getBalance = async (args: Arguments): Promise<CommandResponse | voi
 };
 
 export const command = 'balance [member]';
-export const describe = 'Check your cake balance';
+export const describe = "Check your or another member's cake balance";
 
 export const builder = (yargs: Argv) => yargs;
 

@@ -4,7 +4,11 @@ import Member from '../../entity/member';
 import { CommandArguments, CommandResponse } from '../../utils/command-interfaces';
 import { handleError } from '../../utils/errors';
 
-export const getEarned = async (args: CommandArguments): Promise<CommandResponse | void> => {
+export interface Arguments extends CommandArguments {
+  member?: string;
+}
+
+export const getEarned = async (args: Arguments): Promise<CommandResponse | void> => {
   try {
     const server = await Server.findOne({ where: { discordId: args.message.guild.id } });
 
@@ -12,14 +16,24 @@ export const getEarned = async (args: CommandArguments): Promise<CommandResponse
       throw new Error('Could not find server.');
     }
 
-    const member = await Member.findOne({ where: { server, discordId: args.message.member.id } });
+    let usingMember = false;
+    let member: Member | undefined;
+
+    if (args.member) {
+      const receivingMemberId = args.member.replace(/^<@!?/, '').replace(/>$/, '');
+
+      usingMember = true;
+      member = await Member.findOne({ where: { server, discordId: receivingMemberId } });
+    } else {
+      member = await Member.findOne({ where: { server, discordId: args.message.member.id } });
+    }
 
     if (!member) {
       throw new Error('Could not find member.');
     }
 
     return {
-      content: `${server.config.cakeEmoji} You've earned a total of ${member.earned} ${
+      content: `${server.config.cakeEmoji} ${usingMember ? 'They' : 'You'} have earned a total of ${member.earned} ${
         member.earned === 1 ? server.config.cakeNameSingular : server.config.cakeNamePlural
       }!`,
     };
@@ -28,12 +42,12 @@ export const getEarned = async (args: CommandArguments): Promise<CommandResponse
   }
 };
 
-export const command = 'earned';
-export const describe = `Check how many cakes you've earned over time`;
+export const command = 'earned [member]';
+export const describe = `Check how many cakes you or another member has earned over time`;
 
 export const builder = (yargs: Argv) => yargs;
 
-export const handler = (args: CommandArguments) => {
+export const handler = (args: Arguments) => {
   args.needsFetch = true;
   args.promisedOutput = getEarned(args);
 };
