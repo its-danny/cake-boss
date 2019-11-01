@@ -1,5 +1,7 @@
-import { Client, Message, TextChannel } from 'discord.js';
+import { Client, Message, TextChannel, GuildMember, Role } from 'discord.js';
 import Server from '../entity/server';
+import Milestone from '../entity/milestone';
+import { EMOJI_MILESTONE } from './emoji';
 
 export const logEvent = async (client: Client, message: Message, string: string) => {
   const server = await Server.findOne({ where: { discordId: message.guild.id } });
@@ -39,7 +41,13 @@ export const logRedeemed = async (client: Client, message: Message, string: stri
   }
 };
 
-export const logMilestone = async (client: Client, message: Message, string: string) => {
+export const logMilestone = async (
+  client: Client,
+  message: Message,
+  milestone: Milestone,
+  discordMember: GuildMember,
+  roles: Role[],
+) => {
   const server = await Server.findOne({ where: { discordId: message.guild.id } });
 
   if (server) {
@@ -50,7 +58,15 @@ export const logMilestone = async (client: Client, message: Message, string: str
     const channel: TextChannel = client.channels.get(server.config.milestoneChannelId) as TextChannel;
 
     if (channel) {
-      channel.send(`\u200B${string}`);
+      channel.send(
+        `\u200B${EMOJI_MILESTONE} \`${discordMember.user.tag}\` reached ${milestone.amount} ${
+          server.config.cakeNamePlural
+        } and got the following roles: ${roles.map(role => role.name)}!`,
+      );
     }
+  }
+
+  if (milestone.announcement) {
+    message.channel.send(`${EMOJI_MILESTONE} <@${discordMember.id}> ${milestone.announcement}`);
   }
 };

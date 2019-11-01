@@ -26,6 +26,9 @@ export default class Milestone extends BaseEntity {
   @Column('simple-array', { nullable: false, default: '' })
   roleIds!: string[];
 
+  @Column({ nullable: true })
+  announcement!: string;
+
   @ManyToOne(() => Server, server => server.milestones)
   server!: Server;
 }

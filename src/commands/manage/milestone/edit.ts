@@ -11,6 +11,7 @@ export interface Arguments extends CommandArguments {
   id: number;
   amount: number;
   roles: string;
+  announcement?: string;
 }
 
 export const editMilestone = async (args: Arguments): Promise<CommandResponse | void> => {
@@ -55,6 +56,10 @@ export const editMilestone = async (args: Arguments): Promise<CommandResponse | 
       }
     }
 
+    if (args.announcement) {
+      milestone.announcement = args.announcement;
+    }
+
     await milestone.save();
 
     logEvent(
@@ -75,7 +80,7 @@ export const editMilestone = async (args: Arguments): Promise<CommandResponse | 
   }
 };
 
-export const command = 'edit <id> <amount> <roles>';
+export const command = 'edit <id> <amount> <roles> [announcement]';
 export const describe = 'Edit a milestone';
 
 export const builder = (yargs: Argv) => yargs;

@@ -3,12 +3,7 @@ import Server from '../../entity/server';
 import { canBless, isShamed } from '../../utils/permissions';
 import Member from '../../entity/member';
 import { logEvent, logMilestone } from '../../utils/logger';
-import {
-  EMOJI_DONT_DO_THAT,
-  EMOJI_INCORRECT_PERMISSIONS,
-  EMOJI_RECORD_NOT_FOUND,
-  EMOJI_MILESTONE,
-} from '../../utils/emoji';
+import { EMOJI_DONT_DO_THAT, EMOJI_INCORRECT_PERMISSIONS, EMOJI_RECORD_NOT_FOUND } from '../../utils/emoji';
 import { CommandArguments, CommandResponse } from '../../utils/command-interfaces';
 import { handleError } from '../../utils/errors';
 
@@ -74,13 +69,7 @@ export const blessMember = async (args: Arguments): Promise<CommandResponse | vo
         const roles = milestone.roleIds.map(roleId => args.message.guild.roles.find(role => role.id === roleId));
         receivingDiscordMember.addRoles(roles);
 
-        logMilestone(
-          args.client,
-          args.message,
-          `${EMOJI_MILESTONE} \`${receivingDiscordMember.user.tag}\` reached ${milestone.amount} ${
-            server.config.cakeNamePlural
-          } and got the following roles: ${roles.map(role => role.name)}!`,
-        );
+        logMilestone(args.client, args.message, milestone, receivingDiscordMember, roles);
       }
     });
 
@@ -148,13 +137,7 @@ export const blessRole = async (args: Arguments): Promise<CommandResponse | void
               const roles = milestone.roleIds.map(roleId => args.message.guild.roles.find(role => role.id === roleId));
               discordMember.addRoles(roles);
 
-              logMilestone(
-                args.client,
-                args.message,
-                `${EMOJI_MILESTONE} \`${discordMember.user.tag}\` reached ${milestone.amount} ${
-                  server.config.cakeNamePlural
-                } and got the following roles: ${roles.map(role => role.name)}!`,
-              );
+              logMilestone(args.client, args.message, milestone, discordMember, roles);
             }
           });
         }
