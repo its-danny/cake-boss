@@ -39,7 +39,7 @@ describe('commands/use/earned', () => {
     };
 
     const response = (await getEarned(args)) as CommandResponse;
-    expect(response.content).toBe(`${EMOJI_CAKE} You've earned a total of 5 cakes!`);
+    expect(response.content).toBe(`${EMOJI_CAKE} You have earned a total of 5 cakes!`);
 
     done();
   });
