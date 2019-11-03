@@ -2,18 +2,18 @@
 
 > A Discord bot that lets users reward each other cakes for being helpful, and redeem those cakes for prizes.
 
-[![Discord Bots](https://discordbots.org/api/widget/status/611013950942871562.svg)](https://discordbots.org/bot/611013950942871562)
-[![Discord Bots](https://discordbots.org/api/widget/lib/611013950942871562.svg)](https://discordbots.org/bot/611013950942871562)
-![GitHub commit activity](https://img.shields.io/github/commit-activity/m/dannytatom/cake-boss)
-![GitHub last commit](https://img.shields.io/github/last-commit/dannytatom/cake-boss?color=blue)
-![Maintenance](https://img.shields.io/maintenance/yes/2019?color=blue)
-
 [![Build Status](https://travis-ci.com/dannytatom/cake-boss.svg?branch=master)](https://travis-ci.com/dannytatom/cake-boss)
 [![Sonarcloud Status](https://sonarcloud.io/api/project_badges/measure?project=dannytatom_cake-boss&metric=alert_status)](https://sonarcloud.io/dashboard?id=dannytatom_cake-boss)
 [![SonarCloud Bugs](https://sonarcloud.io/api/project_badges/measure?project=dannytatom_cake-boss&metric=bugs)](https://sonarcloud.io/component_measures/metric/reliability_rating/list?id=dannytatom_cake-boss)
 [![SonarCloud Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=dannytatom_cake-boss&metric=vulnerabilities)](https://sonarcloud.io/component_measures/metric/security_rating/list?id=dannytatom_cake-boss)
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=dannytatom_cake-boss&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=dannytatom_cake-boss)
 [![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=dannytatom_cake-boss&metric=sqale_index)](https://sonarcloud.io/dashboard?id=dannytatom_cake-boss)
+
+[![Discord Bots](https://discordbots.org/api/widget/status/611013950942871562.svg)](https://discordbots.org/bot/611013950942871562)
+[![Discord Bots](https://discordbots.org/api/widget/lib/611013950942871562.svg)](https://discordbots.org/bot/611013950942871562)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/m/dannytatom/cake-boss)
+![GitHub last commit](https://img.shields.io/github/last-commit/dannytatom/cake-boss?color=blue)
+![Maintenance](https://img.shields.io/maintenance/yes/2019?color=blue)
 
 ## Features
 
@@ -66,4 +66,4 @@ Contributions are welcome. Check the [guidelines](https://github.com/dannytatom/
 
 ---
 
-If you dig the bot, feel free to upvote it on [Discord Bots](https://discordbots.org/bot/611013950942871562) or [Bots on Discord](https://bots.ondiscord.xyz/bots/611013950942871562).
+If you dig the bot, feel free to upvote it on [Top.GG](https://top.gg/bot/611013950942871562) or [Bots on Discord](https://bots.ondiscord.xyz/bots/611013950942871562).
