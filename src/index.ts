@@ -11,6 +11,7 @@ import schedule from 'node-schedule';
 import Koa from 'koa';
 import Router from 'koa-router';
 import cors from '@koa/cors';
+import Axios from 'axios';
 import Member from './entity/member';
 import Server from './entity/server';
 import User from './entity/user';
@@ -307,6 +308,38 @@ createConnection()
               await supportChannel.setTopic(
                 `${EMOJI_WORKING_HARD} ${servers.length} servers, ${userCount} users, ${cakeTotalsCombined} cakes given!`,
               );
+
+              const BOTS_ON_DISCORD_API_KEY: string = process.env.BOTS_ON_DISCORD_API_KEY as string;
+
+              if (BOTS_ON_DISCORD_API_KEY) {
+                await Axios.post(
+                  `https://bots.ondiscord.xyz/bot-api/bots/611013950942871562/guilds`,
+                  {
+                    guildCount: servers.length,
+                  },
+                  {
+                    headers: {
+                      Authorization: BOTS_ON_DISCORD_API_KEY,
+                    },
+                  },
+                );
+              }
+
+              const TOP_GG_API_KEY: string = process.env.TOP_GG_API_KEY as string;
+
+              if (TOP_GG_API_KEY) {
+                await Axios.post(
+                  `https://top.gg/api/bots/611013950942871562/stats`,
+                  {
+                    server_count: servers.length,
+                  },
+                  {
+                    headers: {
+                      Authorization: process.env.TOP_GG_API_KEY,
+                    },
+                  },
+                );
+              }
             }
           }
         } catch (error) {
