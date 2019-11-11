@@ -5,9 +5,9 @@ import {
   Column,
   OneToMany,
   CreateDateColumn,
-  UpdateDateColumn,
-} from 'typeorm';
-import Member from './member';
+  UpdateDateColumn
+} from "typeorm";
+import Member from "./member";
 
 @Entity()
 export default class User extends BaseEntity {
@@ -23,7 +23,11 @@ export default class User extends BaseEntity {
   @Column({ nullable: false })
   discordId!: string;
 
-  @OneToMany(() => Member, member => member.user, { eager: true })
+  @OneToMany(
+    () => Member,
+    member => member.user,
+    { eager: true }
+  )
   members!: Member[];
 
   totalEarned(): number {

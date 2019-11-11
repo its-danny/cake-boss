@@ -1,17 +1,19 @@
-import { Argv } from 'yargs';
-import Table from 'cli-table';
-import Server from '../../entity/server';
-import { EMOJI_WORKING_HARD } from '../../utils/emoji';
-import getTableBorder from '../../utils/get-table-border';
-import { CommandArguments, CommandResponse } from '../../utils/command-interfaces';
-import { handleError } from '../../utils/errors';
+import { Argv } from "yargs";
+import Table from "cli-table";
+import Server from "../../entity/server";
+import { EMOJI_WORKING_HARD } from "../../utils/emoji";
+import getTableBorder from "../../utils/get-table-border";
+import { CommandArguments, CommandResponse } from "../../utils/command-interfaces";
+import { handleError } from "../../utils/errors";
 
 export const getTopEarners = async (args: CommandArguments): Promise<CommandResponse | void> => {
   try {
-    const server = await Server.findOne({ where: { discordId: args.message.guild.id } });
+    const server = await Server.findOne({
+      where: { discordId: args.message.guild.id }
+    });
 
     if (!server) {
-      throw new Error('Could not find server.');
+      throw new Error("Could not find server.");
     }
 
     const members = await server.members;
@@ -27,9 +29,9 @@ export const getTopEarners = async (args: CommandArguments): Promise<CommandResp
     }
 
     const table = new Table({
-      head: ['', 'Member', 'Earned'],
+      head: ["", "Member", "Earned"],
       style: { head: [], border: [] },
-      chars: getTableBorder(),
+      chars: getTableBorder()
     });
 
     sorted.forEach((member, index) => {
@@ -37,13 +39,15 @@ export const getTopEarners = async (args: CommandArguments): Promise<CommandResp
       table.push([`#${index + 1}`, discordMember ? discordMember.displayName : member.discordId, member.earned]);
     });
 
-    return { content: `${server.config.cakeEmoji} **Top Earners** \n\n\`\`\`\n\n${table.toString()}\n\`\`\`` };
+    return {
+      content: `${server.config.cakeEmoji} **Top Earners** \n\n\`\`\`\n\n${table.toString()}\n\`\`\``
+    };
   } catch (error) {
     return handleError(error, args.message);
   }
 };
 
-export const command = 'leaders';
+export const command = "leaders";
 export const describe = `View the server's top earners`;
 
 export const builder = (yargs: Argv) => yargs;

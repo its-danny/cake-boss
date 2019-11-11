@@ -1,22 +1,26 @@
-import { Argv } from 'yargs';
-import Table from 'cli-table';
-import { canDrop } from '../../utils/permissions';
-import Server from '../../entity/server';
-import { EMOJI_INCORRECT_PERMISSIONS, EMOJI_WORKING_HARD } from '../../utils/emoji';
-import { CommandArguments, CommandResponse } from '../../utils/command-interfaces';
-import getTableBorder from '../../utils/get-table-border';
-import { handleError } from '../../utils/errors';
+import { Argv } from "yargs";
+import Table from "cli-table";
+import { canDrop } from "../../utils/permissions";
+import Server from "../../entity/server";
+import { EMOJI_INCORRECT_PERMISSIONS, EMOJI_WORKING_HARD } from "../../utils/emoji";
+import { CommandArguments, CommandResponse } from "../../utils/command-interfaces";
+import getTableBorder from "../../utils/get-table-border";
+import { handleError } from "../../utils/errors";
 
 export const getDropList = async (args: CommandArguments): Promise<CommandResponse | void> => {
   try {
     if (!(await canDrop(args.message))) {
-      return { content: `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!` };
+      return {
+        content: `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`
+      };
     }
 
-    const server = await Server.findOne({ where: { discordId: args.message.guild.id } });
+    const server = await Server.findOne({
+      where: { discordId: args.message.guild.id }
+    });
 
     if (!server) {
-      throw new Error('Could not find server.');
+      throw new Error("Could not find server.");
     }
 
     if (server.drops.length === 0) {
@@ -24,9 +28,9 @@ export const getDropList = async (args: CommandArguments): Promise<CommandRespon
     }
 
     const table = new Table({
-      head: ['Channel', 'Amount'],
+      head: ["Channel", "Amount"],
       style: { head: [], border: [] },
-      chars: getTableBorder(),
+      chars: getTableBorder()
     });
 
     const dropped: { [key: string]: number } = {};
@@ -50,15 +54,15 @@ export const getDropList = async (args: CommandArguments): Promise<CommandRespon
     return {
       content: `${server.config.cakeEmoji} **Dropped ${
         server.config.cakeNamePlural
-      }** \n\n\`\`\`\n\n${table.toString()}\n\`\`\``,
+      }** \n\n\`\`\`\n\n${table.toString()}\n\`\`\``
     };
   } catch (error) {
     return handleError(error, args.message);
   }
 };
 
-export const command = 'dropped';
-export const describe = 'View dropped cakes';
+export const command = "dropped";
+export const describe = "View dropped cakes";
 
 export const builder = (yargs: Argv) => yargs;
 

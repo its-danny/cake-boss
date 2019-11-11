@@ -1,25 +1,25 @@
-import { createConnection, getConnection } from 'typeorm';
+import { createConnection, getConnection } from "typeorm";
 import {
   createServer,
   createClient,
   createMessage,
   createChannel,
   createPrize,
-  ENTITIES,
-} from '../../../../test/test-helpers';
-import { removePrize, Arguments } from './remove';
-import { EMOJI_ERROR, EMOJI_INCORRECT_PERMISSIONS, EMOJI_JOB_WELL_DONE } from '../../../utils/emoji';
-import { CommandResponse } from '../../../utils/command-interfaces';
+  ENTITIES
+} from "../../../../test/test-helpers";
+import { removePrize, Arguments } from "./remove";
+import { EMOJI_ERROR, EMOJI_INCORRECT_PERMISSIONS, EMOJI_JOB_WELL_DONE } from "../../../utils/emoji";
+import { CommandResponse } from "../../../utils/command-interfaces";
 
-describe('commands/manage/prize/remove', () => {
+describe("commands/manage/prize/remove", () => {
   beforeEach(async done => {
     await createConnection({
-      type: 'sqlite',
-      database: ':memory:',
+      type: "sqlite",
+      database: ":memory:",
       dropSchema: true,
       entities: ENTITIES,
       synchronize: true,
-      logging: false,
+      logging: false
     });
 
     done();
@@ -43,7 +43,7 @@ describe('commands/manage/prize/remove', () => {
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {},
+      reactions: {}
     };
 
     const response = (await removePrize(args)) as CommandResponse;
@@ -52,18 +52,18 @@ describe('commands/manage/prize/remove', () => {
     done();
   });
 
-  it('should require redeem-channel being set', async done => {
+  it("should require redeem-channel being set", async done => {
     const server = await createServer();
     const prize = await createPrize(server);
 
     const args: Arguments = {
       client: createClient(),
-      message: await createMessage({ server, permission: 'ADMINISTRATOR' }),
+      message: await createMessage({ server, permission: "ADMINISTRATOR" }),
       id: prize.id,
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {},
+      reactions: {}
     };
 
     const response = (await removePrize(args)) as CommandResponse;
@@ -72,34 +72,38 @@ describe('commands/manage/prize/remove', () => {
     done();
   });
 
-  it('should require a valid id', async done => {
+  it("should require a valid id", async done => {
     const server = await createServer();
-    const channel = createChannel('redeem');
+    const channel = createChannel("redeem");
 
     server.config.redeemChannelId = channel.id;
     await server.config.save();
 
     const args: Arguments = {
       client: createClient(),
-      message: await createMessage({ server, serverChannels: [channel], permission: 'ADMINISTRATOR' }),
+      message: await createMessage({
+        server,
+        serverChannels: [channel],
+        permission: "ADMINISTRATOR"
+      }),
       id: 7,
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {},
+      reactions: {}
     };
 
     const response = (await removePrize(args)) as CommandResponse;
     expect(response.content).toBe(
-      `${EMOJI_ERROR} Couldn't find that prize, are you sure \`${args.id}\` is the right ID?`,
+      `${EMOJI_ERROR} Couldn't find that prize, are you sure \`${args.id}\` is the right ID?`
     );
 
     done();
   });
 
-  it('should remove the prize', async done => {
+  it("should remove the prize", async done => {
     const server = await createServer();
-    const channel = createChannel('redeem');
+    const channel = createChannel("redeem");
     const prize = await createPrize(server);
 
     server.config.redeemChannelId = channel.id;
@@ -107,12 +111,16 @@ describe('commands/manage/prize/remove', () => {
 
     const args: Arguments = {
       client: createClient(),
-      message: await createMessage({ server, serverChannels: [channel], permission: 'ADMINISTRATOR' }),
+      message: await createMessage({
+        server,
+        serverChannels: [channel],
+        permission: "ADMINISTRATOR"
+      }),
       id: prize.id,
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {},
+      reactions: {}
     };
 
     const response = (await removePrize(args)) as CommandResponse;

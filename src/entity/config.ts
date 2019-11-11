@@ -1,34 +1,34 @@
-import { Entity, BaseEntity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
-import { Guild } from 'discord.js';
-import { toSentenceSerial } from 'underscore.string';
-import { chain, isEmpty } from 'lodash';
-import { EMOJI_CAKE } from '../utils/emoji';
+import { Entity, BaseEntity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from "typeorm";
+import { Guild } from "discord.js";
+import { toSentenceSerial } from "underscore.string";
+import { chain, isEmpty } from "lodash";
+import { EMOJI_CAKE } from "../utils/emoji";
 
 export type ConfigCommand =
-  | 'command-prefix'
-  | 'quiet-mode'
-  | 'log-channel'
-  | 'log-with-link'
-  | 'redeem-channel'
-  | 'redeem-timer'
-  | 'milestone-channel'
-  | 'manager-roles'
-  | 'blesser-roles'
-  | 'dropper-roles'
-  | 'redeem-ping-roles'
-  | 'nickname'
-  | 'cake-emoji'
-  | 'cake-name-singular'
-  | 'cake-name-plural'
-  | 'drop-gifs'
-  | 'no-drop-gifs'
-  | 'no-giving'
-  | 'requirement-to-give'
-  | 'give-limit'
-  | 'give-limit-hour-reset';
+  | "command-prefix"
+  | "quiet-mode"
+  | "log-channel"
+  | "log-with-link"
+  | "redeem-channel"
+  | "redeem-timer"
+  | "milestone-channel"
+  | "manager-roles"
+  | "blesser-roles"
+  | "dropper-roles"
+  | "redeem-ping-roles"
+  | "nickname"
+  | "cake-emoji"
+  | "cake-name-singular"
+  | "cake-name-plural"
+  | "drop-gifs"
+  | "no-drop-gifs"
+  | "no-giving"
+  | "requirement-to-give"
+  | "give-limit"
+  | "give-limit-hour-reset";
 
-type roleTypes = 'manager-roles' | 'blesser-roles' | 'dropper-roles' | 'redeem-ping-roles';
-type cakeNameType = 'singular' | 'plural';
+type roleTypes = "manager-roles" | "blesser-roles" | "dropper-roles" | "redeem-ping-roles";
+type cakeNameType = "singular" | "plural";
 
 @Entity()
 export default class Config extends BaseEntity {
@@ -41,7 +41,7 @@ export default class Config extends BaseEntity {
   @UpdateDateColumn({ nullable: true })
   updatedAt!: Date;
 
-  @Column({ nullable: false, default: 'cake' })
+  @Column({ nullable: false, default: "cake" })
   commandPrefix!: string;
 
   @Column({ nullable: false, default: false })
@@ -62,34 +62,34 @@ export default class Config extends BaseEntity {
   @Column({ nullable: true, type: String })
   milestoneChannelId!: string | null;
 
-  @Column('simple-array', { nullable: false, default: '' })
+  @Column("simple-array", { nullable: false, default: "" })
   managerRoleIds!: string[];
 
-  @Column('simple-array', { nullable: false, default: '' })
+  @Column("simple-array", { nullable: false, default: "" })
   blesserRoleIds!: string[];
 
-  @Column('simple-array', { nullable: false, default: '' })
+  @Column("simple-array", { nullable: false, default: "" })
   dropperRoleIds!: string[];
 
-  @Column('simple-array', { nullable: false, default: '' })
+  @Column("simple-array", { nullable: false, default: "" })
   redeemPingRoleIds!: string[];
 
-  @Column({ nullable: false, default: 'CAKE BOSS!' })
+  @Column({ nullable: false, default: "CAKE BOSS!" })
   nickname!: string;
 
   @Column({ nullable: false, default: EMOJI_CAKE })
   cakeEmoji!: string;
 
-  @Column({ nullable: false, default: 'cake' })
+  @Column({ nullable: false, default: "cake" })
   cakeNameSingular!: string;
 
-  @Column({ nullable: false, default: 'cakes' })
+  @Column({ nullable: false, default: "cakes" })
   cakeNamePlural!: string;
 
-  @Column('simple-array', { nullable: false, default: '' })
+  @Column("simple-array", { nullable: false, default: "" })
   dropGifs!: string[];
 
-  @Column('simple-array', { nullable: false, default: '' })
+  @Column("simple-array", { nullable: false, default: "" })
   noDropGifs!: string[];
 
   @Column({ nullable: false, default: false })
@@ -105,7 +105,7 @@ export default class Config extends BaseEntity {
   giveLimitHourReset!: number;
 
   setCommandPrefix(prefix: string): boolean {
-    if (prefix === '') {
+    if (prefix === "") {
       return false;
     }
 
@@ -115,23 +115,23 @@ export default class Config extends BaseEntity {
   }
 
   setQuietMode(toggle: string): boolean {
-    if (toggle !== 'true' && toggle !== 'false') {
+    if (toggle !== "true" && toggle !== "false") {
       return false;
     }
 
-    this.quietMode = toggle === 'true';
+    this.quietMode = toggle === "true";
 
     return true;
   }
 
   setLogChannel(channelString: string, guild: Guild): boolean {
-    if (channelString === 'none') {
+    if (channelString === "none") {
       this.logChannelId = null;
 
       return true;
     }
 
-    const channelId = channelString.replace(/^<#/, '').replace(/>$/, '');
+    const channelId = channelString.replace(/^<#/, "").replace(/>$/, "");
     const channel = guild.channels.get(channelId);
 
     if (!channel) {
@@ -144,23 +144,23 @@ export default class Config extends BaseEntity {
   }
 
   setLogWithLink(toggle: string): boolean {
-    if (toggle !== 'true' && toggle !== 'false') {
+    if (toggle !== "true" && toggle !== "false") {
       return false;
     }
 
-    this.logWithLink = toggle === 'true';
+    this.logWithLink = toggle === "true";
 
     return true;
   }
 
   setRedeemChannel(channelString: string, guild: Guild): boolean {
-    if (channelString === 'none') {
+    if (channelString === "none") {
       this.redeemChannelId = null;
 
       return true;
     }
 
-    const channelId = channelString.replace(/^<#/, '').replace(/>$/, '');
+    const channelId = channelString.replace(/^<#/, "").replace(/>$/, "");
     const channel = guild.channels.get(channelId);
 
     if (!channel) {
@@ -185,13 +185,13 @@ export default class Config extends BaseEntity {
   }
 
   setMilestoneChannel(channelString: string, guild: Guild): boolean {
-    if (channelString === 'none') {
+    if (channelString === "none") {
       this.milestoneChannelId = null;
 
       return true;
     }
 
-    const channelId = channelString.replace(/^<#/, '').replace(/>$/, '');
+    const channelId = channelString.replace(/^<#/, "").replace(/>$/, "");
     const channel = guild.channels.get(channelId);
 
     if (!channel) {
@@ -204,18 +204,18 @@ export default class Config extends BaseEntity {
   }
 
   setRoles(roles: string, type: roleTypes, guild: Guild): boolean {
-    if (roles === 'none') {
+    if (roles === "none") {
       switch (type) {
-        case 'manager-roles':
+        case "manager-roles":
           this.managerRoleIds = [];
           break;
-        case 'blesser-roles':
+        case "blesser-roles":
           this.blesserRoleIds = [];
           break;
-        case 'dropper-roles':
+        case "dropper-roles":
           this.dropperRoleIds = [];
           break;
-        case 'redeem-ping-roles':
+        case "redeem-ping-roles":
           this.redeemPingRoleIds = [];
           break;
         default:
@@ -225,7 +225,7 @@ export default class Config extends BaseEntity {
     }
 
     const foundRolesIds = roles
-      .split(',')
+      .split(",")
       .map(g => g.trim())
       .filter(roleName => {
         return guild.roles.find(role => role.name === roleName.trim());
@@ -234,16 +234,16 @@ export default class Config extends BaseEntity {
 
     if (foundRolesIds.length > 0) {
       switch (type) {
-        case 'manager-roles':
+        case "manager-roles":
           this.managerRoleIds = foundRolesIds;
           break;
-        case 'blesser-roles':
+        case "blesser-roles":
           this.blesserRoleIds = foundRolesIds;
           break;
-        case 'dropper-roles':
+        case "dropper-roles":
           this.dropperRoleIds = foundRolesIds;
           break;
-        case 'redeem-ping-roles':
+        case "redeem-ping-roles":
           this.redeemPingRoleIds = foundRolesIds;
           break;
         default:
@@ -256,7 +256,7 @@ export default class Config extends BaseEntity {
   }
 
   setNickname(nickname: string): boolean {
-    if (nickname === '') {
+    if (nickname === "") {
       return false;
     }
 
@@ -266,7 +266,7 @@ export default class Config extends BaseEntity {
   }
 
   setCakeEmoji(emoji: string): boolean {
-    if (emoji === '') {
+    if (emoji === "") {
       return false;
     }
 
@@ -276,13 +276,13 @@ export default class Config extends BaseEntity {
   }
 
   setCakeName(name: string, type: cakeNameType): boolean {
-    if (name === '') {
+    if (name === "") {
       return false;
     }
 
-    if (type === 'singular') {
+    if (type === "singular") {
       this.cakeNameSingular = name;
-    } else if (type === 'plural') {
+    } else if (type === "plural") {
       this.cakeNamePlural = name;
     } else {
       return false;
@@ -292,31 +292,31 @@ export default class Config extends BaseEntity {
   }
 
   setDropGifs(gifs: string): boolean {
-    if (gifs === 'none') {
+    if (gifs === "none") {
       this.dropGifs = [];
     } else {
-      this.dropGifs = gifs.split(',').map(g => g.trim());
+      this.dropGifs = gifs.split(",").map(g => g.trim());
     }
 
     return true;
   }
 
   setNoDropGifs(gifs: string): boolean {
-    if (gifs === 'none') {
+    if (gifs === "none") {
       this.noDropGifs = [];
     } else {
-      this.noDropGifs = gifs.split(',').map(g => g.trim());
+      this.noDropGifs = gifs.split(",").map(g => g.trim());
     }
 
     return true;
   }
 
   setNoGiving(toggle: string): boolean {
-    if (toggle !== 'true' && toggle !== 'false') {
+    if (toggle !== "true" && toggle !== "false") {
       return false;
     }
 
-    this.noGiving = toggle === 'true';
+    this.noGiving = toggle === "true";
 
     return true;
   }
@@ -383,48 +383,75 @@ export default class Config extends BaseEntity {
     const redeemPingRoles = getRoles(this.redeemPingRoleIds);
 
     switch (config) {
-      case 'command-prefix':
-        return { default: '-', value: this.commandPrefix };
-      case 'quiet-mode':
-        return { default: 'false', value: `${this.quietMode}` };
-      case 'log-channel':
-        return { default: 'none', value: logChannel ? `#${logChannel.name}` : 'none' };
-      case 'log-with-link':
-        return { default: 'false', value: `${this.logWithLink}` };
-      case 'redeem-channel':
-        return { default: 'none', value: redeemChannel ? `#${redeemChannel.name}` : 'none' };
-      case 'redeem-timer':
-        return { default: '10', value: `${this.redeemTimer}` };
-      case 'milestone-channel':
-        return { default: 'none', value: milestoneChannel ? `#${milestoneChannel.name}` : 'none' };
-      case 'manager-roles':
-        return { default: 'none', value: isEmpty(managerRoles) ? 'none' : toSentenceSerial(managerRoles) };
-      case 'blesser-roles':
-        return { default: 'none', value: isEmpty(blesserRoles) ? 'none' : toSentenceSerial(blesserRoles) };
-      case 'dropper-roles':
-        return { default: 'none', value: isEmpty(dropperRoles) ? 'none' : toSentenceSerial(dropperRoles) };
-      case 'redeem-ping-roles':
-        return { default: 'none', value: isEmpty(redeemPingRoles) ? 'none' : toSentenceSerial(redeemPingRoles) };
-      case 'nickname':
-        return { default: 'CAKE BOSS!', value: this.nickname || '' };
-      case 'cake-emoji':
+      case "command-prefix":
+        return { default: "-", value: this.commandPrefix };
+      case "quiet-mode":
+        return { default: "false", value: `${this.quietMode}` };
+      case "log-channel":
+        return {
+          default: "none",
+          value: logChannel ? `#${logChannel.name}` : "none"
+        };
+      case "log-with-link":
+        return { default: "false", value: `${this.logWithLink}` };
+      case "redeem-channel":
+        return {
+          default: "none",
+          value: redeemChannel ? `#${redeemChannel.name}` : "none"
+        };
+      case "redeem-timer":
+        return { default: "10", value: `${this.redeemTimer}` };
+      case "milestone-channel":
+        return {
+          default: "none",
+          value: milestoneChannel ? `#${milestoneChannel.name}` : "none"
+        };
+      case "manager-roles":
+        return {
+          default: "none",
+          value: isEmpty(managerRoles) ? "none" : toSentenceSerial(managerRoles)
+        };
+      case "blesser-roles":
+        return {
+          default: "none",
+          value: isEmpty(blesserRoles) ? "none" : toSentenceSerial(blesserRoles)
+        };
+      case "dropper-roles":
+        return {
+          default: "none",
+          value: isEmpty(dropperRoles) ? "none" : toSentenceSerial(dropperRoles)
+        };
+      case "redeem-ping-roles":
+        return {
+          default: "none",
+          value: isEmpty(redeemPingRoles) ? "none" : toSentenceSerial(redeemPingRoles)
+        };
+      case "nickname":
+        return { default: "CAKE BOSS!", value: this.nickname || "" };
+      case "cake-emoji":
         return { default: EMOJI_CAKE, value: this.cakeEmoji };
-      case 'cake-name-singular':
-        return { default: 'cake', value: this.cakeNameSingular };
-      case 'cake-name-plural':
-        return { default: 'cakes', value: this.cakeNamePlural };
-      case 'drop-gifs':
-        return { default: 'none', value: isEmpty(this.dropGifs) ? 'none' : toSentenceSerial(this.dropGifs) };
-      case 'no-drop-gifs':
-        return { default: 'none', value: isEmpty(this.noDropGifs) ? 'none' : toSentenceSerial(this.noDropGifs) };
-      case 'no-giving':
-        return { default: 'false', value: `${this.noGiving}` };
-      case 'requirement-to-give':
-        return { default: '0', value: `${this.requirementToGive}` };
-      case 'give-limit':
-        return { default: '5', value: `${this.giveLimit}` };
-      case 'give-limit-hour-reset':
-        return { default: '1', value: `${this.giveLimitHourReset}` };
+      case "cake-name-singular":
+        return { default: "cake", value: this.cakeNameSingular };
+      case "cake-name-plural":
+        return { default: "cakes", value: this.cakeNamePlural };
+      case "drop-gifs":
+        return {
+          default: "none",
+          value: isEmpty(this.dropGifs) ? "none" : toSentenceSerial(this.dropGifs)
+        };
+      case "no-drop-gifs":
+        return {
+          default: "none",
+          value: isEmpty(this.noDropGifs) ? "none" : toSentenceSerial(this.noDropGifs)
+        };
+      case "no-giving":
+        return { default: "false", value: `${this.noGiving}` };
+      case "requirement-to-give":
+        return { default: "0", value: `${this.requirementToGive}` };
+      case "give-limit":
+        return { default: "5", value: `${this.giveLimit}` };
+      case "give-limit-hour-reset":
+        return { default: "1", value: `${this.giveLimitHourReset}` };
       default:
         return undefined;
     }

@@ -1,4 +1,4 @@
-import { Client, Message, MessageOptions, Attachment, RichEmbed } from 'discord.js';
+import { Client, Message, MessageOptions, Attachment, RichEmbed } from "discord.js";
 
 export interface CommandResponse {
   content: string;

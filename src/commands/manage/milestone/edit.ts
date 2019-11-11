@@ -1,11 +1,11 @@
-import { Argv } from 'yargs';
-import { canManage } from '../../../utils/permissions';
-import Server from '../../../entity/server';
-import Milestone from '../../../entity/milestone';
-import { logEvent } from '../../../utils/logger';
-import { EMOJI_ERROR, EMOJI_JOB_WELL_DONE, EMOJI_INCORRECT_PERMISSIONS, EMOJI_MILESTONE } from '../../../utils/emoji';
-import { CommandArguments, CommandResponse } from '../../../utils/command-interfaces';
-import { handleError } from '../../../utils/errors';
+import { Argv } from "yargs";
+import { canManage } from "../../../utils/permissions";
+import Server from "../../../entity/server";
+import Milestone from "../../../entity/milestone";
+import { logEvent } from "../../../utils/logger";
+import { EMOJI_ERROR, EMOJI_JOB_WELL_DONE, EMOJI_INCORRECT_PERMISSIONS, EMOJI_MILESTONE } from "../../../utils/emoji";
+import { CommandArguments, CommandResponse } from "../../../utils/command-interfaces";
+import { handleError } from "../../../utils/errors";
 
 export interface Arguments extends CommandArguments {
   id: number;
@@ -17,13 +17,17 @@ export interface Arguments extends CommandArguments {
 export const editMilestone = async (args: Arguments): Promise<CommandResponse | void> => {
   try {
     if (!(await canManage(args.message))) {
-      return { content: `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!` };
+      return {
+        content: `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`
+      };
     }
 
-    const server = await Server.findOne({ where: { discordId: args.message.guild.id } });
+    const server = await Server.findOne({
+      where: { discordId: args.message.guild.id }
+    });
 
     if (!server) {
-      throw new Error('Could not find server.');
+      throw new Error("Could not find server.");
     }
 
     if (args.amount <= 0) {
@@ -33,16 +37,18 @@ export const editMilestone = async (args: Arguments): Promise<CommandResponse | 
     const milestone = await Milestone.findOne({ server, id: args.id });
 
     if (!milestone) {
-      return { content: `${EMOJI_ERROR} Couldn't find that milestone, are you sure \`${args.id}\` is the right ID?` };
+      return {
+        content: `${EMOJI_ERROR} Couldn't find that milestone, are you sure \`${args.id}\` is the right ID?`
+      };
     }
 
     milestone.amount = args.amount;
 
-    if (args.roles === 'none') {
+    if (args.roles === "none") {
       milestone.roleIds = [];
     } else {
       const foundRolesIds = args.roles
-        .split(',')
+        .split(",")
         .map(g => g.trim())
         .filter(roleName => {
           return args.message.guild.roles.find(role => role.name === roleName.trim());
@@ -65,7 +71,7 @@ export const editMilestone = async (args: Arguments): Promise<CommandResponse | 
     logEvent(
       args.client,
       args.message,
-      `${EMOJI_MILESTONE} \`${args.message.author.tag}\` edited milestone: \`${milestone.amount}\``,
+      `${EMOJI_MILESTONE} \`${args.message.author.tag}\` edited milestone: \`${milestone.amount}\``
     );
 
     if (server.config.quietMode) {
@@ -80,8 +86,8 @@ export const editMilestone = async (args: Arguments): Promise<CommandResponse | 
   }
 };
 
-export const command = 'edit <id> <amount> <roles> [announcement]';
-export const describe = 'Edit a milestone';
+export const command = "edit <id> <amount> <roles> [announcement]";
+export const describe = "Edit a milestone";
 
 export const builder = (yargs: Argv) => yargs;
 

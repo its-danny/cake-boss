@@ -5,9 +5,9 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
-  ManyToOne,
-} from 'typeorm';
-import Server from './server';
+  ManyToOne
+} from "typeorm";
+import Server from "./server";
 
 @Entity()
 export default class Milestone extends BaseEntity {
@@ -23,12 +23,15 @@ export default class Milestone extends BaseEntity {
   @Column({ nullable: false, default: 1 })
   amount!: number;
 
-  @Column('simple-array', { nullable: false, default: '' })
+  @Column("simple-array", { nullable: false, default: "" })
   roleIds!: string[];
 
   @Column({ nullable: true })
   announcement!: string;
 
-  @ManyToOne(() => Server, server => server.milestones)
+  @ManyToOne(
+    () => Server,
+    server => server.milestones
+  )
   server!: Server;
 }

@@ -1,19 +1,19 @@
-import { Argv } from 'yargs';
-import Table from 'cli-table';
-import { getConnection } from 'typeorm';
-import { canManage } from '../../../utils/permissions';
-import Server from '../../../entity/server';
+import { Argv } from "yargs";
+import Table from "cli-table";
+import { getConnection } from "typeorm";
+import { canManage } from "../../../utils/permissions";
+import Server from "../../../entity/server";
 import {
   EMOJI_INCORRECT_PERMISSIONS,
   EMOJI_RECORD_NOT_FOUND,
   EMOJI_ERROR,
   EMOJI_SHAME,
-  EMOJI_WORKING_HARD,
-} from '../../../utils/emoji';
-import getTableBorder from '../../../utils/get-table-border';
-import { CommandArguments, CommandResponse } from '../../../utils/command-interfaces';
-import Member from '../../../entity/member';
-import { handleError } from '../../../utils/errors';
+  EMOJI_WORKING_HARD
+} from "../../../utils/emoji";
+import getTableBorder from "../../../utils/get-table-border";
+import { CommandArguments, CommandResponse } from "../../../utils/command-interfaces";
+import Member from "../../../entity/member";
+import { handleError } from "../../../utils/errors";
 
 interface Arguments extends CommandArguments {
   page?: number;
@@ -22,13 +22,17 @@ interface Arguments extends CommandArguments {
 export const getShamedList = async (args: Arguments): Promise<CommandResponse | void> => {
   try {
     if (!(await canManage(args.message))) {
-      return { content: `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!` };
+      return {
+        content: `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`
+      };
     }
 
-    const server = await Server.findOne({ where: { discordId: args.message.guild.id } });
+    const server = await Server.findOne({
+      where: { discordId: args.message.guild.id }
+    });
 
     if (!server) {
-      throw new Error('Could not find server.');
+      throw new Error("Could not find server.");
     }
 
     const perPage = 5;
@@ -43,9 +47,9 @@ export const getShamedList = async (args: Arguments): Promise<CommandResponse | 
     const connection = getConnection();
     const shamedMembers: Member[] = await connection
       .getRepository(Member)
-      .createQueryBuilder('member')
+      .createQueryBuilder("member")
       .where({ server, shamed: true })
-      .orderBy('member.id', 'ASC')
+      .orderBy("member.id", "ASC")
       .skip(perPage * (currentPage - 1))
       .take(perPage)
       .getMany();
@@ -55,9 +59,9 @@ export const getShamedList = async (args: Arguments): Promise<CommandResponse | 
     }
 
     const table = new Table({
-      head: ['Name'],
+      head: ["Name"],
       style: { head: [], border: [] },
-      chars: getTableBorder(),
+      chars: getTableBorder()
     });
 
     shamedMembers.forEach(shamed => {
@@ -73,15 +77,15 @@ export const getShamedList = async (args: Arguments): Promise<CommandResponse | 
     });
 
     return {
-      content: `${EMOJI_SHAME} **Shame List** [ Page ${currentPage} of ${totalPages} ]\n\n\`\`\`\n\n${table.toString()}\n\`\`\``,
+      content: `${EMOJI_SHAME} **Shame List** [ Page ${currentPage} of ${totalPages} ]\n\n\`\`\`\n\n${table.toString()}\n\`\`\``
     };
   } catch (error) {
     return handleError(error, args.message);
   }
 };
 
-export const command = 'list [page]';
-export const describe = 'List shamed users';
+export const command = "list [page]";
+export const describe = "List shamed users";
 
 export const builder = (yargs: Argv) => yargs;
 
