@@ -1,36 +1,40 @@
-import { Argv } from 'yargs';
-import { TextChannel } from 'discord.js';
-import { isEmpty, sample } from 'lodash';
-import Server from '../../entity/server';
-import Drop from '../../entity/drop';
-import { logEvent, logMilestone } from '../../utils/logger';
-import Member from '../../entity/member';
-import { isShamed } from '../../utils/permissions';
-import { EMOJI_DONT_DO_THAT, EMOJI_RECORD_NOT_FOUND, EMOJI_JOB_WELL_DONE } from '../../utils/emoji';
-import { CommandArguments, CommandResponse } from '../../utils/command-interfaces';
-import { handleError } from '../../utils/errors';
+import { Argv } from "yargs";
+import { TextChannel } from "discord.js";
+import { isEmpty, sample } from "lodash";
+import Server from "../../entity/server";
+import Drop from "../../entity/drop";
+import { logEvent, logMilestone } from "../../utils/logger";
+import Member from "../../entity/member";
+import { isShamed } from "../../utils/permissions";
+import { EMOJI_DONT_DO_THAT, EMOJI_RECORD_NOT_FOUND, EMOJI_JOB_WELL_DONE } from "../../utils/emoji";
+import { CommandArguments, CommandResponse } from "../../utils/command-interfaces";
+import { handleError } from "../../utils/errors";
 
 export const takeCake = async (args: CommandArguments): Promise<CommandResponse | void> => {
   try {
-    const server = await Server.findOne({ where: { discordId: args.message.guild.id } });
+    const server = await Server.findOne({
+      where: { discordId: args.message.guild.id }
+    });
 
     if (!server) {
-      throw new Error('Could not find server.');
+      throw new Error("Could not find server.");
     }
 
     if (await isShamed(server.discordId, args.message.member.id)) {
       return {
-        content: `${EMOJI_DONT_DO_THAT} You have been **shamed** and can not get ${server.config.cakeNamePlural}!`,
+        content: `${EMOJI_DONT_DO_THAT} You have been **shamed** and can not get ${server.config.cakeNamePlural}!`
       };
     }
 
-    const drop = await Drop.findOne({ where: { server, channelDiscordId: args.message.channel.id } });
+    const drop = await Drop.findOne({
+      where: { server, channelDiscordId: args.message.channel.id }
+    });
 
     if (!drop) {
       return {
         content: `${EMOJI_RECORD_NOT_FOUND} There are no drops here!\n${
-          !isEmpty(server.config.noDropGifs) ? sample(server.config.noDropGifs) : ''
-        }`,
+          !isEmpty(server.config.noDropGifs) ? sample(server.config.noDropGifs) : ""
+        }`
       };
     }
 
@@ -42,10 +46,12 @@ export const takeCake = async (args: CommandArguments): Promise<CommandResponse 
       await drop.save();
     }
 
-    const member = await Member.findOne({ where: { discordId: args.message.member.id } });
+    const member = await Member.findOne({
+      where: { discordId: args.message.member.id }
+    });
 
     if (!member) {
-      throw new Error('Could not find member.');
+      throw new Error("Could not find member.");
     }
 
     const previousEarned = member.earned;
@@ -59,7 +65,7 @@ export const takeCake = async (args: CommandArguments): Promise<CommandResponse 
     logEvent(
       args.client,
       args.message,
-      `${server.config.cakeEmoji} \`${args.message.author.tag}\` took a ${server.config.cakeNameSingular} from \`#${discordChannel.name}\`!`,
+      `${server.config.cakeEmoji} \`${args.message.author.tag}\` took a ${server.config.cakeNameSingular} from \`#${discordChannel.name}\`!`
     );
 
     server.milestones.forEach(milestone => {
@@ -73,7 +79,7 @@ export const takeCake = async (args: CommandArguments): Promise<CommandResponse 
 
     if (previousEarned < server.config.requirementToGive && member.earned >= server.config.requirementToGive) {
       args.message.channel.send(
-        `${server.config.cakeEmoji} You can now give ${server.config.cakeNamePlural}, <@${args.message.member.id}>!`,
+        `${server.config.cakeEmoji} You can now give ${server.config.cakeNamePlural}, <@${args.message.member.id}>!`
       );
     }
 
@@ -90,14 +96,16 @@ export const takeCake = async (args: CommandArguments): Promise<CommandResponse 
 
       return undefined;
     }
-    return { content: `${EMOJI_JOB_WELL_DONE} ${server.config.cakeEmoji} You got it, <@${args.message.member.id}>!` };
+    return {
+      content: `${EMOJI_JOB_WELL_DONE} ${server.config.cakeEmoji} You got it, <@${args.message.member.id}>!`
+    };
   } catch (error) {
     return handleError(error, args.message);
   }
 };
 
-export const command = 'take';
-export const describe = 'Take a dropped cake';
+export const command = "take";
+export const describe = "Take a dropped cake";
 
 export const builder = (yargs: Argv) => yargs;
 

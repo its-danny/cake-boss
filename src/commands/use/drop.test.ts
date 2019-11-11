@@ -1,19 +1,19 @@
-import { createConnection, getConnection } from 'typeorm';
-import { dropCakes, Arguments } from './drop';
-import { createServer, createMessage, createClient, createChannel, ENTITIES } from '../../../test/test-helpers';
-import { EMOJI_INCORRECT_PERMISSIONS, EMOJI_JOB_WELL_DONE } from '../../utils/emoji';
-import Drop from '../../entity/drop';
-import { CommandResponse } from '../../utils/command-interfaces';
+import { createConnection, getConnection } from "typeorm";
+import { dropCakes, Arguments } from "./drop";
+import { createServer, createMessage, createClient, createChannel, ENTITIES } from "../../../test/test-helpers";
+import { EMOJI_INCORRECT_PERMISSIONS, EMOJI_JOB_WELL_DONE } from "../../utils/emoji";
+import Drop from "../../entity/drop";
+import { CommandResponse } from "../../utils/command-interfaces";
 
-describe('commands/use/drop', () => {
+describe("commands/use/drop", () => {
   beforeEach(async done => {
     await createConnection({
-      type: 'sqlite',
-      database: ':memory:',
+      type: "sqlite",
+      database: ":memory:",
       dropSchema: true,
       entities: ENTITIES,
       synchronize: true,
-      logging: false,
+      logging: false
     });
 
     done();
@@ -32,12 +32,12 @@ describe('commands/use/drop', () => {
     const args: Arguments = {
       client: createClient(),
       message: await createMessage({ server }),
-      channel: '<#12345>',
+      channel: "<#12345>",
       amount: 1,
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {},
+      reactions: {}
     };
 
     const response = (await dropCakes(args)) as CommandResponse;
@@ -52,19 +52,25 @@ describe('commands/use/drop', () => {
 
     const args: Arguments = {
       client: createClient(),
-      message: await createMessage({ server, serverChannels: [channel], permission: 'ADMINISTRATOR' }),
+      message: await createMessage({
+        server,
+        serverChannels: [channel],
+        permission: "ADMINISTRATOR"
+      }),
       channel: `<#${channel.id}>`,
       amount: 1,
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {},
+      reactions: {}
     };
 
     const response = (await dropCakes(args)) as CommandResponse;
     expect(response.content).toBe(`${EMOJI_JOB_WELL_DONE} Done!`);
 
-    const drop = await Drop.findOne({ where: { server, channelDiscordId: channel.id } });
+    const drop = await Drop.findOne({
+      where: { server, channelDiscordId: channel.id }
+    });
     expect(drop).toBeDefined();
     expect(drop!.amount).toBe(1);
 

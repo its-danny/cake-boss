@@ -1,25 +1,25 @@
-import { createConnection, getConnection } from 'typeorm';
+import { createConnection, getConnection } from "typeorm";
 import {
   createServer,
   createClient,
   createMessage,
   createChannel,
   createPrize,
-  ENTITIES,
-} from '../../../../test/test-helpers';
-import { editPrize, Arguments } from './edit';
-import { EMOJI_ERROR, EMOJI_INCORRECT_PERMISSIONS, EMOJI_JOB_WELL_DONE } from '../../../utils/emoji';
-import { CommandResponse } from '../../../utils/command-interfaces';
+  ENTITIES
+} from "../../../../test/test-helpers";
+import { editPrize, Arguments } from "./edit";
+import { EMOJI_ERROR, EMOJI_INCORRECT_PERMISSIONS, EMOJI_JOB_WELL_DONE } from "../../../utils/emoji";
+import { CommandResponse } from "../../../utils/command-interfaces";
 
-describe('commands/manage/prize/edit', () => {
+describe("commands/manage/prize/edit", () => {
   beforeEach(async done => {
     await createConnection({
-      type: 'sqlite',
-      database: ':memory:',
+      type: "sqlite",
+      database: ":memory:",
       dropSchema: true,
       entities: ENTITIES,
       synchronize: true,
-      logging: false,
+      logging: false
     });
 
     done();
@@ -40,13 +40,13 @@ describe('commands/manage/prize/edit', () => {
       client: createClient(),
       message: await createMessage({ server }),
       id: prize.id,
-      description: 'A hellhound',
-      reactionEmoji: '🐺',
+      description: "A hellhound",
+      reactionEmoji: "🐺",
       price: 3,
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {},
+      reactions: {}
     };
 
     const response = (await editPrize(args)) as CommandResponse;
@@ -55,21 +55,21 @@ describe('commands/manage/prize/edit', () => {
     done();
   });
 
-  it('should require redeem-channel being set', async done => {
+  it("should require redeem-channel being set", async done => {
     const server = await createServer();
     const prize = await createPrize(server);
 
     const args: Arguments = {
       client: createClient(),
-      message: await createMessage({ server, permission: 'ADMINISTRATOR' }),
+      message: await createMessage({ server, permission: "ADMINISTRATOR" }),
       id: prize.id,
-      description: 'A hellhound',
-      reactionEmoji: '🐺',
+      description: "A hellhound",
+      reactionEmoji: "🐺",
       price: 3,
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {},
+      reactions: {}
     };
 
     const response = (await editPrize(args)) as CommandResponse;
@@ -78,9 +78,9 @@ describe('commands/manage/prize/edit', () => {
     done();
   });
 
-  it('should require description', async done => {
+  it("should require description", async done => {
     const server = await createServer();
-    const channel = createChannel('redeem');
+    const channel = createChannel("redeem");
     const prize = await createPrize(server);
 
     server.config.redeemChannelId = channel.id;
@@ -88,15 +88,19 @@ describe('commands/manage/prize/edit', () => {
 
     const args: Arguments = {
       client: createClient(),
-      message: await createMessage({ server, serverChannels: [channel], permission: 'ADMINISTRATOR' }),
+      message: await createMessage({
+        server,
+        serverChannels: [channel],
+        permission: "ADMINISTRATOR"
+      }),
       id: prize.id,
-      description: '',
-      reactionEmoji: '🐺',
+      description: "",
+      reactionEmoji: "🐺",
       price: 3,
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {},
+      reactions: {}
     };
 
     const response = (await editPrize(args)) as CommandResponse;
@@ -105,9 +109,9 @@ describe('commands/manage/prize/edit', () => {
     done();
   });
 
-  it('should require reaction emoji', async done => {
+  it("should require reaction emoji", async done => {
     const server = await createServer();
-    const channel = createChannel('redeem');
+    const channel = createChannel("redeem");
     const prize = await createPrize(server);
 
     server.config.redeemChannelId = channel.id;
@@ -115,15 +119,19 @@ describe('commands/manage/prize/edit', () => {
 
     const args: Arguments = {
       client: createClient(),
-      message: await createMessage({ server, serverChannels: [channel], permission: 'ADMINISTRATOR' }),
+      message: await createMessage({
+        server,
+        serverChannels: [channel],
+        permission: "ADMINISTRATOR"
+      }),
       id: prize.id,
-      description: 'A hellhound',
-      reactionEmoji: '',
+      description: "A hellhound",
+      reactionEmoji: "",
       price: 3,
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {},
+      reactions: {}
     };
 
     const response = (await editPrize(args)) as CommandResponse;
@@ -132,9 +140,9 @@ describe('commands/manage/prize/edit', () => {
     done();
   });
 
-  it('should require price of 1 or more', async done => {
+  it("should require price of 1 or more", async done => {
     const server = await createServer();
-    const channel = createChannel('redeem');
+    const channel = createChannel("redeem");
     const prize = await createPrize(server);
 
     server.config.redeemChannelId = channel.id;
@@ -142,15 +150,19 @@ describe('commands/manage/prize/edit', () => {
 
     const args: Arguments = {
       client: createClient(),
-      message: await createMessage({ server, serverChannels: [channel], permission: 'ADMINISTRATOR' }),
+      message: await createMessage({
+        server,
+        serverChannels: [channel],
+        permission: "ADMINISTRATOR"
+      }),
       id: prize.id,
-      description: 'A hellhound',
-      reactionEmoji: '🐺',
+      description: "A hellhound",
+      reactionEmoji: "🐺",
       price: 0,
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {},
+      reactions: {}
     };
 
     const response = (await editPrize(args)) as CommandResponse;
@@ -159,37 +171,41 @@ describe('commands/manage/prize/edit', () => {
     done();
   });
 
-  it('should require a valid id', async done => {
+  it("should require a valid id", async done => {
     const server = await createServer();
-    const channel = createChannel('redeem');
+    const channel = createChannel("redeem");
 
     server.config.redeemChannelId = channel.id;
     await server.config.save();
 
     const args: Arguments = {
       client: createClient(),
-      message: await createMessage({ server, serverChannels: [channel], permission: 'ADMINISTRATOR' }),
+      message: await createMessage({
+        server,
+        serverChannels: [channel],
+        permission: "ADMINISTRATOR"
+      }),
       id: 7,
-      description: 'A hellhound',
-      reactionEmoji: '🐺',
+      description: "A hellhound",
+      reactionEmoji: "🐺",
       price: 1,
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {},
+      reactions: {}
     };
 
     const response = (await editPrize(args)) as CommandResponse;
     expect(response.content).toBe(
-      `${EMOJI_ERROR} Couldn't find that prize, are you sure \`${args.id}\` is the right ID?`,
+      `${EMOJI_ERROR} Couldn't find that prize, are you sure \`${args.id}\` is the right ID?`
     );
 
     done();
   });
 
-  it('should update the prize', async done => {
+  it("should update the prize", async done => {
     const server = await createServer();
-    const channel = createChannel('redeem');
+    const channel = createChannel("redeem");
     const prize = await createPrize(server);
 
     server.config.redeemChannelId = channel.id;
@@ -197,15 +213,19 @@ describe('commands/manage/prize/edit', () => {
 
     const args: Arguments = {
       client: createClient(),
-      message: await createMessage({ server, serverChannels: [channel], permission: 'ADMINISTRATOR' }),
+      message: await createMessage({
+        server,
+        serverChannels: [channel],
+        permission: "ADMINISTRATOR"
+      }),
       id: prize.id,
-      description: 'A hellhound',
-      reactionEmoji: '🐺',
+      description: "A hellhound",
+      reactionEmoji: "🐺",
       price: 10,
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {},
+      reactions: {}
     };
 
     const response = (await editPrize(args)) as CommandResponse;

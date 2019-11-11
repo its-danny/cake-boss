@@ -1,30 +1,30 @@
-import 'reflect-metadata';
-import dotenv from 'dotenv';
-import Discord, { Message, Guild, TextChannel } from 'discord.js';
-import * as Sentry from '@sentry/node';
-import yargs from 'yargs';
-import { createConnection } from 'typeorm';
-import moment from 'moment';
-import fs from 'fs';
-import fsExtra from 'fs-extra';
-import schedule from 'node-schedule';
-import Koa from 'koa';
-import Router from 'koa-router';
-import cors from '@koa/cors';
-import Axios from 'axios';
-import Member from './entity/member';
-import Server from './entity/server';
-import User from './entity/user';
-import { CommandArguments, CommandResponse } from './utils/command-interfaces';
-import { EMOJI_JOB_WELL_DONE, EMOJI_WORKING_HARD, EMOJI_THINKING, EMOJI_CAKE } from './utils/emoji';
-import { handleError } from './utils/errors';
+import "reflect-metadata";
+import dotenv from "dotenv";
+import Discord, { Message, Guild, TextChannel } from "discord.js";
+import * as Sentry from "@sentry/node";
+import yargs from "yargs";
+import { createConnection } from "typeorm";
+import moment from "moment";
+import fs from "fs";
+import fsExtra from "fs-extra";
+import schedule from "node-schedule";
+import Koa from "koa";
+import Router from "koa-router";
+import cors from "@koa/cors";
+import Axios from "axios";
+import Member from "./entity/member";
+import Server from "./entity/server";
+import User from "./entity/user";
+import { CommandArguments, CommandResponse } from "./utils/command-interfaces";
+import { EMOJI_JOB_WELL_DONE, EMOJI_WORKING_HARD, EMOJI_THINKING, EMOJI_CAKE } from "./utils/emoji";
+import { handleError } from "./utils/errors";
 
 dotenv.config({ path: `./.env` });
 
 // Sentry
 
 const SENTRY_DSN: string = process.env.SENTRY_DSN as string;
-const SENTRY_DISABLED = !SENTRY_DSN || SENTRY_DSN === '';
+const SENTRY_DISABLED = !SENTRY_DSN || SENTRY_DSN === "";
 
 if (!SENTRY_DISABLED) {
   Sentry.init({ dsn: SENTRY_DSN });
@@ -33,15 +33,21 @@ if (!SENTRY_DISABLED) {
 // Bot
 
 const client = new Discord.Client({
-  fetchAllMembers: true,
+  fetchAllMembers: true
 });
 
 const NODE_ENV: string = process.env.NODE_ENV as string;
 
 const commandParser = yargs
-  .scriptName('[command-prefix]')
-  .commandDir('commands/manage', { exclude: /\.test\./gm, extensions: [NODE_ENV === 'production' ? 'js' : 'ts'] })
-  .commandDir('commands/use', { exclude: /\.test\./gm, extensions: [NODE_ENV === 'production' ? 'js' : 'ts'] })
+  .scriptName("[command-prefix]")
+  .commandDir("commands/manage", {
+    exclude: /\.test\./gm,
+    extensions: [NODE_ENV === "production" ? "js" : "ts"]
+  })
+  .commandDir("commands/use", {
+    exclude: /\.test\./gm,
+    extensions: [NODE_ENV === "production" ? "js" : "ts"]
+  })
   .showHelpOnFail(true)
   .wrap(null)
   .help();
@@ -54,7 +60,7 @@ interface WatchedMessage {
 
 const messagesToWatch: WatchedMessage[] = [];
 
-client.on('ready', async () => {
+client.on("ready", async () => {
   client.user.setActivity(`in the kitchen! ${EMOJI_WORKING_HARD}`);
 
   client.guilds.forEach(async guild => {
@@ -69,11 +75,11 @@ client.on('ready', async () => {
   console.log(`${EMOJI_CAKE} Cake Boss online!`);
 });
 
-client.on('guildCreate', async (guild: Guild) => {
+client.on("guildCreate", async (guild: Guild) => {
   await Server.findOrCreate(guild.id);
 });
 
-client.on('guildDelete', async (guild: Guild) => {
+client.on("guildDelete", async (guild: Guild) => {
   const server = await Server.findOne({ where: { discordId: guild.id } });
 
   if (server) {
@@ -82,7 +88,7 @@ client.on('guildDelete', async (guild: Guild) => {
   }
 });
 
-client.on('messageReactionAdd', async (reaction, user) => {
+client.on("messageReactionAdd", async (reaction, user) => {
   const index = messagesToWatch.findIndex(m => m.message.id === reaction.message.id);
 
   if (index > -1) {
@@ -93,21 +99,23 @@ client.on('messageReactionAdd', async (reaction, user) => {
       message.message.edit(`${EMOJI_JOB_WELL_DONE} Prize redeemed!`);
       messagesToWatch.splice(index, 1);
 
-      const server = await Server.findOne({ where: { discordId: message.message.guild.id } });
+      const server = await Server.findOne({
+        where: { discordId: message.message.guild.id }
+      });
 
       if (server && server.config.redeemChannelId && server.config.redeemPingRoleIds.length > 0) {
         const discordChannel = message.message.guild.channels.get(server.config.redeemChannelId) as TextChannel;
 
         if (discordChannel) {
           const mentions = server.config.redeemPingRoleIds.map(id => `<@&${id}>`);
-          discordChannel.send(`👇 A prize was redeemed, ${mentions.join(' ')}!`);
+          discordChannel.send(`👇 A prize was redeemed, ${mentions.join(" ")}!`);
         }
       }
     }
   }
 });
 
-client.on('message', async (message: Message) => {
+client.on("message", async (message: Message) => {
   if (message.author.id !== client.user.id && !message.author.bot) {
     const server = await Server.findOrCreate(message.guild.id);
 
@@ -116,9 +124,9 @@ client.on('message', async (message: Message) => {
 
       const cleanContent = message.content
         .trim()
-        .split(' ')
+        .split(" ")
         .map((s, i) => (i === 0 ? s.toLowerCase() : s))
-        .join(' ');
+        .join(" ");
 
       if (cleanContent.startsWith(`${commandPrefix}`) || message.isMemberMentioned(client.user)) {
         try {
@@ -140,21 +148,21 @@ client.on('message', async (message: Message) => {
             needsFetch: false,
             careAboutQuietMode: false,
             promisedOutput: null,
-            reactions: null,
+            reactions: null
           };
 
-          let command = cleanContent.replace(commandPrefix, '');
+          let command = cleanContent.replace(commandPrefix, "");
 
           if (message.isMemberMentioned(client.user) && message.mentions.members.get(client.user.id)) {
             const mentionRegex = new RegExp(`<@!?${message.mentions.members.get(client.user.id)!.id}>`);
-            command = command.replace(mentionRegex, '');
+            command = command.replace(mentionRegex, "");
           }
 
           commandParser.parse(command, context, async (error, argv) => {
             if (error) {
-              if (error.name === 'YError') {
+              if (error.name === "YError") {
                 message.channel.send(
-                  `\u200B${EMOJI_WORKING_HARD} Looks like you need some help! Check the commands here: <https://cake-boss.js.org/>`,
+                  `\u200B${EMOJI_WORKING_HARD} Looks like you need some help! Check the commands here: <https://cake-boss.js.org/>`
                 );
               } else {
                 handleError(error, message);
@@ -173,7 +181,7 @@ client.on('message', async (message: Message) => {
 
             if (argv.help) {
               message.channel.send(
-                `\u200B${EMOJI_WORKING_HARD} Looks like you need some help! Check the commands here: <https://cake-boss.js.org/>`,
+                `\u200B${EMOJI_WORKING_HARD} Looks like you need some help! Check the commands here: <https://cake-boss.js.org/>`
               );
             }
 
@@ -183,16 +191,18 @@ client.on('message', async (message: Message) => {
               if (sentMessage) {
                 await sentMessage.edit(
                   `\u200B${commandResponse.content}`,
-                  commandResponse.messageOptions || commandResponse.richEmbed,
+                  commandResponse.messageOptions || commandResponse.richEmbed
                 );
               } else {
                 sentMessage = (await message.channel.send(
                   `\u200B${commandResponse.content}`,
-                  commandResponse.messageOptions || commandResponse.richEmbed || commandResponse.attachment,
+                  commandResponse.messageOptions || commandResponse.richEmbed || commandResponse.attachment
                 )) as Message;
               }
 
-              const reactions = argv.reactions as { [key: string]: () => void } | null;
+              const reactions = argv.reactions as {
+                [key: string]: () => void;
+              } | null;
 
               if (sentMessage && reactions) {
                 Object.keys(reactions).forEach(emoji => {
@@ -207,7 +217,11 @@ client.on('message', async (message: Message) => {
                   sentMessage!.react(react);
                 });
 
-                const toWatch = { message: sentMessage, reactions, userId: message.author.id };
+                const toWatch = {
+                  message: sentMessage,
+                  reactions,
+                  userId: message.author.id
+                };
                 messagesToWatch.push(toWatch);
                 const toWatchIndex = messagesToWatch.indexOf(toWatch);
                 sentMessage
@@ -233,9 +247,9 @@ api.use(cors());
 api.use(router.routes());
 api.use(router.allowedMethods());
 
-router.get('/ping', context => {
+router.get("/ping", context => {
   // eslint-disable-next-line no-param-reassign
-  context.body = 'ONLINE';
+  context.body = "ONLINE";
 });
 
 // Start it all up
@@ -247,13 +261,13 @@ createConnection()
 
     const API_PORT: string = process.env.API_PORT as string;
 
-    if (API_PORT && API_PORT !== '') {
-      api.listen(API_PORT, () => console.log('🚀 API online!'));
+    if (API_PORT && API_PORT !== "") {
+      api.listen(API_PORT, () => console.log("🚀 API online!"));
     }
 
-    fs.writeFileSync(`${process.cwd()}/.uptime`, moment().utc(), 'utf8');
+    fs.writeFileSync(`${process.cwd()}/.uptime`, moment().utc(), "utf8");
 
-    schedule.scheduleJob('0 * * * *', async () => {
+    schedule.scheduleJob("0 * * * *", async () => {
       try {
         const servers = await Server.find({ where: { active: true } });
 
@@ -280,7 +294,7 @@ createConnection()
       }
     });
 
-    schedule.scheduleJob('*/10 * * * *', async () => {
+    schedule.scheduleJob("*/10 * * * *", async () => {
       try {
         await fsExtra.emptyDir(`${process.cwd()}/tmp/`);
       } catch (error) {
@@ -288,7 +302,7 @@ createConnection()
       }
     });
 
-    schedule.scheduleJob('0 * * * *', async () => {
+    schedule.scheduleJob("0 * * * *", async () => {
       const SUPPORT_SERVER_ID: string = process.env.SUPPORT_SERVER_ID as string;
       const SUPPORT_CHANNEL_ID: string = process.env.SUPPORT_CHANNEL_ID as string;
 
@@ -306,7 +320,7 @@ createConnection()
               const cakeTotalsCombined = (await cakeTotalsByServer).reduce((a, b) => a + b);
 
               await supportChannel.setTopic(
-                `${EMOJI_WORKING_HARD} ${servers.length} servers, ${userCount} users, ${cakeTotalsCombined} cakes given!`,
+                `${EMOJI_WORKING_HARD} ${servers.length} servers, ${userCount} users, ${cakeTotalsCombined} cakes given!`
               );
 
               const BOTS_ON_DISCORD_API_KEY: string = process.env.BOTS_ON_DISCORD_API_KEY as string;
@@ -315,13 +329,13 @@ createConnection()
                 await Axios.post(
                   `https://bots.ondiscord.xyz/bot-api/bots/611013950942871562/guilds`,
                   {
-                    guildCount: servers.length,
+                    guildCount: servers.length
                   },
                   {
                     headers: {
-                      Authorization: BOTS_ON_DISCORD_API_KEY,
-                    },
-                  },
+                      Authorization: BOTS_ON_DISCORD_API_KEY
+                    }
+                  }
                 );
               }
 
@@ -331,13 +345,13 @@ createConnection()
                 await Axios.post(
                   `https://top.gg/api/bots/611013950942871562/stats`,
                   {
-                    server_count: servers.length,
+                    server_count: servers.length
                   },
                   {
                     headers: {
-                      Authorization: process.env.TOP_GG_API_KEY,
-                    },
-                  },
+                      Authorization: process.env.TOP_GG_API_KEY
+                    }
+                  }
                 );
               }
             }

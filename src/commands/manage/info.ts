@@ -1,7 +1,7 @@
-import { Argv } from 'yargs';
-import { CommandArguments } from '../../utils/command-interfaces';
+import { Argv } from "yargs";
+import { CommandArguments } from "../../utils/command-interfaces";
 
-export const command = 'info';
+export const command = "info";
 export const describe = `What is Cake Boss?`;
 
 export const builder = (yargs: Argv) => yargs;
@@ -16,10 +16,10 @@ export const handler = (args: CommandArguments) => {
         Docs: <https://cake-boss.js.org/>
         Support: <https://discord.gg/2AG9fKt>
       `
-        .split('\n')
+        .split("\n")
         .map(l => l.trim())
-        .join('\n')
-        .trim(),
-    }),
+        .join("\n")
+        .trim()
+    })
   );
 };

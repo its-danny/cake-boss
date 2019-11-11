@@ -1,13 +1,15 @@
-import { Message } from 'discord.js';
-import Server from '../entity/server';
-import Member from '../entity/member';
+import { Message } from "discord.js";
+import Server from "../entity/server";
+import Member from "../entity/member";
 
 export const canManage = async (message: Message): Promise<boolean> => {
-  if (message.member.hasPermission('ADMINISTRATOR')) {
+  if (message.member.hasPermission("ADMINISTRATOR")) {
     return true;
   }
 
-  const server = await Server.findOne({ where: { discordId: message.guild.id } });
+  const server = await Server.findOne({
+    where: { discordId: message.guild.id }
+  });
 
   if (server) {
     return message.member.roles.some(role => server.config.managerRoleIds.includes(role.id));
@@ -17,7 +19,7 @@ export const canManage = async (message: Message): Promise<boolean> => {
 };
 
 export const canBless = async (message: Message): Promise<boolean> => {
-  if (message.member.hasPermission('ADMINISTRATOR')) {
+  if (message.member.hasPermission("ADMINISTRATOR")) {
     return true;
   }
 
@@ -25,7 +27,9 @@ export const canBless = async (message: Message): Promise<boolean> => {
     return true;
   }
 
-  const server = await Server.findOne({ where: { discordId: message.guild.id } });
+  const server = await Server.findOne({
+    where: { discordId: message.guild.id }
+  });
 
   if (server) {
     return message.member.roles.some(role => server.config.blesserRoleIds.includes(role.id));
@@ -35,7 +39,7 @@ export const canBless = async (message: Message): Promise<boolean> => {
 };
 
 export const canDrop = async (message: Message): Promise<boolean> => {
-  if (message.member.hasPermission('ADMINISTRATOR')) {
+  if (message.member.hasPermission("ADMINISTRATOR")) {
     return true;
   }
 
@@ -43,7 +47,9 @@ export const canDrop = async (message: Message): Promise<boolean> => {
     return true;
   }
 
-  const server = await Server.findOne({ where: { discordId: message.guild.id } });
+  const server = await Server.findOne({
+    where: { discordId: message.guild.id }
+  });
 
   if (server) {
     return message.member.roles.some(role => server.config.dropperRoleIds.includes(role.id));
@@ -53,10 +59,14 @@ export const canDrop = async (message: Message): Promise<boolean> => {
 };
 
 export const canGive = async (message: Message): Promise<boolean> => {
-  const server = await Server.findOne({ where: { discordId: message.guild.id } });
+  const server = await Server.findOne({
+    where: { discordId: message.guild.id }
+  });
 
   if (server) {
-    const member = await Member.findOne({ where: { discordId: message.member.id } });
+    const member = await Member.findOne({
+      where: { discordId: message.member.id }
+    });
 
     if (member) {
       return member.earned >= server.config.requirementToGive && member.givenSinceReset < server.config.giveLimit;
@@ -67,10 +77,14 @@ export const canGive = async (message: Message): Promise<boolean> => {
 };
 
 export const isShamed = async (discordServerId: string, discordMemberId: string): Promise<boolean> => {
-  const server = await Server.findOne({ where: { discordId: discordServerId } });
+  const server = await Server.findOne({
+    where: { discordId: discordServerId }
+  });
 
   if (server) {
-    const member = await Member.findOne({ where: { discordId: discordMemberId } });
+    const member = await Member.findOne({
+      where: { discordId: discordMemberId }
+    });
 
     if (member) {
       return member.shamed;

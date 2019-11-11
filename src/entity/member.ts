@@ -5,11 +5,11 @@ import {
   Column,
   ManyToOne,
   CreateDateColumn,
-  UpdateDateColumn,
-} from 'typeorm';
-import User from './user';
-import Server from './server';
-import { handleError } from '../utils/errors';
+  UpdateDateColumn
+} from "typeorm";
+import User from "./user";
+import Server from "./server";
+import { handleError } from "../utils/errors";
 
 @Entity()
 export default class Member extends BaseEntity {
@@ -42,32 +42,36 @@ export default class Member extends BaseEntity {
 
   @ManyToOne(
     () => User,
-    user => user.members,
+    user => user.members
   )
   user!: User;
 
   @ManyToOne(
     () => Server,
-    server => server.members,
+    server => server.members
   )
   server!: Server;
 
   static async findOrCreate(
     serverDiscordId: string,
     discordUserId: string,
-    discordMemberId: string,
+    discordMemberId: string
   ): Promise<Member | void> {
     try {
-      const foundMember = await Member.findOne({ where: { discordId: discordMemberId } });
+      const foundMember = await Member.findOne({
+        where: { discordId: discordMemberId }
+      });
 
       if (foundMember) {
         return foundMember;
       }
 
-      const server = await Server.findOne({ where: { discordId: serverDiscordId } });
+      const server = await Server.findOne({
+        where: { discordId: serverDiscordId }
+      });
 
       if (!server) {
-        throw new Error('Could not find server.');
+        throw new Error("Could not find server.");
       }
 
       let user = await User.findOne({ where: { discordId: discordUserId } });
@@ -79,7 +83,9 @@ export default class Member extends BaseEntity {
         user = await user.save();
       }
 
-      let member = await Member.findOne({ where: { discordId: discordMemberId } });
+      let member = await Member.findOne({
+        where: { discordId: discordMemberId }
+      });
 
       if (!member) {
         member = new Member();

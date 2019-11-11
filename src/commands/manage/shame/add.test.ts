@@ -1,18 +1,18 @@
-import { createConnection, getConnection } from 'typeorm';
-import { createServer, createClient, createMessage, createMember, ENTITIES } from '../../../../test/test-helpers';
-import { shameMember, Arguments } from './add';
-import { EMOJI_INCORRECT_PERMISSIONS, EMOJI_JOB_WELL_DONE, EMOJI_RECORD_NOT_FOUND } from '../../../utils/emoji';
-import { CommandResponse } from '../../../utils/command-interfaces';
+import { createConnection, getConnection } from "typeorm";
+import { createServer, createClient, createMessage, createMember, ENTITIES } from "../../../../test/test-helpers";
+import { shameMember, Arguments } from "./add";
+import { EMOJI_INCORRECT_PERMISSIONS, EMOJI_JOB_WELL_DONE, EMOJI_RECORD_NOT_FOUND } from "../../../utils/emoji";
+import { CommandResponse } from "../../../utils/command-interfaces";
 
-describe('commands/manage/shamed/add', () => {
+describe("commands/manage/shamed/add", () => {
   beforeEach(async done => {
     await createConnection({
-      type: 'sqlite',
-      database: ':memory:',
+      type: "sqlite",
+      database: ":memory:",
       dropSchema: true,
       entities: ENTITIES,
       synchronize: true,
-      logging: false,
+      logging: false
     });
 
     done();
@@ -31,11 +31,11 @@ describe('commands/manage/shamed/add', () => {
     const args: Arguments = {
       client: createClient(),
       message: await createMessage({ server }),
-      member: '<@12345>',
+      member: "<@12345>",
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {},
+      reactions: {}
     };
 
     const response = (await shameMember(args)) as CommandResponse;
@@ -49,12 +49,12 @@ describe('commands/manage/shamed/add', () => {
 
     const args: Arguments = {
       client: createClient(),
-      message: await createMessage({ server, permission: 'ADMINISTRATOR' }),
-      member: '<@12345>',
+      message: await createMessage({ server, permission: "ADMINISTRATOR" }),
+      member: "<@12345>",
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {},
+      reactions: {}
     };
 
     const response = (await shameMember(args)) as CommandResponse;
@@ -69,12 +69,16 @@ describe('commands/manage/shamed/add', () => {
 
     const args: Arguments = {
       client: createClient(),
-      message: await createMessage({ server, serverMembers: [member], permission: 'ADMINISTRATOR' }),
+      message: await createMessage({
+        server,
+        serverMembers: [member],
+        permission: "ADMINISTRATOR"
+      }),
       member: `<@${member.discordId}>`,
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {},
+      reactions: {}
     };
 
     const response = (await shameMember(args)) as CommandResponse;

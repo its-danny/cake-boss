@@ -1,18 +1,18 @@
-import { createConnection, getConnection } from 'typeorm';
-import { getTopGivers } from './givers';
-import { createServer, createMember, createMessage, createClient, ENTITIES } from '../../../test/test-helpers';
-import { EMOJI_CAKE, EMOJI_WORKING_HARD } from '../../utils/emoji';
-import { CommandArguments, CommandResponse } from '../../utils/command-interfaces';
+import { createConnection, getConnection } from "typeorm";
+import { getTopGivers } from "./givers";
+import { createServer, createMember, createMessage, createClient, ENTITIES } from "../../../test/test-helpers";
+import { EMOJI_CAKE, EMOJI_WORKING_HARD } from "../../utils/emoji";
+import { CommandArguments, CommandResponse } from "../../utils/command-interfaces";
 
-describe('commands/use/givers', () => {
+describe("commands/use/givers", () => {
   beforeEach(async done => {
     await createConnection({
-      type: 'sqlite',
-      database: ':memory:',
+      type: "sqlite",
+      database: ":memory:",
       dropSchema: true,
       entities: ENTITIES,
       synchronize: true,
-      logging: false,
+      logging: false
     });
 
     done();
@@ -34,7 +34,7 @@ describe('commands/use/givers', () => {
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {},
+      reactions: {}
     };
 
     const response = (await getTopGivers(args)) as CommandResponse;
@@ -56,7 +56,7 @@ describe('commands/use/givers', () => {
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {},
+      reactions: {}
     };
 
     const response = (await getTopGivers(args)) as CommandResponse;

@@ -1,15 +1,15 @@
-import { Argv } from 'yargs';
-import Table from 'cli-table';
-import { chain } from 'lodash';
-import { toSentenceSerial } from 'underscore.string';
-import { getConnection } from 'typeorm';
-import { canManage } from '../../../utils/permissions';
-import Server from '../../../entity/server';
-import { EMOJI_ERROR, EMOJI_INCORRECT_PERMISSIONS, EMOJI_PRIZE, EMOJI_WORKING_HARD } from '../../../utils/emoji';
-import getTableBorder from '../../../utils/get-table-border';
-import { CommandArguments, CommandResponse } from '../../../utils/command-interfaces';
-import Prize from '../../../entity/prize';
-import { handleError } from '../../../utils/errors';
+import { Argv } from "yargs";
+import Table from "cli-table";
+import { chain } from "lodash";
+import { toSentenceSerial } from "underscore.string";
+import { getConnection } from "typeorm";
+import { canManage } from "../../../utils/permissions";
+import Server from "../../../entity/server";
+import { EMOJI_ERROR, EMOJI_INCORRECT_PERMISSIONS, EMOJI_PRIZE, EMOJI_WORKING_HARD } from "../../../utils/emoji";
+import getTableBorder from "../../../utils/get-table-border";
+import { CommandArguments, CommandResponse } from "../../../utils/command-interfaces";
+import Prize from "../../../entity/prize";
+import { handleError } from "../../../utils/errors";
 
 interface Arguments extends CommandArguments {
   page?: number;
@@ -18,17 +18,23 @@ interface Arguments extends CommandArguments {
 export const getPrizeList = async (args: Arguments): Promise<CommandResponse | void> => {
   try {
     if (!(await canManage(args.message))) {
-      return { content: `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!` };
+      return {
+        content: `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`
+      };
     }
 
-    const server = await Server.findOne({ where: { discordId: args.message.guild.id } });
+    const server = await Server.findOne({
+      where: { discordId: args.message.guild.id }
+    });
 
     if (!server) {
-      throw new Error('Could not find server.');
+      throw new Error("Could not find server.");
     }
 
-    if (!server.config.redeemChannelId || server.config.redeemChannelId === '') {
-      return { content: `${EMOJI_ERROR} You need to set the \`redeem-channel\` config before using prizes.` };
+    if (!server.config.redeemChannelId || server.config.redeemChannelId === "") {
+      return {
+        content: `${EMOJI_ERROR} You need to set the \`redeem-channel\` config before using prizes.`
+      };
     }
 
     const perPage = 5;
@@ -43,9 +49,9 @@ export const getPrizeList = async (args: Arguments): Promise<CommandResponse | v
     const connection = getConnection();
     const prizes: Prize[] = await connection
       .getRepository(Prize)
-      .createQueryBuilder('prize')
+      .createQueryBuilder("prize")
       .where({ server })
-      .orderBy('prize.id', 'ASC')
+      .orderBy("prize.id", "ASC")
       .skip(perPage * (currentPage - 1))
       .take(perPage)
       .getMany();
@@ -55,9 +61,9 @@ export const getPrizeList = async (args: Arguments): Promise<CommandResponse | v
     }
 
     const table = new Table({
-      head: ['ID', 'Description', 'Reaction Emoji', 'Price', 'Roles to Give'],
+      head: ["ID", "Description", "Reaction Emoji", "Price", "Roles to Give"],
       style: { head: [], border: [] },
-      chars: getTableBorder(),
+      chars: getTableBorder()
     });
 
     prizes.forEach(prize => {
@@ -79,22 +85,22 @@ export const getPrizeList = async (args: Arguments): Promise<CommandResponse | v
         prize.description,
         prize.reactionEmoji,
         prize.price,
-        roleNames.length > 0 ? toSentenceSerial(roleNames) : 'none',
+        roleNames.length > 0 ? toSentenceSerial(roleNames) : "none"
       ]);
 
       return false;
     });
 
     return {
-      content: `${EMOJI_PRIZE} **Prize List** [ Page ${currentPage} of ${totalPages} ]\n\n\`\`\`\n\n${table.toString()}\n\`\`\``,
+      content: `${EMOJI_PRIZE} **Prize List** [ Page ${currentPage} of ${totalPages} ]\n\n\`\`\`\n\n${table.toString()}\n\`\`\``
     };
   } catch (error) {
     return handleError(error, args.message);
   }
 };
 
-export const command = 'list [page]';
-export const describe = 'View prize list';
+export const command = "list [page]";
+export const describe = "View prize list";
 
 export const builder = (yargs: Argv) => yargs;
 

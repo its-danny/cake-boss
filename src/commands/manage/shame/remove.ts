@@ -1,16 +1,16 @@
-import { Argv } from 'yargs';
-import { canManage } from '../../../utils/permissions';
-import Server from '../../../entity/server';
-import Member from '../../../entity/member';
+import { Argv } from "yargs";
+import { canManage } from "../../../utils/permissions";
+import Server from "../../../entity/server";
+import Member from "../../../entity/member";
 import {
   EMOJI_INCORRECT_PERMISSIONS,
   EMOJI_RECORD_NOT_FOUND,
   EMOJI_JOB_WELL_DONE,
-  EMOJI_SHAME,
-} from '../../../utils/emoji';
-import { logEvent } from '../../../utils/logger';
-import { CommandArguments, CommandResponse } from '../../../utils/command-interfaces';
-import { handleError } from '../../../utils/errors';
+  EMOJI_SHAME
+} from "../../../utils/emoji";
+import { logEvent } from "../../../utils/logger";
+import { CommandArguments, CommandResponse } from "../../../utils/command-interfaces";
+import { handleError } from "../../../utils/errors";
 
 export interface Arguments extends CommandArguments {
   member: string;
@@ -19,26 +19,34 @@ export interface Arguments extends CommandArguments {
 export const unshameMember = async (args: Arguments): Promise<CommandResponse | void> => {
   try {
     if (!(await canManage(args.message))) {
-      return { content: `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!` };
+      return {
+        content: `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`
+      };
     }
 
-    const server = await Server.findOne({ where: { discordId: args.message.guild.id } });
+    const server = await Server.findOne({
+      where: { discordId: args.message.guild.id }
+    });
 
     if (!server) {
-      throw new Error('Could not find server.');
+      throw new Error("Could not find server.");
     }
 
-    const memberId = args.member.replace(/^<@!?/, '').replace(/>$/, '');
+    const memberId = args.member.replace(/^<@!?/, "").replace(/>$/, "");
     const discordMember = args.message.guild.members.get(memberId);
 
     if (!discordMember) {
-      return { content: `${EMOJI_RECORD_NOT_FOUND} Uh oh, I couldn't find them.` };
+      return {
+        content: `${EMOJI_RECORD_NOT_FOUND} Uh oh, I couldn't find them.`
+      };
     }
 
-    const member = await Member.findOne({ where: { discordId: discordMember.id } });
+    const member = await Member.findOne({
+      where: { discordId: discordMember.id }
+    });
 
     if (!member) {
-      throw new Error('Could not find member.');
+      throw new Error("Could not find member.");
     }
 
     member.shamed = false;
@@ -47,7 +55,7 @@ export const unshameMember = async (args: Arguments): Promise<CommandResponse | 
     logEvent(
       args.client,
       args.message,
-      `${EMOJI_SHAME} \`${args.message.author.tag}\` removed \`${discordMember.user.tag}\` from the shame list.`,
+      `${EMOJI_SHAME} \`${args.message.author.tag}\` removed \`${discordMember.user.tag}\` from the shame list.`
     );
 
     if (server.config.quietMode) {
@@ -62,8 +70,8 @@ export const unshameMember = async (args: Arguments): Promise<CommandResponse | 
   }
 };
 
-export const command = 'remove <member>';
-export const describe = 'Reluctantly unshame someone';
+export const command = "remove <member>";
+export const describe = "Reluctantly unshame someone";
 
 export const builder = (yargs: Argv) => yargs;
 

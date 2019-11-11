@@ -5,9 +5,9 @@ import {
   Column,
   OneToMany,
   CreateDateColumn,
-  UpdateDateColumn,
-} from 'typeorm';
-import Member from './member';
+  UpdateDateColumn
+} from "typeorm";
+import Member from "./member";
 
 @Entity()
 export default class User extends BaseEntity {
@@ -26,7 +26,7 @@ export default class User extends BaseEntity {
   @OneToMany(
     () => Member,
     member => member.user,
-    { eager: true },
+    { eager: true }
   )
   members!: Member[];
 

@@ -1,19 +1,19 @@
-import { createConnection, getConnection } from 'typeorm';
-import { getDropList } from './dropped';
-import { createServer, createMessage, createClient, createChannel, ENTITIES } from '../../../test/test-helpers';
-import { EMOJI_INCORRECT_PERMISSIONS, EMOJI_CAKE } from '../../utils/emoji';
-import Drop from '../../entity/drop';
-import { CommandArguments, CommandResponse } from '../../utils/command-interfaces';
+import { createConnection, getConnection } from "typeorm";
+import { getDropList } from "./dropped";
+import { createServer, createMessage, createClient, createChannel, ENTITIES } from "../../../test/test-helpers";
+import { EMOJI_INCORRECT_PERMISSIONS, EMOJI_CAKE } from "../../utils/emoji";
+import Drop from "../../entity/drop";
+import { CommandArguments, CommandResponse } from "../../utils/command-interfaces";
 
-describe('commands/use/dropped', () => {
+describe("commands/use/dropped", () => {
   beforeEach(async done => {
     await createConnection({
-      type: 'sqlite',
-      database: ':memory:',
+      type: "sqlite",
+      database: ":memory:",
       dropSchema: true,
       entities: ENTITIES,
       synchronize: true,
-      logging: false,
+      logging: false
     });
 
     done();
@@ -35,7 +35,7 @@ describe('commands/use/dropped', () => {
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {},
+      reactions: {}
     };
 
     const response = (await getDropList(args)) as CommandResponse;
@@ -46,8 +46,8 @@ describe('commands/use/dropped', () => {
 
   it(`should return the drop list`, async done => {
     const server = await createServer();
-    const channelOne = createChannel('general');
-    const channelTwo = createChannel('games');
+    const channelOne = createChannel("general");
+    const channelTwo = createChannel("games");
 
     const dropOne = new Drop();
     dropOne.server = server;
@@ -69,11 +69,15 @@ describe('commands/use/dropped', () => {
 
     const args: CommandArguments = {
       client: createClient(),
-      message: await createMessage({ server, serverChannels: [channelOne, channelTwo], permission: 'ADMINISTRATOR' }),
+      message: await createMessage({
+        server,
+        serverChannels: [channelOne, channelTwo],
+        permission: "ADMINISTRATOR"
+      }),
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {},
+      reactions: {}
     };
 
     const response = (await getDropList(args)) as CommandResponse;

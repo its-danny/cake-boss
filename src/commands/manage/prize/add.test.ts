@@ -1,18 +1,18 @@
-import { createConnection, getConnection } from 'typeorm';
-import { createServer, createClient, createMessage, createChannel, ENTITIES } from '../../../../test/test-helpers';
-import { addPrize, Arguments } from './add';
-import { EMOJI_ERROR, EMOJI_INCORRECT_PERMISSIONS, EMOJI_JOB_WELL_DONE } from '../../../utils/emoji';
-import { CommandResponse } from '../../../utils/command-interfaces';
+import { createConnection, getConnection } from "typeorm";
+import { createServer, createClient, createMessage, createChannel, ENTITIES } from "../../../../test/test-helpers";
+import { addPrize, Arguments } from "./add";
+import { EMOJI_ERROR, EMOJI_INCORRECT_PERMISSIONS, EMOJI_JOB_WELL_DONE } from "../../../utils/emoji";
+import { CommandResponse } from "../../../utils/command-interfaces";
 
-describe('commands/manage/prize/add', () => {
+describe("commands/manage/prize/add", () => {
   beforeEach(async done => {
     await createConnection({
-      type: 'sqlite',
-      database: ':memory:',
+      type: "sqlite",
+      database: ":memory:",
       dropSchema: true,
       entities: ENTITIES,
       synchronize: true,
-      logging: false,
+      logging: false
     });
 
     done();
@@ -31,13 +31,13 @@ describe('commands/manage/prize/add', () => {
     const args: Arguments = {
       client: createClient(),
       message: await createMessage({ server }),
-      description: 'A hellhound',
-      reactionEmoji: '🐺',
+      description: "A hellhound",
+      reactionEmoji: "🐺",
       price: 3,
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {},
+      reactions: {}
     };
 
     const response = (await addPrize(args)) as CommandResponse;
@@ -46,19 +46,19 @@ describe('commands/manage/prize/add', () => {
     done();
   });
 
-  it('should require redeem-channel being set', async done => {
+  it("should require redeem-channel being set", async done => {
     const server = await createServer();
 
     const args: Arguments = {
       client: createClient(),
-      message: await createMessage({ server, permission: 'ADMINISTRATOR' }),
-      description: 'A hellhound',
-      reactionEmoji: '🐺',
+      message: await createMessage({ server, permission: "ADMINISTRATOR" }),
+      description: "A hellhound",
+      reactionEmoji: "🐺",
       price: 3,
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {},
+      reactions: {}
     };
 
     const response = (await addPrize(args)) as CommandResponse;
@@ -67,23 +67,27 @@ describe('commands/manage/prize/add', () => {
     done();
   });
 
-  it('should require description', async done => {
+  it("should require description", async done => {
     const server = await createServer();
-    const channel = createChannel('redeem');
+    const channel = createChannel("redeem");
 
     server.config.redeemChannelId = channel.id;
     await server.config.save();
 
     const args: Arguments = {
       client: createClient(),
-      message: await createMessage({ server, serverChannels: [channel], permission: 'ADMINISTRATOR' }),
-      description: '',
-      reactionEmoji: '🐺',
+      message: await createMessage({
+        server,
+        serverChannels: [channel],
+        permission: "ADMINISTRATOR"
+      }),
+      description: "",
+      reactionEmoji: "🐺",
       price: 3,
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {},
+      reactions: {}
     };
 
     const response = (await addPrize(args)) as CommandResponse;
@@ -92,23 +96,27 @@ describe('commands/manage/prize/add', () => {
     done();
   });
 
-  it('should require reaction emoji', async done => {
+  it("should require reaction emoji", async done => {
     const server = await createServer();
-    const channel = createChannel('redeem');
+    const channel = createChannel("redeem");
 
     server.config.redeemChannelId = channel.id;
     await server.config.save();
 
     const args: Arguments = {
       client: createClient(),
-      message: await createMessage({ server, serverChannels: [channel], permission: 'ADMINISTRATOR' }),
-      description: 'A hellhound',
-      reactionEmoji: '',
+      message: await createMessage({
+        server,
+        serverChannels: [channel],
+        permission: "ADMINISTRATOR"
+      }),
+      description: "A hellhound",
+      reactionEmoji: "",
       price: 3,
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {},
+      reactions: {}
     };
 
     const response = (await addPrize(args)) as CommandResponse;
@@ -117,23 +125,27 @@ describe('commands/manage/prize/add', () => {
     done();
   });
 
-  it('should require price of 1 or more', async done => {
+  it("should require price of 1 or more", async done => {
     const server = await createServer();
-    const channel = createChannel('redeem');
+    const channel = createChannel("redeem");
 
     server.config.redeemChannelId = channel.id;
     await server.config.save();
 
     const args: Arguments = {
       client: createClient(),
-      message: await createMessage({ server, serverChannels: [channel], permission: 'ADMINISTRATOR' }),
-      description: 'A hellhound',
-      reactionEmoji: '🐺',
+      message: await createMessage({
+        server,
+        serverChannels: [channel],
+        permission: "ADMINISTRATOR"
+      }),
+      description: "A hellhound",
+      reactionEmoji: "🐺",
       price: 0,
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {},
+      reactions: {}
     };
 
     const response = (await addPrize(args)) as CommandResponse;
@@ -142,23 +154,27 @@ describe('commands/manage/prize/add', () => {
     done();
   });
 
-  it('should add the prize', async done => {
+  it("should add the prize", async done => {
     const server = await createServer();
-    const channel = createChannel('redeem');
+    const channel = createChannel("redeem");
 
     server.config.redeemChannelId = channel.id;
     await server.config.save();
 
     const args: Arguments = {
       client: createClient(),
-      message: await createMessage({ server, serverChannels: [channel], permission: 'ADMINISTRATOR' }),
-      description: 'A hellhound',
-      reactionEmoji: '🐺',
+      message: await createMessage({
+        server,
+        serverChannels: [channel],
+        permission: "ADMINISTRATOR"
+      }),
+      description: "A hellhound",
+      reactionEmoji: "🐺",
       price: 10,
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {},
+      reactions: {}
     };
 
     const response = (await addPrize(args)) as CommandResponse;

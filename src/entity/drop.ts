@@ -5,9 +5,9 @@ import {
   Column,
   ManyToOne,
   CreateDateColumn,
-  UpdateDateColumn,
-} from 'typeorm';
-import Server from './server';
+  UpdateDateColumn
+} from "typeorm";
+import Server from "./server";
 
 @Entity()
 export default class Drop extends BaseEntity {
@@ -28,7 +28,7 @@ export default class Drop extends BaseEntity {
 
   @ManyToOne(
     () => Server,
-    server => server.drops,
+    server => server.drops
   )
   server!: Server;
 }

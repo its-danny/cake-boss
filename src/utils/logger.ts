@@ -1,13 +1,15 @@
-import { Client, Message, TextChannel, GuildMember, Role } from 'discord.js';
-import Server from '../entity/server';
-import Milestone from '../entity/milestone';
-import { EMOJI_MILESTONE } from './emoji';
+import { Client, Message, TextChannel, GuildMember, Role } from "discord.js";
+import Server from "../entity/server";
+import Milestone from "../entity/milestone";
+import { EMOJI_MILESTONE } from "./emoji";
 
 export const logEvent = async (client: Client, message: Message, string: string) => {
-  const server = await Server.findOne({ where: { discordId: message.guild.id } });
+  const server = await Server.findOne({
+    where: { discordId: message.guild.id }
+  });
 
   if (server) {
-    if (!server.config.logChannelId || server.config.logChannelId === '') {
+    if (!server.config.logChannelId || server.config.logChannelId === "") {
       return;
     }
 
@@ -26,10 +28,12 @@ export const logEvent = async (client: Client, message: Message, string: string)
 };
 
 export const logRedeemed = async (client: Client, message: Message, string: string) => {
-  const server = await Server.findOne({ where: { discordId: message.guild.id } });
+  const server = await Server.findOne({
+    where: { discordId: message.guild.id }
+  });
 
   if (server) {
-    if (!server.config.redeemChannelId || server.config.redeemChannelId === '') {
+    if (!server.config.redeemChannelId || server.config.redeemChannelId === "") {
       return;
     }
 
@@ -46,12 +50,14 @@ export const logMilestone = async (
   message: Message,
   milestone: Milestone,
   discordMember: GuildMember,
-  roles: Role[],
+  roles: Role[]
 ) => {
-  const server = await Server.findOne({ where: { discordId: message.guild.id } });
+  const server = await Server.findOne({
+    where: { discordId: message.guild.id }
+  });
 
   if (server) {
-    if (!server.config.milestoneChannelId || server.config.milestoneChannelId === '') {
+    if (!server.config.milestoneChannelId || server.config.milestoneChannelId === "") {
       return;
     }
 
@@ -61,7 +67,7 @@ export const logMilestone = async (
       channel.send(
         `\u200B${EMOJI_MILESTONE} \`${discordMember.user.tag}\` reached ${milestone.amount} ${
           server.config.cakeNamePlural
-        } and got the following roles: ${roles.map(role => role.name)}!`,
+        } and got the following roles: ${roles.map(role => role.name)}!`
       );
     }
   }

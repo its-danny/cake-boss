@@ -1,18 +1,18 @@
-import { createConnection, getConnection } from 'typeorm';
-import { disappearCakes, Arguments } from './disappear';
-import { createServer, createMember, createMessage, createClient, ENTITIES } from '../../../test/test-helpers';
-import { EMOJI_INCORRECT_PERMISSIONS, EMOJI_RECORD_NOT_FOUND, EMOJI_JOB_WELL_DONE } from '../../utils/emoji';
-import { CommandResponse } from '../../utils/command-interfaces';
+import { createConnection, getConnection } from "typeorm";
+import { disappearCakes, Arguments } from "./disappear";
+import { createServer, createMember, createMessage, createClient, ENTITIES } from "../../../test/test-helpers";
+import { EMOJI_INCORRECT_PERMISSIONS, EMOJI_RECORD_NOT_FOUND, EMOJI_JOB_WELL_DONE } from "../../utils/emoji";
+import { CommandResponse } from "../../utils/command-interfaces";
 
-describe('commands/use/disappear', () => {
+describe("commands/use/disappear", () => {
   beforeEach(async done => {
     await createConnection({
-      type: 'sqlite',
-      database: ':memory:',
+      type: "sqlite",
+      database: ":memory:",
       dropSchema: true,
       entities: ENTITIES,
       synchronize: true,
-      logging: false,
+      logging: false
     });
 
     done();
@@ -31,12 +31,12 @@ describe('commands/use/disappear', () => {
     const args: Arguments = {
       client: createClient(),
       message: await createMessage({ server }),
-      member: '',
+      member: "",
       amount: 1,
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {},
+      reactions: {}
     };
 
     const response = (await disappearCakes(args)) as CommandResponse;
@@ -50,13 +50,13 @@ describe('commands/use/disappear', () => {
 
     const args: Arguments = {
       client: createClient(),
-      message: await createMessage({ server, permission: 'ADMINISTRATOR' }),
+      message: await createMessage({ server, permission: "ADMINISTRATOR" }),
       member: `<@12345>`,
       amount: 1,
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {},
+      reactions: {}
     };
 
     const response = (await disappearCakes(args)) as CommandResponse;
@@ -71,13 +71,17 @@ describe('commands/use/disappear', () => {
 
     const args: Arguments = {
       client: createClient(),
-      message: await createMessage({ server, serverMembers: [member], permission: 'ADMINISTRATOR' }),
+      message: await createMessage({
+        server,
+        serverMembers: [member],
+        permission: "ADMINISTRATOR"
+      }),
       member: `<@${member.discordId}>`,
       amount: 1,
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {},
+      reactions: {}
     };
 
     const response = (await disappearCakes(args)) as CommandResponse;

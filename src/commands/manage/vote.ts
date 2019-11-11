@@ -1,7 +1,7 @@
-import { Argv } from 'yargs';
-import { CommandArguments } from '../../utils/command-interfaces';
+import { Argv } from "yargs";
+import { CommandArguments } from "../../utils/command-interfaces";
 
-export const command = 'vote';
+export const command = "vote";
 export const describe = `Vote for Cake Boss!`;
 
 export const builder = (yargs: Argv) => yargs;
@@ -15,10 +15,10 @@ export const handler = (args: CommandArguments) => {
         Discord Bots: <https://discordbots.org/bot/611013950942871562>
         Bots on Discrd: <https://bots.ondiscord.xyz/bots/611013950942871562>
       `
-        .split('\n')
+        .split("\n")
         .map(l => l.trim())
-        .join('\n')
-        .trim(),
-    }),
+        .join("\n")
+        .trim()
+    })
   );
 };
