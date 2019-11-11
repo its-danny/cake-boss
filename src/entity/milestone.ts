@@ -29,6 +29,9 @@ export default class Milestone extends BaseEntity {
   @Column({ nullable: true })
   announcement!: string;
 
-  @ManyToOne(() => Server, server => server.milestones)
+  @ManyToOne(
+    () => Server,
+    server => server.milestones,
+  )
   server!: Server;
 }

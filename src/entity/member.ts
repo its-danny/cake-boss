@@ -40,10 +40,16 @@ export default class Member extends BaseEntity {
   @Column({ nullable: false, default: false })
   shamed!: boolean;
 
-  @ManyToOne(() => User, user => user.members)
+  @ManyToOne(
+    () => User,
+    user => user.members,
+  )
   user!: User;
 
-  @ManyToOne(() => Server, server => server.members)
+  @ManyToOne(
+    () => Server,
+    server => server.members,
+  )
   server!: Server;
 
   static async findOrCreate(

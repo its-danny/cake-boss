@@ -26,6 +26,9 @@ export default class Drop extends BaseEntity {
   @Column({ nullable: false, default: 0 })
   amount!: number;
 
-  @ManyToOne(() => Server, server => server.drops)
+  @ManyToOne(
+    () => Server,
+    server => server.drops,
+  )
   server!: Server;
 }
