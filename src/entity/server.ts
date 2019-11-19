@@ -103,6 +103,6 @@ export default class Server extends BaseEntity {
   async totalEarnedByMembers(): Promise<number> {
     const members = await this.members;
 
-    return members.map(m => m.earned).reduce((a, c) => a + c);
+    return members.map(m => m.earned).reduce((a, c) => a + c, 0);
   }
 }
