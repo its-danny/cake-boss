@@ -317,7 +317,7 @@ createConnection()
               const servers = await Server.find();
               const userCount = await User.count();
               const cakeTotalsByServer = Promise.all(servers.map(s => s.totalEarnedByMembers()));
-              const cakeTotalsCombined = (await cakeTotalsByServer).reduce((a, b) => a + b);
+              const cakeTotalsCombined = (await cakeTotalsByServer).reduce((a, b) => a + b, 0);
 
               await supportChannel.setTopic(
                 `${EMOJI_WORKING_HARD} ${servers.length} servers, ${userCount} users, ${cakeTotalsCombined} cakes given!`
