@@ -2,17 +2,17 @@
 /* eslint-disable no-new */
 
 new Vue({
-  el: '#status-wrap',
+  el: "#status-wrap",
 
   data() {
     return {
-      isOnline: false,
+      isOnline: false
     };
   },
 
   mounted() {
     axios
-      .get('https://fuckadomain.name/ping')
+      .get("https://fuckadomain.name/ping")
       .then(() => {
         this.isOnline = true;
       })
@@ -20,5 +20,5 @@ new Vue({
       .finally(() => {
         $('[data-toggle="tooltip"]').tooltip();
       });
-  },
+  }
 });

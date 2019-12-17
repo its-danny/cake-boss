@@ -6,7 +6,6 @@ const NODE_ENV: string = process.env.NODE_ENV as string;
 const SENTRY_DSN: string = process.env.SENTRY_DSN as string;
 const SENTRY_DISABLED = !SENTRY_DSN || SENTRY_DSN === "";
 
-// eslint-disable-next-line import/prefer-default-export
 export const handleError = async (error: Error, message: Message | null) => {
   if (message) {
     message.channel.send(`\u200B${EMOJI_ERROR} Uh oh, something broke!`);
