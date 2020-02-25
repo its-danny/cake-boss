@@ -48,7 +48,7 @@
     "@types/faker": "^4.1.8",
     "@types/fs-extra": "^8.1.0",
     "@types/json2csv": "^4.5.1",
-    "@types/koa": "^2.11.1",
+    "@types/koa": "^2.11.2",
     "@types/koa-router": "^7.0.42",
     "@types/koa__cors": "^3.0.1",
     "@types/lodash": "^4.14.149",
