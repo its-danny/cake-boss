@@ -43,7 +43,7 @@
   "dependencies": {
     "@discordjs/uws": "^10.149.0",
     "@koa/cors": "^3.0.0",
-    "@sentry/node": "^5.13.0",
+    "@sentry/node": "^5.13.1",
     "@types/cli-table": "^0.3.0",
     "@types/faker": "^4.1.10",
     "@types/fs-extra": "^8.1.0",
