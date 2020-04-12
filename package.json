@@ -73,6 +73,6 @@
     "typeorm": "^0.2.24",
     "typescript": "^3.8.3",
     "underscore.string": "^3.3.5",
-    "yargs": "^15.0.2"
+    "yargs": "^15.3.1"
   }
 }
