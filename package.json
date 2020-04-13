@@ -45,7 +45,7 @@
     "@koa/cors": "^3.0.0",
     "@sentry/node": "^5.15.4",
     "@types/cli-table": "^0.3.0",
-    "@types/faker": "^4.1.10",
+    "@types/faker": "^4.1.11",
     "@types/fs-extra": "^8.1.0",
     "@types/json2csv": "^4.5.1",
     "@types/koa": "^2.11.2",
