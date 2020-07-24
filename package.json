@@ -42,7 +42,7 @@
   },
   "dependencies": {
     "@discordjs/uws": "^10.149.0",
-    "@koa/cors": "^3.0.0",
+    "@koa/cors": "^3.1.0",
     "@sentry/node": "^5.15.4",
     "@types/cli-table": "^0.3.0",
     "@types/faker": "^4.1.10",
