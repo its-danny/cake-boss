@@ -17,12 +17,20 @@ export const getLedger = async (args: CommandArguments): Promise<CommandResponse
       };
     }
 
+    if (!args.message.guild) {
+      throw new Error("Could not find Discord Guild.");
+    }
+
     const server = await Server.findOne({
       where: { discordId: args.message.guild.id },
     });
 
     if (!server) {
       throw new Error("Could not find server.");
+    }
+
+    if (!args.message.guild.me) {
+      throw new Error("Could not find Discord GuildMember for Cake Boss.");
     }
 
     if (!args.message.guild.me.hasPermission("ATTACH_FILES")) {
@@ -42,8 +50,8 @@ export const getLedger = async (args: CommandArguments): Promise<CommandResponse
     const fields = ["Name/ID", "Balance", "Earned", "Date Added"];
     const data: any = [];
 
-    members.forEach(member => {
-      const discordMember = args.message.guild.members.get(member.discordId);
+    members.forEach((member) => {
+      const discordMember = args.message.guild!.members.cache.get(member.discordId);
 
       data.push({
         "Name/ID": discordMember ? discordMember.displayName : member.discordId,
@@ -65,7 +73,9 @@ export const getLedger = async (args: CommandArguments): Promise<CommandResponse
 
     return {
       content: `${EMOJI_WORKING_HARD} Of course!`,
-      messageOptions: { files: [filePath + fileName] },
+      messageOptions: {
+        files: [filePath + fileName],
+      },
     };
   } catch (error) {
     return handleError(error, args.message);

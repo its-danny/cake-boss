@@ -13,7 +13,7 @@ import { EMOJI_ERROR, EMOJI_INCORRECT_PERMISSIONS, EMOJI_JOB_WELL_DONE } from ".
 import { Arguments, editPrize } from "./edit";
 
 describe("commands/manage/prize/edit", () => {
-  beforeEach(async done => {
+  beforeEach(async (done) => {
     await createConnection({
       type: "sqlite",
       database: ":memory:",
@@ -26,14 +26,14 @@ describe("commands/manage/prize/edit", () => {
     done();
   });
 
-  afterEach(async done => {
+  afterEach(async (done) => {
     const conn = getConnection();
     await conn.close();
 
     done();
   });
 
-  it(`should require permissions`, async done => {
+  it(`should require permissions`, async (done) => {
     const server = await createServer();
     const prize = await createPrize(server);
 
@@ -56,7 +56,7 @@ describe("commands/manage/prize/edit", () => {
     done();
   });
 
-  it("should require redeem-channel being set", async done => {
+  it("should require redeem-channel being set", async (done) => {
     const server = await createServer();
     const prize = await createPrize(server);
 
@@ -79,7 +79,7 @@ describe("commands/manage/prize/edit", () => {
     done();
   });
 
-  it("should require description", async done => {
+  it("should require description", async (done) => {
     const server = await createServer();
     const channel = createChannel("redeem");
     const prize = await createPrize(server);
@@ -110,7 +110,7 @@ describe("commands/manage/prize/edit", () => {
     done();
   });
 
-  it("should require reaction emoji", async done => {
+  it("should require reaction emoji", async (done) => {
     const server = await createServer();
     const channel = createChannel("redeem");
     const prize = await createPrize(server);
@@ -141,7 +141,7 @@ describe("commands/manage/prize/edit", () => {
     done();
   });
 
-  it("should require price of 1 or more", async done => {
+  it("should require price of 1 or more", async (done) => {
     const server = await createServer();
     const channel = createChannel("redeem");
     const prize = await createPrize(server);
@@ -172,7 +172,7 @@ describe("commands/manage/prize/edit", () => {
     done();
   });
 
-  it("should require a valid id", async done => {
+  it("should require a valid id", async (done) => {
     const server = await createServer();
     const channel = createChannel("redeem");
 
@@ -204,7 +204,7 @@ describe("commands/manage/prize/edit", () => {
     done();
   });
 
-  it("should update the prize", async done => {
+  it("should update the prize", async (done) => {
     const server = await createServer();
     const channel = createChannel("redeem");
     const prize = await createPrize(server);

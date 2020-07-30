@@ -6,7 +6,7 @@ import { EMOJI_CAKE, EMOJI_WORKING_HARD } from "../../utils/emoji";
 import { getTopGivers } from "./givers";
 
 describe("commands/use/givers", () => {
-  beforeEach(async done => {
+  beforeEach(async (done) => {
     await createConnection({
       type: "sqlite",
       database: ":memory:",
@@ -19,14 +19,14 @@ describe("commands/use/givers", () => {
     done();
   });
 
-  afterEach(async done => {
+  afterEach(async (done) => {
     const conn = getConnection();
     await conn.close();
 
     done();
   });
 
-  it(`should let you know if there are no leaders`, async done => {
+  it(`should let you know if there are no leaders`, async (done) => {
     const server = await createServer();
 
     const args: CommandArguments = {
@@ -44,7 +44,7 @@ describe("commands/use/givers", () => {
     done();
   });
 
-  it(`should let you know if you're not set up yet`, async done => {
+  it(`should let you know if you're not set up yet`, async (done) => {
     const server = await createServer();
 
     const memberOne = await createMember({ server, given: 1 });

@@ -15,6 +15,26 @@ export interface ServerOptions {
   noGiving?: boolean;
 }
 
+export interface MemberOptions {
+  server: Server;
+  discordId?: string;
+  balance?: number;
+  earned?: number;
+  given?: number;
+  givenSinceReset?: number;
+  shamed?: boolean;
+}
+
+export interface MessageOptions {
+  server: Server;
+  channel?: any;
+  serverMembers?: Member[];
+  serverChannels?: any[];
+  serverRoles?: Role[];
+  senderId?: string;
+  permission?: string;
+}
+
 export const createServer = async (opts?: ServerOptions): Promise<Server> => {
   const config = new Config();
 
@@ -51,16 +71,6 @@ export const createUser = async (): Promise<User> => {
 
   return user.save();
 };
-
-export interface MemberOptions {
-  server: Server;
-  discordId?: string;
-  balance?: number;
-  earned?: number;
-  given?: number;
-  givenSinceReset?: number;
-  shamed?: boolean;
-}
 
 export const createMember = async (opts: MemberOptions): Promise<Member> => {
   const user = await createUser();
@@ -102,15 +112,13 @@ export const createClient = (): Client => {
   return {} as Client;
 };
 
-export interface MessageOptions {
-  server: Server;
-  channel?: any;
-  serverMembers?: Member[];
-  serverChannels?: any[];
-  serverRoles?: Role[];
-  senderId?: string;
-  permission?: string;
-}
+export const createChannel = (name?: string): TextChannel => {
+  return ({
+    id: faker.random.uuid(),
+    name: name || faker.internet.domainName(),
+    send: () => {},
+  } as unknown) as TextChannel;
+};
 
 export const createMessage = async (opts: MessageOptions): Promise<Message> => {
   return {
@@ -118,57 +126,61 @@ export const createMessage = async (opts: MessageOptions): Promise<Message> => {
       id: opts.server.discordId,
 
       members: {
-        get(id: string) {
-          if (opts.serverMembers) {
-            const found = opts.serverMembers.find(m => m.discordId === id);
+        cache: {
+          get(id: string) {
+            if (opts.serverMembers) {
+              const found = opts.serverMembers.find((m) => m.discordId === id);
 
-            if (found) {
-              return {
-                id: found.discordId,
-                displayName: found.discordId,
+              if (found) {
+                return {
+                  id: found.discordId,
+                  displayName: found.discordId,
 
-                user: {
-                  tag: `${found.discordId}#1234`,
-                },
-              };
+                  user: {
+                    tag: `${found.discordId}#1234`,
+                  },
+                };
+              }
+              return null;
             }
             return null;
-          }
-          return null;
+          },
         },
       },
 
       channels: {
-        get(id: string) {
-          if (opts.serverChannels) {
-            const found = opts.serverChannels.find(channel => channel.id === id);
+        cache: {
+          get(id: string) {
+            if (opts.serverChannels) {
+              const found = opts.serverChannels.find((channel) => channel.id === id);
 
-            if (found) {
-              return {
-                id: found.id,
-                name: found.name,
+              if (found) {
+                return {
+                  id: found.id,
+                  name: found.name,
 
-                send() {},
-              };
+                  send() {},
+                };
+              }
+              return null;
             }
             return null;
-          }
-          return null;
+          },
         },
       },
 
-      roles: opts.serverRoles ? opts.serverRoles : [],
+      roles: { cache: opts.serverRoles ? opts.serverRoles : [] },
     } as unknown) as Guild,
 
     author: {
       tag: `${faker.random.uuid()}#1234`,
     },
 
-    channel: opts.channel ? opts.channel : null,
+    channel: opts.channel ? opts.channel : createChannel(),
 
     member: ({
       id: opts.senderId ? opts.senderId : faker.random.uuid(),
-      roles: [],
+      roles: { cache: [] },
 
       hasPermission(permission: string) {
         if (opts.permission) {
@@ -179,11 +191,4 @@ export const createMessage = async (opts: MessageOptions): Promise<Message> => {
       },
     } as unknown) as GuildMember,
   } as Message;
-};
-
-export const createChannel = (name?: string): TextChannel => {
-  return {
-    id: faker.random.uuid(),
-    name: name || faker.internet.domainName(),
-  } as TextChannel;
 };

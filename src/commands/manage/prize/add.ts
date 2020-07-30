@@ -1,3 +1,4 @@
+import { Role } from "discord.js";
 import { Argv } from "yargs";
 
 import Prize from "../../../entity/prize";
@@ -21,6 +22,10 @@ export const addPrize = async (args: Arguments): Promise<CommandResponse | void>
       return {
         content: `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`,
       };
+    }
+
+    if (!args.message.guild) {
+      throw new Error("Could not find Discord Guild.");
     }
 
     const server = await Server.findOne({
@@ -61,11 +66,13 @@ export const addPrize = async (args: Arguments): Promise<CommandResponse | void>
       } else {
         const foundRolesIds = args.roles
           .split(",")
-          .map(g => g.trim())
-          .filter(roleName => {
-            return args.message.guild.roles.find(role => role.name === roleName.trim());
+          .map((g) => g.trim())
+          .filter((roleName) => {
+            return args.message.guild!.roles.cache.find((role) => role.name === roleName.trim());
           })
-          .map(roleName => args.message.guild.roles.find(role => role.name === roleName.trim()).id);
+          .map((roleName) => args.message.guild!.roles.cache.find((role) => role.name === roleName.trim()))
+          .filter((role): role is Role => !!role)
+          .map((role) => role.id);
 
         if (foundRolesIds.length > 0) {
           prize.roleIds = foundRolesIds;

@@ -6,7 +6,7 @@ import { EMOJI_CAKE, EMOJI_WORKING_HARD } from "../../utils/emoji";
 import { getTopEarners } from "./leaders";
 
 describe("commands/use/leaders", () => {
-  beforeEach(async done => {
+  beforeEach(async (done) => {
     await createConnection({
       type: "sqlite",
       database: ":memory:",
@@ -19,14 +19,14 @@ describe("commands/use/leaders", () => {
     done();
   });
 
-  afterEach(async done => {
+  afterEach(async (done) => {
     const conn = getConnection();
     await conn.close();
 
     done();
   });
 
-  it(`should let you know if there are no leaders`, async done => {
+  it(`should let you know if there are no leaders`, async (done) => {
     const server = await createServer();
 
     const args: CommandArguments = {
@@ -44,7 +44,7 @@ describe("commands/use/leaders", () => {
     done();
   });
 
-  it(`should let you know if you're not set up yet`, async done => {
+  it(`should let you know if you're not set up yet`, async (done) => {
     const server = await createServer();
 
     const memberOne = await createMember({ server, earned: 1 });
@@ -61,6 +61,7 @@ describe("commands/use/leaders", () => {
     };
 
     const response = (await getTopEarners(args)) as CommandResponse;
+
     expect(response.content).toMatchInlineSnapshot(`
       "${EMOJI_CAKE} **Top Earners** 
 

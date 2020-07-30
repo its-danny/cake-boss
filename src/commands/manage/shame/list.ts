@@ -28,6 +28,10 @@ export const getShamedList = async (args: Arguments): Promise<CommandResponse | 
       };
     }
 
+    if (!args.message.guild) {
+      throw new Error("Could not find Discord Guild.");
+    }
+
     const server = await Server.findOne({
       where: { discordId: args.message.guild.id },
     });
@@ -65,8 +69,8 @@ export const getShamedList = async (args: Arguments): Promise<CommandResponse | 
       chars: getTableBorder(),
     });
 
-    shamedMembers.forEach(shamed => {
-      const discordMember = args.message.guild.members.get(shamed.discordId);
+    shamedMembers.forEach((shamed) => {
+      const discordMember = args.message.guild!.members.cache.get(shamed.discordId);
 
       if (!discordMember) {
         return `${EMOJI_RECORD_NOT_FOUND} Uh oh, had trouble finding a user.`;

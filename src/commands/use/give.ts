@@ -1,3 +1,4 @@
+import { Role } from "discord.js";
 import moment from "moment";
 import { Argv } from "yargs";
 
@@ -21,6 +22,10 @@ export interface Arguments extends CommandArguments {
 
 export const giveCakeToMember = async (args: Arguments): Promise<CommandResponse | void> => {
   try {
+    if (!args.message.guild) {
+      throw new Error("Could not find Discord Guild.");
+    }
+
     const server = await Server.findOne({
       where: { discordId: args.message.guild.id },
     });
@@ -35,6 +40,10 @@ export const giveCakeToMember = async (args: Arguments): Promise<CommandResponse
       };
     }
 
+    if (!args.message.member) {
+      throw new Error("Could not find Discord GuildMember.");
+    }
+
     if (await isShamed(args.message.guild.id, args.message.member.id)) {
       return {
         content: `${EMOJI_DONT_DO_THAT} You have been **shamed** and can not give ${server.config.cakeNamePlural}!`,
@@ -42,7 +51,7 @@ export const giveCakeToMember = async (args: Arguments): Promise<CommandResponse
     }
 
     const receivingMemberId = args.member.replace(/^<@!?/, "").replace(/>$/, "");
-    const receivingDiscordMember = args.message.guild.members.get(receivingMemberId);
+    const receivingDiscordMember = args.message.guild.members.cache.get(receivingMemberId);
 
     if (!receivingDiscordMember) {
       return {
@@ -130,10 +139,13 @@ export const giveCakeToMember = async (args: Arguments): Promise<CommandResponse
       }\` ${amount} ${amount > 1 ? server.config.cakeNamePlural : server.config.cakeNameSingular}!`,
     );
 
-    server.milestones.forEach(milestone => {
+    server.milestones.forEach((milestone) => {
       if (previousEarned < milestone.amount && receivingMember.earned >= milestone.amount) {
-        const roles = milestone.roleIds.map(roleId => args.message.guild.roles.find(role => role.id === roleId));
-        receivingDiscordMember.addRoles(roles);
+        const roles = milestone.roleIds
+          .map((roleId) => args.message.guild!.roles.cache.find((role) => role.id === roleId))
+          .filter((role): role is Role => !!role);
+
+        receivingDiscordMember.roles.add(roles);
 
         logMilestone(args.client, args.message, milestone, receivingDiscordMember, roles);
       }

@@ -25,6 +25,10 @@ export const unshameMember = async (args: Arguments): Promise<CommandResponse | 
       };
     }
 
+    if (!args.message.guild) {
+      throw new Error("Could not find Discord Guild.");
+    }
+
     const server = await Server.findOne({
       where: { discordId: args.message.guild.id },
     });
@@ -34,7 +38,7 @@ export const unshameMember = async (args: Arguments): Promise<CommandResponse | 
     }
 
     const memberId = args.member.replace(/^<@!?/, "").replace(/>$/, "");
-    const discordMember = args.message.guild.members.get(memberId);
+    const discordMember = args.message.guild.members.cache.get(memberId);
 
     if (!discordMember) {
       return {

@@ -13,9 +13,9 @@ export const builder = (yargs: Argv) => yargs;
 export const handler = (args: CommandArguments) => {
   const start = parseInt(fs.readFileSync(`${process.cwd()}/.uptime`, "utf8"), 10);
 
-  args.promisedOutput = new Promise(resolve =>
+  args.promisedOutput = new Promise((resolve) =>
     resolve({
-      content: `${EMOJI_WORKING_HARD} I started workin' ${moment(start).from()}.`,
+      content: `${EMOJI_WORKING_HARD} I started workin' ${moment(start).from(moment())}.`,
     }),
   );
 };

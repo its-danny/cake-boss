@@ -6,7 +6,7 @@ import { EMOJI_CAKE } from "../../utils/emoji";
 import { getBalance } from "./balance";
 
 describe("commands/use/balance", () => {
-  beforeEach(async done => {
+  beforeEach(async (done) => {
     await createConnection({
       type: "sqlite",
       database: ":memory:",
@@ -19,14 +19,14 @@ describe("commands/use/balance", () => {
     done();
   });
 
-  afterEach(async done => {
+  afterEach(async (done) => {
     const conn = getConnection();
     await conn.close();
 
     done();
   });
 
-  it(`should give you your balance`, async done => {
+  it(`should give you your balance`, async (done) => {
     const server = await createServer();
     const member = await createMember({ server, balance: 3 });
 

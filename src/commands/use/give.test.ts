@@ -12,7 +12,7 @@ import {
 import { Arguments, giveCakeToMember } from "./give";
 
 describe("commands/use/give", () => {
-  beforeEach(async done => {
+  beforeEach(async (done) => {
     await createConnection({
       type: "sqlite",
       database: ":memory:",
@@ -25,14 +25,14 @@ describe("commands/use/give", () => {
     done();
   });
 
-  afterEach(async done => {
+  afterEach(async (done) => {
     const conn = getConnection();
     await conn.close();
 
     done();
   });
 
-  it(`should stop you if no-giving is enabled`, async done => {
+  it(`should stop you if no-giving is enabled`, async (done) => {
     const server = await createServer({ noGiving: true });
     const sender = await createMember({ server });
     const receiver = await createMember({ server });
@@ -58,7 +58,7 @@ describe("commands/use/give", () => {
     done();
   });
 
-  it(`should stop you if you're shamed`, async done => {
+  it(`should stop you if you're shamed`, async (done) => {
     const server = await createServer();
     const sender = await createMember({ server, shamed: true });
     const receiver = await createMember({ server });
@@ -86,7 +86,7 @@ describe("commands/use/give", () => {
     done();
   });
 
-  it(`should require a valid member`, async done => {
+  it(`should require a valid member`, async (done) => {
     const server = await createServer();
     const sender = await createMember({ server });
 
@@ -111,7 +111,7 @@ describe("commands/use/give", () => {
     done();
   });
 
-  it(`shouldn't let you give to yourself`, async done => {
+  it(`shouldn't let you give to yourself`, async (done) => {
     const server = await createServer();
     const sender = await createMember({ server });
 
@@ -136,7 +136,7 @@ describe("commands/use/give", () => {
     done();
   });
 
-  it(`should stop you if they're shamed`, async done => {
+  it(`should stop you if they're shamed`, async (done) => {
     const server = await createServer();
     const sender = await createMember({ server });
     const receiver = await createMember({ server, shamed: true });
@@ -164,7 +164,7 @@ describe("commands/use/give", () => {
     done();
   });
 
-  it(`should stop you if you've hit your limit`, async done => {
+  it(`should stop you if you've hit your limit`, async (done) => {
     const server = await createServer();
     const sender = await createMember({ server, givenSinceReset: 5 });
     const receiver = await createMember({ server });
@@ -192,7 +192,7 @@ describe("commands/use/give", () => {
     done();
   });
 
-  it("should give them cake", async done => {
+  it("should give them cake", async (done) => {
     const server = await createServer();
     const sender = await createMember({ server });
     const receiver = await createMember({ server });

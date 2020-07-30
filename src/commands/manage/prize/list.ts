@@ -24,6 +24,10 @@ export const getPrizeList = async (args: Arguments): Promise<CommandResponse | v
       };
     }
 
+    if (!args.message.guild) {
+      throw new Error("Could not find Discord Guild.");
+    }
+
     const server = await Server.findOne({
       where: { discordId: args.message.guild.id },
     });
@@ -67,10 +71,10 @@ export const getPrizeList = async (args: Arguments): Promise<CommandResponse | v
       chars: getTableBorder(),
     });
 
-    prizes.forEach(prize => {
+    prizes.forEach((prize) => {
       const roleNames = chain(prize.roleIds)
-        .map(roleId => {
-          const role = args.message.guild.roles.get(roleId);
+        .map((roleId) => {
+          const role = args.message.guild!.roles.cache.get(roleId);
 
           if (role) {
             return role.name;

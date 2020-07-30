@@ -23,6 +23,10 @@ export const setConfig = async (args: Arguments): Promise<CommandResponse | void
       };
     }
 
+    if (!args.message.guild) {
+      throw new Error("Could not find Discord Guild.");
+    }
+
     const server = await Server.findOne({
       where: { discordId: args.message.guild.id },
     });
@@ -47,6 +51,10 @@ export const setConfig = async (args: Arguments): Promise<CommandResponse | void
       } else {
         return { content: `${EMOJI_ERROR} ${ERROR_MESSAGE}` };
       }
+    }
+
+    if (!args.message.guild.me) {
+      throw new Error("Could not find Discord Guild for Cake Boss.");
     }
 
     if (args.config === "quiet-mode") {
@@ -75,7 +83,7 @@ export const setConfig = async (args: Arguments): Promise<CommandResponse | void
       if (server.config.setLogChannel(args.value, args.message.guild)) {
         await server.config.save();
 
-        const channel = args.message.guild.channels.get(args.value.replace(/^<#/, "").replace(/>$/, ""));
+        const channel = args.message.guild.channels.cache.get(args.value.replace(/^<#/, "").replace(/>$/, ""));
 
         await logEvent(
           args.client,
@@ -111,7 +119,7 @@ export const setConfig = async (args: Arguments): Promise<CommandResponse | void
       if (server.config.setRedeemChannel(args.value, args.message.guild)) {
         await server.config.save();
 
-        const channel = args.message.guild.channels.get(args.value.replace(/^<#/, "").replace(/>$/, ""));
+        const channel = args.message.guild.channels.cache.get(args.value.replace(/^<#/, "").replace(/>$/, ""));
 
         await logEvent(
           args.client,
@@ -147,7 +155,7 @@ export const setConfig = async (args: Arguments): Promise<CommandResponse | void
       if (server.config.setMilestoneChannel(args.value, args.message.guild)) {
         await server.config.save();
 
-        const channel = args.message.guild.channels.get(args.value.replace(/^<#/, "").replace(/>$/, ""));
+        const channel = args.message.guild.channels.cache.get(args.value.replace(/^<#/, "").replace(/>$/, ""));
 
         await logEvent(
           args.client,
@@ -237,7 +245,11 @@ export const setConfig = async (args: Arguments): Promise<CommandResponse | void
       if (server.config.setNickname(args.value)) {
         await server.config.save();
 
-        const member = args.message.guild.members.get(args.client.user.id);
+        if (!args.client.user) {
+          throw new Error("Could not find Discord ClientUser.");
+        }
+
+        const member = args.message.guild.members.cache.get(args.client.user.id);
 
         if (server && member) {
           member.setNickname(server.config.nickname);

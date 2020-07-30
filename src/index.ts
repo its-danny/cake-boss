@@ -63,18 +63,26 @@ interface WatchedMessage {
 const messagesToWatch: WatchedMessage[] = [];
 
 client.on("ready", async () => {
-  client.user.setActivity(`in the kitchen! ${EMOJI_WORKING_HARD}`);
-
-  client.guilds.forEach(async guild => {
-    const server = await Server.findOne({ where: { discordId: guild.id } });
-    const member = guild.members.get(client.user.id);
-
-    if (server && member) {
-      member.setNickname(server.config.nickname);
+  try {
+    if (!client.user) {
+      throw new Error("Could not find Discord CluentUser.");
     }
-  });
 
-  console.log(`${EMOJI_CAKE} Cake Boss online!`);
+    client.user.setActivity(`in the kitchen! ${EMOJI_WORKING_HARD}`);
+
+    client.guilds.cache.forEach(async (guild) => {
+      const server = await Server.findOne({ where: { discordId: guild.id } });
+      const member = guild.members.cache.get(client.user!.id);
+
+      if (server && member) {
+        member.setNickname(server.config.nickname);
+      }
+    });
+
+    console.log(`${EMOJI_CAKE} Cake Boss online!`);
+  } catch (error) {
+    handleError(error);
+  }
 });
 
 client.on("guildCreate", async (guild: Guild) => {
@@ -91,48 +99,72 @@ client.on("guildDelete", async (guild: Guild) => {
 });
 
 client.on("messageReactionAdd", async (reaction, user) => {
-  const index = messagesToWatch.findIndex(m => m.message.id === reaction.message.id);
+  try {
+    const index = messagesToWatch.findIndex((m) => m.message.id === reaction.message.id);
 
-  if (index > -1) {
-    const message = messagesToWatch[index];
+    if (index > -1) {
+      const message = messagesToWatch[index];
 
-    if (user.id === message.userId && Object.hasOwnProperty.call(message.reactions, reaction.emoji.toString())) {
-      message.reactions[reaction.emoji.toString()]();
-      message.message.edit(`${EMOJI_JOB_WELL_DONE} Prize redeemed!`);
-      messagesToWatch.splice(index, 1);
+      if (user.id === message.userId && Object.hasOwnProperty.call(message.reactions, reaction.emoji.toString())) {
+        message.reactions[reaction.emoji.toString()]();
+        message.message.edit(`${EMOJI_JOB_WELL_DONE} Prize redeemed!`);
+        messagesToWatch.splice(index, 1);
 
-      const server = await Server.findOne({
-        where: { discordId: message.message.guild.id },
-      });
+        if (!message.message.guild) {
+          throw new Error("Could not find Discord Guild.");
+        }
 
-      if (server && server.config.redeemChannelId && server.config.redeemPingRoleIds.length > 0) {
-        const discordChannel = message.message.guild.channels.get(server.config.redeemChannelId) as TextChannel;
+        const server = await Server.findOne({
+          where: { discordId: message.message.guild.id },
+        });
 
-        if (discordChannel) {
-          const mentions = server.config.redeemPingRoleIds.map(id => `<@&${id}>`);
-          discordChannel.send(`👇 A prize was redeemed, ${mentions.join(" ")}!`);
+        if (server && server.config.redeemChannelId && server.config.redeemPingRoleIds.length > 0) {
+          const discordChannel = message.message.guild.channels.cache.get(server.config.redeemChannelId) as TextChannel;
+
+          if (discordChannel) {
+            const mentions = server.config.redeemPingRoleIds.map((id) => `<@&${id}>`);
+            discordChannel.send(`👇 A prize was redeemed, ${mentions.join(" ")}!`);
+          }
         }
       }
     }
+  } catch (error) {
+    handleError(error);
   }
 });
 
 client.on("message", async (message: Message) => {
-  if (message.author.id !== client.user.id && !message.author.bot) {
-    const server = await Server.findOrCreate(message.guild.id);
+  try {
+    if (!client.user) {
+      throw new Error("Could not find Discord CluentUser.");
+    }
 
-    if (server) {
-      const { commandPrefix } = server.config;
+    if (message.author.id !== client.user.id && !message.author.bot) {
+      if (!message.guild) {
+        throw new Error("Could not find Discord Guild.");
+      }
 
-      const cleanContent = message.content
-        .trim()
-        .split(" ")
-        .map((s, i) => (i === 0 ? s.toLowerCase() : s))
-        .join(" ");
+      const server = await Server.findOrCreate(message.guild.id);
 
-      if (cleanContent.startsWith(`${commandPrefix}`) || message.isMemberMentioned(client.user)) {
-        try {
+      if (server) {
+        const { commandPrefix } = server.config;
+
+        const cleanContent = message.content
+          .trim()
+          .split(" ")
+          .map((s, i) => (i === 0 ? s.toLowerCase() : s))
+          .join(" ");
+
+        if (cleanContent.startsWith(`${commandPrefix}`) || message.mentions.has(client.user)) {
+          if (!message.member) {
+            throw new Error("Could not find Discord GuildMember.");
+          }
+
           await Member.findOrCreate(server.discordId, message.author.id, message.member.id);
+
+          if (!message.mentions.members) {
+            throw new Error("Could not find Discord Mentions GuildMember.");
+          }
 
           // eslint-disable-next-line no-restricted-syntax
           for (const member of message.mentions.members) {
@@ -155,7 +187,7 @@ client.on("message", async (message: Message) => {
 
           let command = cleanContent.replace(commandPrefix, "");
 
-          if (message.isMemberMentioned(client.user) && message.mentions.members.get(client.user.id)) {
+          if (message.mentions.has(client.user) && message.mentions.members.get(client.user.id)) {
             const mentionRegex = new RegExp(`<@!?${message.mentions.members.get(client.user.id)!.id}>`);
             command = command.replace(mentionRegex, "");
           }
@@ -191,14 +223,11 @@ client.on("message", async (message: Message) => {
               const commandResponse: CommandResponse = (await argv.promisedOutput) as CommandResponse;
 
               if (sentMessage) {
-                await sentMessage.edit(
-                  `\u200B${commandResponse.content}`,
-                  commandResponse.messageOptions || commandResponse.richEmbed,
-                );
+                await sentMessage.edit(`\u200B${commandResponse.content}`, commandResponse.messageEditOptions);
               } else {
                 sentMessage = (await message.channel.send(
                   `\u200B${commandResponse.content}`,
-                  commandResponse.messageOptions || commandResponse.richEmbed || commandResponse.attachment,
+                  commandResponse.messageOptions,
                 )) as Message;
               }
 
@@ -207,7 +236,7 @@ client.on("message", async (message: Message) => {
               } | null;
 
               if (sentMessage && reactions) {
-                Object.keys(reactions).forEach(emoji => {
+                Object.keys(reactions).forEach((emoji) => {
                   let react: string;
 
                   if (/\b:\d{18}/.test(emoji)) {
@@ -227,16 +256,16 @@ client.on("message", async (message: Message) => {
                 messagesToWatch.push(toWatch);
                 const toWatchIndex = messagesToWatch.indexOf(toWatch);
                 sentMessage
-                  .delete(1000 * server.config.redeemTimer)
+                  .delete({ timeout: 1000 * server.config.redeemTimer })
                   .then(() => messagesToWatch.splice(toWatchIndex, 1));
               }
             }
           });
-        } catch (error) {
-          handleError(error, message);
         }
       }
     }
+  } catch (error) {
+    handleError(error);
   }
 });
 
@@ -249,7 +278,7 @@ api.use(cors());
 api.use(router.routes());
 api.use(router.allowedMethods());
 
-router.get("/ping", context => {
+router.get("/ping", (context) => {
   // eslint-disable-next-line no-param-reassign
   context.body = "ONLINE";
 });
@@ -267,13 +296,13 @@ createConnection()
       api.listen(API_PORT, () => console.log("🚀 API online!"));
     }
 
-    fs.writeFileSync(`${process.cwd()}/.uptime`, moment().utc(), "utf8");
+    fs.writeFileSync(`${process.cwd()}/.uptime`, moment.utc().valueOf().toString(), "utf8");
 
     schedule.scheduleJob("0 * * * *", async () => {
       try {
         const servers = await Server.find({ where: { active: true } });
 
-        servers.forEach(async server => {
+        servers.forEach(async (server) => {
           // eslint-disable-next-line no-param-reassign
           server.timeSinceLastReset += 1;
 
@@ -282,7 +311,7 @@ createConnection()
             server.timeSinceLastReset = 0;
 
             const members = await server.members;
-            members.forEach(async member => {
+            members.forEach(async (member) => {
               // eslint-disable-next-line no-param-reassign
               member.givenSinceReset = 0;
               await member.save();
@@ -292,7 +321,7 @@ createConnection()
           await server.save();
         });
       } catch (error) {
-        handleError(error, null);
+        handleError(error);
       }
     });
 
@@ -300,7 +329,7 @@ createConnection()
       try {
         await fsExtra.emptyDir(`${process.cwd()}/tmp/`);
       } catch (error) {
-        handleError(error, null);
+        handleError(error);
       }
     });
 
@@ -310,15 +339,15 @@ createConnection()
 
       if (SUPPORT_SERVER_ID && SUPPORT_CHANNEL_ID) {
         try {
-          const supportGuild = client.guilds.find(guild => guild.id === SUPPORT_SERVER_ID);
+          const supportGuild = client.guilds.cache.find((guild) => guild.id === SUPPORT_SERVER_ID);
 
           if (supportGuild) {
-            const supportChannel = supportGuild.channels.find(guild => guild.id === SUPPORT_CHANNEL_ID);
+            const supportChannel = supportGuild.channels.cache.find((guild) => guild.id === SUPPORT_CHANNEL_ID);
 
             if (supportChannel) {
               const servers = await Server.find();
               const userCount = await User.count();
-              const cakeTotalsByServer = Promise.all(servers.map(s => s.totalEarnedByMembers()));
+              const cakeTotalsByServer = Promise.all(servers.map((s) => s.totalEarnedByMembers()));
               const cakeTotalsCombined = (await cakeTotalsByServer).reduce((a, b) => a + b, 0);
 
               await supportChannel.setTopic(
@@ -359,11 +388,11 @@ createConnection()
             }
           }
         } catch (error) {
-          handleError(error, null);
+          handleError(error);
         }
       }
     });
   })
-  .catch(error => {
-    handleError(error, null);
+  .catch((error) => {
+    handleError(error);
   });

@@ -1,3 +1,4 @@
+import { Role } from "discord.js";
 import { Argv } from "yargs";
 
 import Member from "../../entity/member";
@@ -22,6 +23,10 @@ export const blessMember = async (args: Arguments): Promise<CommandResponse | vo
       };
     }
 
+    if (!args.message.guild) {
+      throw new Error("Could not find Discord Guild.");
+    }
+
     const server = await Server.findOne({
       where: { discordId: args.message.guild.id },
     });
@@ -31,7 +36,7 @@ export const blessMember = async (args: Arguments): Promise<CommandResponse | vo
     }
 
     const receivingMemberId = args.member.replace(/^<@!?/, "").replace(/>$/, "");
-    const receivingDiscordMember = args.message.guild.members.get(receivingMemberId);
+    const receivingDiscordMember = args.message.guild.members.cache.get(receivingMemberId);
 
     if (!receivingDiscordMember) {
       return {
@@ -73,10 +78,13 @@ export const blessMember = async (args: Arguments): Promise<CommandResponse | vo
       }\` with ${amount} ${amount > 1 ? server.config.cakeNamePlural : server.config.cakeNameSingular}!`,
     );
 
-    server.milestones.forEach(milestone => {
+    server.milestones.forEach((milestone) => {
       if (previousEarned < milestone.amount && receivingMember.earned >= milestone.amount) {
-        const roles = milestone.roleIds.map(roleId => args.message.guild.roles.find(role => role.id === roleId));
-        receivingDiscordMember.addRoles(roles);
+        const roles = milestone.roleIds
+          .map((roleId) => args.message.guild!.roles.cache.find((role) => role.id === roleId))
+          .filter((role): role is Role => !!role);
+
+        receivingDiscordMember.roles.add(roles);
 
         logMilestone(args.client, args.message, milestone, receivingDiscordMember, roles);
       }
@@ -102,6 +110,10 @@ export const blessMember = async (args: Arguments): Promise<CommandResponse | vo
       return undefined;
     }
 
+    if (!args.message.member) {
+      throw new Error("Could not find Discord GuildMember.");
+    }
+
     return {
       content: `${server.config.cakeEmoji} ${receivingDiscordMember.displayName} just got ${amount} ${
         amount > 1 ? server.config.cakeNamePlural : server.config.cakeNameSingular
@@ -120,6 +132,10 @@ export const blessRole = async (args: Arguments): Promise<CommandResponse | void
       };
     }
 
+    if (!args.message.guild) {
+      throw new Error("Could not find Discord Guild.");
+    }
+
     const server = await Server.findOne({
       where: { discordId: args.message.guild.id },
     });
@@ -128,7 +144,7 @@ export const blessRole = async (args: Arguments): Promise<CommandResponse | void
       throw new Error("Could not find server.");
     }
 
-    const discordRole = args.message.guild.roles.find(role => role.name === args.role);
+    const discordRole = args.message.guild.roles.cache.find((role) => role.name === args.role);
 
     if (!discordRole) {
       return {
@@ -155,10 +171,13 @@ export const blessRole = async (args: Arguments): Promise<CommandResponse | void
           // eslint-disable-next-line no-await-in-loop
           await member.save();
 
-          server.milestones.forEach(milestone => {
+          server.milestones.forEach((milestone) => {
             if (previousEarned < milestone.amount && member.earned >= milestone.amount) {
-              const roles = milestone.roleIds.map(roleId => args.message.guild.roles.find(role => role.id === roleId));
-              discordMember.addRoles(roles);
+              const roles = milestone.roleIds
+                .map((roleId) => args.message.guild!.roles.cache.find((role) => role.id === roleId))
+                .filter((role): role is Role => !!role);
+
+              discordMember.roles.add(roles);
 
               logMilestone(args.client, args.message, milestone, discordMember, roles);
             }
@@ -193,6 +212,10 @@ export const blessRole = async (args: Arguments): Promise<CommandResponse | void
       args.message.react(react);
 
       return undefined;
+    }
+
+    if (!args.message.member) {
+      throw new Error("Could not find Discord GuildMember.");
     }
 
     return {

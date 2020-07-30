@@ -41,31 +41,16 @@ export default class Server extends BaseEntity {
   @JoinColumn()
   config!: Config;
 
-  @OneToMany(
-    () => Member,
-    member => member.server,
-  )
+  @OneToMany(() => Member, (member) => member.server)
   members!: Promise<Member[]>;
 
-  @OneToMany(
-    () => Prize,
-    prize => prize.server,
-    { eager: true },
-  )
+  @OneToMany(() => Prize, (prize) => prize.server, { eager: true })
   prizes!: Prize[];
 
-  @OneToMany(
-    () => Drop,
-    drop => drop.server,
-    { eager: true },
-  )
+  @OneToMany(() => Drop, (drop) => drop.server, { eager: true })
   drops!: Drop[];
 
-  @OneToMany(
-    () => Milestone,
-    milestone => milestone.server,
-    { eager: true },
-  )
+  @OneToMany(() => Milestone, (milestone) => milestone.server, { eager: true })
   milestones!: Milestone[];
 
   static async findOrCreate(guildId: string): Promise<Server | void> {
@@ -78,17 +63,15 @@ export default class Server extends BaseEntity {
         if (foundServer.active) {
           return foundServer;
         }
+
         foundServer.active = true;
+
         return foundServer.save();
       }
 
       const config = new Config();
 
-      try {
-        await config.save();
-      } catch (error) {
-        handleError(error, null);
-      }
+      await config.save();
 
       const server = new Server();
       server.discordId = guildId;
@@ -97,13 +80,13 @@ export default class Server extends BaseEntity {
 
       return server.save();
     } catch (error) {
-      return handleError(error, null);
+      return handleError(error);
     }
   }
 
   async totalEarnedByMembers(): Promise<number> {
     const members = await this.members;
 
-    return members.map(m => m.earned).reduce((a, c) => a + c, 0);
+    return members.map((m) => m.earned).reduce((a, c) => a + c, 0);
   }
 }

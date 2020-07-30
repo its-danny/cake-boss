@@ -16,6 +16,10 @@ export const getDropList = async (args: CommandArguments): Promise<CommandRespon
       };
     }
 
+    if (!args.message.guild) {
+      throw new Error("Could not find Discord Guild.");
+    }
+
     const server = await Server.findOne({
       where: { discordId: args.message.guild.id },
     });
@@ -36,8 +40,8 @@ export const getDropList = async (args: CommandArguments): Promise<CommandRespon
 
     const dropped: { [key: string]: number } = {};
 
-    server.drops.forEach(drop => {
-      const channel = args.message.guild.channels.get(drop.channelDiscordId);
+    server.drops.forEach((drop) => {
+      const channel = args.message.guild!.channels.cache.get(drop.channelDiscordId);
 
       if (channel) {
         if (Object.prototype.hasOwnProperty.call(dropped, channel.name)) {
@@ -50,7 +54,7 @@ export const getDropList = async (args: CommandArguments): Promise<CommandRespon
 
     Object.keys(dropped)
       .sort((a, b) => dropped[b] - dropped[a])
-      .forEach(channel => table.push([`#${channel}`, dropped[channel]]));
+      .forEach((channel) => table.push([`#${channel}`, dropped[channel]]));
 
     return {
       content: `${server.config.cakeEmoji} **Dropped ${

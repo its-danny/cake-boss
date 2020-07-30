@@ -29,6 +29,10 @@ export const dropCakes = async (args: Arguments): Promise<CommandResponse | void
       };
     }
 
+    if (!args.message.guild) {
+      throw new Error("Could not find Discord Guild.");
+    }
+
     const server = await Server.findOne({
       where: { discordId: args.message.guild.id },
     });
@@ -38,7 +42,7 @@ export const dropCakes = async (args: Arguments): Promise<CommandResponse | void
     }
 
     const channelId = args.channel.replace(/^<#/, "").replace(/>$/, "");
-    const discordChannel = args.message.guild.channels.get(channelId) as TextChannel;
+    const discordChannel = args.message.guild.channels.cache.get(channelId) as TextChannel;
 
     if (!discordChannel) {
       return {

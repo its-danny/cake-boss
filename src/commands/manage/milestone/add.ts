@@ -1,3 +1,4 @@
+import { Role } from "discord.js";
 import { Argv } from "yargs";
 
 import Milestone from "../../../entity/milestone";
@@ -22,6 +23,10 @@ export const addMilestone = async (args: Arguments): Promise<CommandResponse | v
       };
     }
 
+    if (!args.message.guild) {
+      throw new Error("Could not find Discord Guild.");
+    }
+
     const server = await Server.findOne({
       where: { discordId: args.message.guild.id },
     });
@@ -43,11 +48,13 @@ export const addMilestone = async (args: Arguments): Promise<CommandResponse | v
     } else {
       const foundRolesIds = args.roles
         .split(",")
-        .map(g => g.trim())
-        .filter(roleName => {
-          return args.message.guild.roles.find(role => role.name === roleName.trim());
+        .map((g) => g.trim())
+        .filter((roleName) => {
+          return args.message.guild!.roles.cache.find((role) => role.name === roleName.trim());
         })
-        .map(roleName => args.message.guild.roles.find(role => role.name === roleName.trim()).id);
+        .map((roleName) => args.message.guild!.roles.cache.find((role) => role.name === roleName.trim()))
+        .filter((role): role is Role => !!role)
+        .map((role) => role.id);
 
       if (foundRolesIds.length > 0) {
         milestone.roleIds = foundRolesIds;

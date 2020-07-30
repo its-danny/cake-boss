@@ -7,7 +7,7 @@ import { EMOJI_CAKE, EMOJI_INCORRECT_PERMISSIONS } from "../../utils/emoji";
 import { getDropList } from "./dropped";
 
 describe("commands/use/dropped", () => {
-  beforeEach(async done => {
+  beforeEach(async (done) => {
     await createConnection({
       type: "sqlite",
       database: ":memory:",
@@ -20,14 +20,14 @@ describe("commands/use/dropped", () => {
     done();
   });
 
-  afterEach(async done => {
+  afterEach(async (done) => {
     const conn = getConnection();
     await conn.close();
 
     done();
   });
 
-  it(`should require permissions`, async done => {
+  it(`should require permissions`, async (done) => {
     const server = await createServer();
 
     const args: CommandArguments = {
@@ -45,7 +45,7 @@ describe("commands/use/dropped", () => {
     done();
   });
 
-  it(`should return the drop list`, async done => {
+  it(`should return the drop list`, async (done) => {
     const server = await createServer();
     const channelOne = createChannel("general");
     const channelTwo = createChannel("games");

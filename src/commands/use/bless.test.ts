@@ -6,7 +6,7 @@ import { EMOJI_CAKE, EMOJI_INCORRECT_PERMISSIONS, EMOJI_RECORD_NOT_FOUND } from 
 import { Arguments, blessMember } from "./bless";
 
 describe("commands/use/bless", () => {
-  beforeEach(async done => {
+  beforeEach(async (done) => {
     await createConnection({
       type: "sqlite",
       database: ":memory:",
@@ -19,14 +19,14 @@ describe("commands/use/bless", () => {
     done();
   });
 
-  afterEach(async done => {
+  afterEach(async (done) => {
     const conn = getConnection();
     await conn.close();
 
     done();
   });
 
-  it(`should require permissions`, async done => {
+  it(`should require permissions`, async (done) => {
     const server = await createServer();
 
     const args: Arguments = {
@@ -47,7 +47,7 @@ describe("commands/use/bless", () => {
     done();
   });
 
-  it(`should require a valid member`, async done => {
+  it(`should require a valid member`, async (done) => {
     const server = await createServer();
 
     const args: Arguments = {
@@ -68,7 +68,7 @@ describe("commands/use/bless", () => {
     done();
   });
 
-  it("should give them cake", async done => {
+  it("should give them cake", async (done) => {
     const server = await createServer();
     const sender = await createMember({ server });
     const receiver = await createMember({ server });

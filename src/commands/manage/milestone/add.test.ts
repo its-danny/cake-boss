@@ -7,7 +7,7 @@ import { EMOJI_ERROR, EMOJI_INCORRECT_PERMISSIONS, EMOJI_JOB_WELL_DONE } from ".
 import { addMilestone, Arguments } from "./add";
 
 describe("commands/manage/milestone/add", () => {
-  beforeEach(async done => {
+  beforeEach(async (done) => {
     await createConnection({
       type: "sqlite",
       database: ":memory:",
@@ -20,14 +20,14 @@ describe("commands/manage/milestone/add", () => {
     done();
   });
 
-  afterEach(async done => {
+  afterEach(async (done) => {
     const conn = getConnection();
     await conn.close();
 
     done();
   });
 
-  it(`should require permissions`, async done => {
+  it(`should require permissions`, async (done) => {
     const server = await createServer();
 
     const args: Arguments = {
@@ -47,7 +47,7 @@ describe("commands/manage/milestone/add", () => {
     done();
   });
 
-  it("should require amount of 1 or more", async done => {
+  it("should require amount of 1 or more", async (done) => {
     const server = await createServer();
 
     const args: Arguments = {
@@ -67,7 +67,7 @@ describe("commands/manage/milestone/add", () => {
     done();
   });
 
-  it("should require 1 or more roles", async done => {
+  it("should require 1 or more roles", async (done) => {
     const server = await createServer();
 
     const args: Arguments = {
@@ -87,7 +87,7 @@ describe("commands/manage/milestone/add", () => {
     done();
   });
 
-  it("should add the milestone", async done => {
+  it("should add the milestone", async (done) => {
     const server = await createServer();
 
     const role = { id: "123", name: "Cool Dude" } as Role;

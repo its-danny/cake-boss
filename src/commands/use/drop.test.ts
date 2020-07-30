@@ -7,7 +7,7 @@ import { EMOJI_INCORRECT_PERMISSIONS, EMOJI_JOB_WELL_DONE } from "../../utils/em
 import { Arguments, dropCakes } from "./drop";
 
 describe("commands/use/drop", () => {
-  beforeEach(async done => {
+  beforeEach(async (done) => {
     await createConnection({
       type: "sqlite",
       database: ":memory:",
@@ -20,14 +20,14 @@ describe("commands/use/drop", () => {
     done();
   });
 
-  afterEach(async done => {
+  afterEach(async (done) => {
     const conn = getConnection();
     await conn.close();
 
     done();
   });
 
-  it(`should require permissions`, async done => {
+  it(`should require permissions`, async (done) => {
     const server = await createServer();
 
     const args: Arguments = {
@@ -47,7 +47,7 @@ describe("commands/use/drop", () => {
     done();
   });
 
-  it(`should drop cakes`, async done => {
+  it(`should drop cakes`, async (done) => {
     const server = await createServer();
     const channel = createChannel();
 

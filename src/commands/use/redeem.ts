@@ -1,3 +1,4 @@
+import { Role } from "discord.js";
 import moment from "moment";
 import { Argv } from "yargs";
 
@@ -11,12 +12,20 @@ import { isShamed } from "../../utils/permissions";
 
 export const redeemCake = async (args: CommandArguments): Promise<CommandResponse | void> => {
   try {
+    if (!args.message.guild) {
+      throw new Error("Could not find Discord Guild.");
+    }
+
     const server = await Server.findOne({
       where: { discordId: args.message.guild.id },
     });
 
     if (!server) {
       throw new Error("Could not find server.");
+    }
+
+    if (!args.message.guild.me) {
+      throw new Error("Could not find Discord GuildMember for Cake Boss.");
     }
 
     if (!args.message.guild.me.hasPermission("MANAGE_ROLES")) {
@@ -41,6 +50,10 @@ export const redeemCake = async (args: CommandArguments): Promise<CommandRespons
       return { content: `${EMOJI_ERROR} Server not yet set up for prizes!` };
     }
 
+    if (!args.message.member) {
+      throw new Error("Could not find Discord GuildMember.");
+    }
+
     if (await isShamed(args.message.guild.id, args.message.member.id)) {
       return {
         content: `${EMOJI_DONT_DO_THAT} You have been **shamed** and can not redeem ${server.config.cakeNamePlural}!`,
@@ -58,7 +71,7 @@ export const redeemCake = async (args: CommandArguments): Promise<CommandRespons
       return { content: `${EMOJI_RECORD_NOT_FOUND} There are no prizes.` };
     }
 
-    server.prizes.forEach(prize => {
+    server.prizes.forEach((prize) => {
       prizeList.push(
         `${prize.reactionEmoji} - \`${prize.description}\` - **${prize.price}** ${
           prize.price === 1 ? server.config.cakeNameSingular : server.config.cakeNamePlural
@@ -71,10 +84,12 @@ export const redeemCake = async (args: CommandArguments): Promise<CommandRespons
           await member.save();
 
           if (prize.roleIds.length > 0) {
-            const roles = prize.roleIds.map(id => args.message.guild.roles.find(r => r.id === id));
+            const roles = prize.roleIds
+              .map((id) => args.message.guild!.roles.cache.find((r) => r.id === id))
+              .filter((role): role is Role => !!role);
 
             if (roles.length > 0) {
-              args.message.member.addRoles(roles);
+              args.message.member!.roles.add(roles);
             }
           }
 

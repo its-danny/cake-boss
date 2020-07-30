@@ -26,6 +26,10 @@ export const disappearCakes = async (args: Arguments): Promise<CommandResponse |
       };
     }
 
+    if (!args.message.guild) {
+      throw new Error("Could not find Discord Guild.");
+    }
+
     const server = await Server.findOne({
       where: { discordId: args.message.guild.id },
     });
@@ -35,7 +39,7 @@ export const disappearCakes = async (args: Arguments): Promise<CommandResponse |
     }
 
     const targetMemberId = args.member.replace(/^<@!?/, "").replace(/>$/, "");
-    const targetDiscordMember = args.message.guild.members.get(targetMemberId);
+    const targetDiscordMember = args.message.guild.members.cache.get(targetMemberId);
 
     if (!targetDiscordMember) {
       return {

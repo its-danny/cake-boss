@@ -19,6 +19,10 @@ export const getValue = async (args: Arguments): Promise<CommandResponse | void>
       };
     }
 
+    if (!args.message.guild) {
+      throw new Error("Could not find Discord Guild.");
+    }
+
     const server = await Server.findOne({
       where: { discordId: args.message.guild.id },
     });

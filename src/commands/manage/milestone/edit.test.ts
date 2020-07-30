@@ -7,7 +7,7 @@ import { EMOJI_ERROR, EMOJI_INCORRECT_PERMISSIONS, EMOJI_JOB_WELL_DONE } from ".
 import { Arguments, editMilestone } from "./edit";
 
 describe("commands/manage/milestone/edit", () => {
-  beforeEach(async done => {
+  beforeEach(async (done) => {
     await createConnection({
       type: "sqlite",
       database: ":memory:",
@@ -20,14 +20,14 @@ describe("commands/manage/milestone/edit", () => {
     done();
   });
 
-  afterEach(async done => {
+  afterEach(async (done) => {
     const conn = getConnection();
     await conn.close();
 
     done();
   });
 
-  it(`should require permissions`, async done => {
+  it(`should require permissions`, async (done) => {
     const server = await createServer();
     const milestone = await createMilestone(server);
 
@@ -49,7 +49,7 @@ describe("commands/manage/milestone/edit", () => {
     done();
   });
 
-  it("should require amount of 1 or more", async done => {
+  it("should require amount of 1 or more", async (done) => {
     const server = await createServer();
     const milestone = await createMilestone(server);
 
@@ -71,7 +71,7 @@ describe("commands/manage/milestone/edit", () => {
     done();
   });
 
-  it("should require 1 or more roles", async done => {
+  it("should require 1 or more roles", async (done) => {
     const server = await createServer();
     const milestone = await createMilestone(server);
 
@@ -93,7 +93,7 @@ describe("commands/manage/milestone/edit", () => {
     done();
   });
 
-  it("should require a valid id", async done => {
+  it("should require a valid id", async (done) => {
     const server = await createServer();
 
     const args: Arguments = {
@@ -116,7 +116,7 @@ describe("commands/manage/milestone/edit", () => {
     done();
   });
 
-  it("should update the milestone", async done => {
+  it("should update the milestone", async (done) => {
     const server = await createServer();
     const milestone = await createMilestone(server);
 

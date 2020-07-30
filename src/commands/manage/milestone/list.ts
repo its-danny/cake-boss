@@ -24,6 +24,10 @@ export const getMilestoneList = async (args: Arguments): Promise<CommandResponse
       };
     }
 
+    if (!args.message.guild) {
+      throw new Error("Could not find Discord Guild.");
+    }
+
     const server = await Server.findOne({
       where: { discordId: args.message.guild.id },
     });
@@ -61,10 +65,10 @@ export const getMilestoneList = async (args: Arguments): Promise<CommandResponse
       chars: getTableBorder(),
     });
 
-    milestones.forEach(milestone => {
+    milestones.forEach((milestone) => {
       const roleNames = chain(milestone.roleIds)
-        .map(roleId => {
-          const role = args.message.guild.roles.get(roleId);
+        .map((roleId) => {
+          const role = args.message.guild!.roles.cache.get(roleId);
 
           if (role) {
             return role.name;

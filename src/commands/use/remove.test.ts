@@ -6,7 +6,7 @@ import { EMOJI_INCORRECT_PERMISSIONS, EMOJI_JOB_WELL_DONE, EMOJI_RECORD_NOT_FOUN
 import { Arguments, removeCakes } from "./remove";
 
 describe("commands/use/remove", () => {
-  beforeEach(async done => {
+  beforeEach(async (done) => {
     await createConnection({
       type: "sqlite",
       database: ":memory:",
@@ -19,14 +19,14 @@ describe("commands/use/remove", () => {
     done();
   });
 
-  afterEach(async done => {
+  afterEach(async (done) => {
     const conn = getConnection();
     await conn.close();
 
     done();
   });
 
-  it(`should require permissions`, async done => {
+  it(`should require permissions`, async (done) => {
     const server = await createServer();
 
     const args: Arguments = {
@@ -46,7 +46,7 @@ describe("commands/use/remove", () => {
     done();
   });
 
-  it(`should require a valid member`, async done => {
+  it(`should require a valid member`, async (done) => {
     const server = await createServer();
 
     const args: Arguments = {
@@ -66,7 +66,7 @@ describe("commands/use/remove", () => {
     done();
   });
 
-  it(`should remove from balance`, async done => {
+  it(`should remove from balance`, async (done) => {
     const server = await createServer();
     const member = await createMember({ server, balance: 5 });
 

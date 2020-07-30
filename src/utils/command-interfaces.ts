@@ -1,10 +1,9 @@
-import { Attachment, Client, Message, MessageOptions, RichEmbed } from "discord.js";
+import { Client, Message, MessageEditOptions, MessageOptions } from "discord.js";
 
 export interface CommandResponse {
   content: string;
   messageOptions?: MessageOptions;
-  attachment?: Attachment;
-  richEmbed?: RichEmbed;
+  messageEditOptions?: MessageEditOptions;
 }
 
 export interface CommandArguments {

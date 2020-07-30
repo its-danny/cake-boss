@@ -9,6 +9,10 @@ import getTableBorder from "../../utils/get-table-border";
 
 export const getTopEarners = async (args: CommandArguments): Promise<CommandResponse | void> => {
   try {
+    if (!args.message.guild) {
+      throw new Error("Could not find Discord Guild.");
+    }
+
     const server = await Server.findOne({
       where: { discordId: args.message.guild.id },
     });
@@ -23,7 +27,7 @@ export const getTopEarners = async (args: CommandArguments): Promise<CommandResp
       .concat()
       .sort((a, b) => b.earned - a.earned)
       .slice(0, 10)
-      .filter(mem => mem.earned > 0);
+      .filter((mem) => mem.earned > 0);
 
     if (sorted.length === 0) {
       return { content: `${EMOJI_WORKING_HARD} There are no top earners yet!` };
@@ -36,7 +40,7 @@ export const getTopEarners = async (args: CommandArguments): Promise<CommandResp
     });
 
     sorted.forEach((member, index) => {
-      const discordMember = args.message.guild.members.get(member.discordId);
+      const discordMember = args.message.guild!.members.cache.get(member.discordId);
       table.push([`#${index + 1}`, discordMember ? discordMember.displayName : member.discordId, member.earned]);
     });
 

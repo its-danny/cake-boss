@@ -11,6 +11,10 @@ export interface Arguments extends CommandArguments {
 
 export const getBalance = async (args: Arguments): Promise<CommandResponse | void> => {
   try {
+    if (!args.message.guild) {
+      throw new Error("Could not find Discord Guild.");
+    }
+
     const server = await Server.findOne({
       where: { discordId: args.message.guild.id },
     });
@@ -26,10 +30,15 @@ export const getBalance = async (args: Arguments): Promise<CommandResponse | voi
       const receivingMemberId = args.member.replace(/^<@!?/, "").replace(/>$/, "");
 
       usingMember = true;
+
       member = await Member.findOne({
         where: { server, discordId: receivingMemberId },
       });
     } else {
+      if (!args.message.member) {
+        throw new Error("Could not find Discord GuildMember.");
+      }
+
       member = await Member.findOne({
         where: { server, discordId: args.message.member.id },
       });

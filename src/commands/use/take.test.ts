@@ -14,7 +14,7 @@ import { EMOJI_DONT_DO_THAT, EMOJI_JOB_WELL_DONE, EMOJI_RECORD_NOT_FOUND } from 
 import { takeCake } from "./take";
 
 describe("commands/use/take", () => {
-  beforeEach(async done => {
+  beforeEach(async (done) => {
     await createConnection({
       type: "sqlite",
       database: ":memory:",
@@ -27,14 +27,14 @@ describe("commands/use/take", () => {
     done();
   });
 
-  afterEach(async done => {
+  afterEach(async (done) => {
     const conn = getConnection();
     await conn.close();
 
     done();
   });
 
-  it(`should stop you if you're shamed`, async done => {
+  it(`should stop you if you're shamed`, async (done) => {
     const server = await createServer();
     const member = await createMember({ server, shamed: true });
     const channel = createChannel();
@@ -61,7 +61,7 @@ describe("commands/use/take", () => {
     done();
   });
 
-  it(`should tell you if there's no cakes dropped`, async done => {
+  it(`should tell you if there's no cakes dropped`, async (done) => {
     const server = await createServer();
     const channel = createChannel();
 
@@ -80,7 +80,7 @@ describe("commands/use/take", () => {
     done();
   });
 
-  it(`should take the cake`, async done => {
+  it(`should take the cake`, async (done) => {
     const server = await createServer();
     const member = await createMember({ server });
     const channel = createChannel();
