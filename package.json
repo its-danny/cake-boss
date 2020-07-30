@@ -8,7 +8,7 @@
   "scripts": {
     "dev": "NODE_ENV=development yarn run nodemon --watch 'src/**/*.ts' --ignore 'src/**/*.test.ts' --exec 'yarn run ts-node' src/index.ts",
     "build": "NODE_ENV=production yarn run tsc",
-    "start": "NODE_ENV=production node dist/index.js",
+    "start": "NODE_ENV=production node dist/src/index.js",
     "test": "NODE_ENV=test yarn run jest",
     "lint": "eslint --ext .ts src/",
     "fix": "eslint --ext .ts src/ --fix && prettier --write '**/*.ts' src/",
