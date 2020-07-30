@@ -1,22 +1,27 @@
-import { Argv } from "yargs";
 import Table from "cli-table";
-import { canDrop } from "../../utils/permissions";
+import { Argv } from "yargs";
+
 import Server from "../../entity/server";
-import { EMOJI_INCORRECT_PERMISSIONS, EMOJI_WORKING_HARD } from "../../utils/emoji";
 import { CommandArguments, CommandResponse } from "../../utils/command-interfaces";
-import getTableBorder from "../../utils/get-table-border";
+import { EMOJI_INCORRECT_PERMISSIONS, EMOJI_WORKING_HARD } from "../../utils/emoji";
 import { handleError } from "../../utils/errors";
+import getTableBorder from "../../utils/get-table-border";
+import { canDrop } from "../../utils/permissions";
 
 export const getDropList = async (args: CommandArguments): Promise<CommandResponse | void> => {
   try {
     if (!(await canDrop(args.message))) {
       return {
-        content: `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`
+        content: `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`,
       };
     }
 
+    if (!args.message.guild) {
+      throw new Error("Could not find Discord Guild.");
+    }
+
     const server = await Server.findOne({
-      where: { discordId: args.message.guild.id }
+      where: { discordId: args.message.guild.id },
     });
 
     if (!server) {
@@ -30,13 +35,13 @@ export const getDropList = async (args: CommandArguments): Promise<CommandRespon
     const table = new Table({
       head: ["Channel", "Amount"],
       style: { head: [], border: [] },
-      chars: getTableBorder()
+      chars: getTableBorder(),
     });
 
     const dropped: { [key: string]: number } = {};
 
-    server.drops.forEach(drop => {
-      const channel = args.message.guild.channels.get(drop.channelDiscordId);
+    server.drops.forEach((drop) => {
+      const channel = args.message.guild!.channels.cache.get(drop.channelDiscordId);
 
       if (channel) {
         if (Object.prototype.hasOwnProperty.call(dropped, channel.name)) {
@@ -49,12 +54,12 @@ export const getDropList = async (args: CommandArguments): Promise<CommandRespon
 
     Object.keys(dropped)
       .sort((a, b) => dropped[b] - dropped[a])
-      .forEach(channel => table.push([`#${channel}`, dropped[channel]]));
+      .forEach((channel) => table.push([`#${channel}`, dropped[channel]]));
 
     return {
       content: `${server.config.cakeEmoji} **Dropped ${
         server.config.cakeNamePlural
-      }** \n\n\`\`\`\n\n${table.toString()}\n\`\`\``
+      }** \n\n\`\`\`\n\n${table.toString()}\n\`\`\``,
     };
   } catch (error) {
     return handleError(error, args.message);

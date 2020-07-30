@@ -1,12 +1,13 @@
 import {
-  Entity,
   BaseEntity,
-  PrimaryGeneratedColumn,
   Column,
-  OneToMany,
   CreateDateColumn,
-  UpdateDateColumn
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from "typeorm";
+
 import Member from "./member";
 
 @Entity()
@@ -23,18 +24,14 @@ export default class User extends BaseEntity {
   @Column({ nullable: false })
   discordId!: string;
 
-  @OneToMany(
-    () => Member,
-    member => member.user,
-    { eager: true }
-  )
+  @OneToMany(() => Member, (member) => member.user, { eager: true })
   members!: Member[];
 
   totalEarned(): number {
     let totalEarned = 0;
 
     if (this.members) {
-      this.members.forEach(m => {
+      this.members.forEach((m) => {
         totalEarned += m.earned;
       });
     }

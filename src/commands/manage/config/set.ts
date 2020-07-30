@@ -1,11 +1,12 @@
 import { Argv } from "yargs";
-import Server from "../../../entity/server";
-import { canManage } from "../../../utils/permissions";
-import { logEvent } from "../../../utils/logger";
-import { EMOJI_ERROR, EMOJI_INCORRECT_PERMISSIONS, EMOJI_CONFIG, EMOJI_JOB_WELL_DONE } from "../../../utils/emoji";
-import { CommandArguments, CommandResponse } from "../../../utils/command-interfaces";
+
 import { ConfigCommand } from "../../../entity/config";
+import Server from "../../../entity/server";
+import { CommandArguments, CommandResponse } from "../../../utils/command-interfaces";
+import { EMOJI_CONFIG, EMOJI_ERROR, EMOJI_INCORRECT_PERMISSIONS, EMOJI_JOB_WELL_DONE } from "../../../utils/emoji";
 import { handleError } from "../../../utils/errors";
+import { logEvent } from "../../../utils/logger";
+import { canManage } from "../../../utils/permissions";
 
 interface Arguments extends CommandArguments {
   config: ConfigCommand;
@@ -18,12 +19,16 @@ export const setConfig = async (args: Arguments): Promise<CommandResponse | void
   try {
     if (!(await canManage(args.message))) {
       return {
-        content: `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`
+        content: `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`,
       };
     }
 
+    if (!args.message.guild) {
+      throw new Error("Could not find Discord Guild.");
+    }
+
     const server = await Server.findOne({
-      where: { discordId: args.message.guild.id }
+      where: { discordId: args.message.guild.id },
     });
 
     if (!server) {
@@ -39,7 +44,7 @@ export const setConfig = async (args: Arguments): Promise<CommandResponse | void
         await logEvent(
           args.client,
           args.message,
-          `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`
+          `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`,
         );
 
         configSet = true;
@@ -48,10 +53,14 @@ export const setConfig = async (args: Arguments): Promise<CommandResponse | void
       }
     }
 
+    if (!args.message.guild.me) {
+      throw new Error("Could not find Discord Guild for Cake Boss.");
+    }
+
     if (args.config === "quiet-mode") {
       if (args.value === "true" && !args.message.guild.me.hasPermission("ADD_REACTIONS")) {
         return {
-          content: `${EMOJI_ERROR} I need permission to \`add reactions\`!`
+          content: `${EMOJI_ERROR} I need permission to \`add reactions\`!`,
         };
       }
 
@@ -61,7 +70,7 @@ export const setConfig = async (args: Arguments): Promise<CommandResponse | void
         await logEvent(
           args.client,
           args.message,
-          `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`
+          `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`,
         );
 
         return { content: `${EMOJI_JOB_WELL_DONE} Done!` };
@@ -74,14 +83,14 @@ export const setConfig = async (args: Arguments): Promise<CommandResponse | void
       if (server.config.setLogChannel(args.value, args.message.guild)) {
         await server.config.save();
 
-        const channel = args.message.guild.channels.get(args.value.replace(/^<#/, "").replace(/>$/, ""));
+        const channel = args.message.guild.channels.cache.get(args.value.replace(/^<#/, "").replace(/>$/, ""));
 
         await logEvent(
           args.client,
           args.message,
           `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${
             channel ? `#${channel.name}` : "none"
-          }\`.`
+          }\`.`,
         );
 
         configSet = true;
@@ -97,7 +106,7 @@ export const setConfig = async (args: Arguments): Promise<CommandResponse | void
         await logEvent(
           args.client,
           args.message,
-          `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`
+          `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`,
         );
 
         configSet = true;
@@ -110,14 +119,14 @@ export const setConfig = async (args: Arguments): Promise<CommandResponse | void
       if (server.config.setRedeemChannel(args.value, args.message.guild)) {
         await server.config.save();
 
-        const channel = args.message.guild.channels.get(args.value.replace(/^<#/, "").replace(/>$/, ""));
+        const channel = args.message.guild.channels.cache.get(args.value.replace(/^<#/, "").replace(/>$/, ""));
 
         await logEvent(
           args.client,
           args.message,
           `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${
             channel ? `#${channel.name}` : "none"
-          }\`.`
+          }\`.`,
         );
 
         configSet = true;
@@ -133,7 +142,7 @@ export const setConfig = async (args: Arguments): Promise<CommandResponse | void
         await logEvent(
           args.client,
           args.message,
-          `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`
+          `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`,
         );
 
         configSet = true;
@@ -146,14 +155,14 @@ export const setConfig = async (args: Arguments): Promise<CommandResponse | void
       if (server.config.setMilestoneChannel(args.value, args.message.guild)) {
         await server.config.save();
 
-        const channel = args.message.guild.channels.get(args.value.replace(/^<#/, "").replace(/>$/, ""));
+        const channel = args.message.guild.channels.cache.get(args.value.replace(/^<#/, "").replace(/>$/, ""));
 
         await logEvent(
           args.client,
           args.message,
           `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${
             channel ? `#${channel.name}` : "none"
-          }\`.`
+          }\`.`,
         );
 
         configSet = true;
@@ -169,7 +178,7 @@ export const setConfig = async (args: Arguments): Promise<CommandResponse | void
         await logEvent(
           args.client,
           args.message,
-          `${EMOJI_CONFIG} \`${args.message.author.tag}\` updated \`${args.config}\`.`
+          `${EMOJI_CONFIG} \`${args.message.author.tag}\` updated \`${args.config}\`.`,
         );
 
         configSet = true;
@@ -185,7 +194,7 @@ export const setConfig = async (args: Arguments): Promise<CommandResponse | void
         await logEvent(
           args.client,
           args.message,
-          `${EMOJI_CONFIG} \`${args.message.author.tag}\` updated \`${args.config}\`.`
+          `${EMOJI_CONFIG} \`${args.message.author.tag}\` updated \`${args.config}\`.`,
         );
 
         configSet = true;
@@ -201,7 +210,7 @@ export const setConfig = async (args: Arguments): Promise<CommandResponse | void
         await logEvent(
           args.client,
           args.message,
-          `${EMOJI_CONFIG} \`${args.message.author.tag}\` updated \`${args.config}\`.`
+          `${EMOJI_CONFIG} \`${args.message.author.tag}\` updated \`${args.config}\`.`,
         );
 
         configSet = true;
@@ -217,7 +226,7 @@ export const setConfig = async (args: Arguments): Promise<CommandResponse | void
         await logEvent(
           args.client,
           args.message,
-          `${EMOJI_CONFIG} \`${args.message.author.tag}\` updated \`${args.config}\`.`
+          `${EMOJI_CONFIG} \`${args.message.author.tag}\` updated \`${args.config}\`.`,
         );
 
         configSet = true;
@@ -229,14 +238,18 @@ export const setConfig = async (args: Arguments): Promise<CommandResponse | void
     if (args.config === "nickname") {
       if (!args.message.guild.me.hasPermission("CHANGE_NICKNAME")) {
         return {
-          content: `${EMOJI_ERROR} I need permission to \`change nickname\`!`
+          content: `${EMOJI_ERROR} I need permission to \`change nickname\`!`,
         };
       }
 
       if (server.config.setNickname(args.value)) {
         await server.config.save();
 
-        const member = args.message.guild.members.get(args.client.user.id);
+        if (!args.client.user) {
+          throw new Error("Could not find Discord ClientUser.");
+        }
+
+        const member = args.message.guild.members.cache.get(args.client.user.id);
 
         if (server && member) {
           member.setNickname(server.config.nickname);
@@ -245,7 +258,7 @@ export const setConfig = async (args: Arguments): Promise<CommandResponse | void
         await logEvent(
           args.client,
           args.message,
-          `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`
+          `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`,
         );
 
         configSet = true;
@@ -261,7 +274,7 @@ export const setConfig = async (args: Arguments): Promise<CommandResponse | void
         await logEvent(
           args.client,
           args.message,
-          `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`
+          `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`,
         );
 
         configSet = true;
@@ -277,7 +290,7 @@ export const setConfig = async (args: Arguments): Promise<CommandResponse | void
         await logEvent(
           args.client,
           args.message,
-          `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`
+          `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`,
         );
 
         configSet = true;
@@ -293,7 +306,7 @@ export const setConfig = async (args: Arguments): Promise<CommandResponse | void
         await logEvent(
           args.client,
           args.message,
-          `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`
+          `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`,
         );
 
         configSet = true;
@@ -311,7 +324,7 @@ export const setConfig = async (args: Arguments): Promise<CommandResponse | void
           args.message,
           `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value
             .split(",")
-            .join(", ")}\`.`
+            .join(", ")}\`.`,
         );
 
         configSet = true;
@@ -329,7 +342,7 @@ export const setConfig = async (args: Arguments): Promise<CommandResponse | void
           args.message,
           `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value
             .split(",")
-            .join(", ")}\`.`
+            .join(", ")}\`.`,
         );
 
         configSet = true;
@@ -344,7 +357,7 @@ export const setConfig = async (args: Arguments): Promise<CommandResponse | void
         await logEvent(
           args.client,
           args.message,
-          `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`
+          `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`,
         );
 
         configSet = true;
@@ -360,7 +373,7 @@ export const setConfig = async (args: Arguments): Promise<CommandResponse | void
         await logEvent(
           args.client,
           args.message,
-          `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`
+          `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`,
         );
 
         configSet = true;
@@ -376,7 +389,7 @@ export const setConfig = async (args: Arguments): Promise<CommandResponse | void
         await logEvent(
           args.client,
           args.message,
-          `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`
+          `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`,
         );
 
         configSet = true;
@@ -392,7 +405,7 @@ export const setConfig = async (args: Arguments): Promise<CommandResponse | void
         await logEvent(
           args.client,
           args.message,
-          `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`
+          `${EMOJI_CONFIG} \`${args.message.author.tag}\` set \`${args.config}\` to \`${args.value}\`.`,
         );
 
         configSet = true;

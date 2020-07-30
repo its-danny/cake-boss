@@ -7,6 +7,6 @@ export const builder = (yargs: Argv) => {
   const NODE_ENV: string = process.env.NODE_ENV as string;
   return yargs.commandDir("shame", {
     exclude: /\.test\./gm,
-    extensions: [NODE_ENV === "production" ? "js" : "ts"]
+    extensions: [NODE_ENV === "production" ? "js" : "ts"],
   });
 };

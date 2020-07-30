@@ -1,31 +1,32 @@
 import { createConnection, getConnection } from "typeorm";
-import { getBalance } from "./balance";
-import { createServer, createMember, createMessage, createClient, ENTITIES } from "../../../test/test-helpers";
-import { EMOJI_CAKE } from "../../utils/emoji";
+
+import { createClient, createMember, createMessage, createServer, ENTITIES } from "../../../test/test-helpers";
 import { CommandArguments, CommandResponse } from "../../utils/command-interfaces";
+import { EMOJI_CAKE } from "../../utils/emoji";
+import { getBalance } from "./balance";
 
 describe("commands/use/balance", () => {
-  beforeEach(async done => {
+  beforeEach(async (done) => {
     await createConnection({
       type: "sqlite",
       database: ":memory:",
       dropSchema: true,
       entities: ENTITIES,
       synchronize: true,
-      logging: false
+      logging: false,
     });
 
     done();
   });
 
-  afterEach(async done => {
+  afterEach(async (done) => {
     const conn = getConnection();
     await conn.close();
 
     done();
   });
 
-  it(`should give you your balance`, async done => {
+  it(`should give you your balance`, async (done) => {
     const server = await createServer();
     const member = await createMember({ server, balance: 3 });
 
@@ -35,7 +36,7 @@ describe("commands/use/balance", () => {
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await getBalance(args)) as CommandResponse;

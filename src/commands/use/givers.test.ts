@@ -1,31 +1,32 @@
 import { createConnection, getConnection } from "typeorm";
-import { getTopGivers } from "./givers";
-import { createServer, createMember, createMessage, createClient, ENTITIES } from "../../../test/test-helpers";
-import { EMOJI_CAKE, EMOJI_WORKING_HARD } from "../../utils/emoji";
+
+import { createClient, createMember, createMessage, createServer, ENTITIES } from "../../../test/test-helpers";
 import { CommandArguments, CommandResponse } from "../../utils/command-interfaces";
+import { EMOJI_CAKE, EMOJI_WORKING_HARD } from "../../utils/emoji";
+import { getTopGivers } from "./givers";
 
 describe("commands/use/givers", () => {
-  beforeEach(async done => {
+  beforeEach(async (done) => {
     await createConnection({
       type: "sqlite",
       database: ":memory:",
       dropSchema: true,
       entities: ENTITIES,
       synchronize: true,
-      logging: false
+      logging: false,
     });
 
     done();
   });
 
-  afterEach(async done => {
+  afterEach(async (done) => {
     const conn = getConnection();
     await conn.close();
 
     done();
   });
 
-  it(`should let you know if there are no leaders`, async done => {
+  it(`should let you know if there are no leaders`, async (done) => {
     const server = await createServer();
 
     const args: CommandArguments = {
@@ -34,7 +35,7 @@ describe("commands/use/givers", () => {
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await getTopGivers(args)) as CommandResponse;
@@ -43,7 +44,7 @@ describe("commands/use/givers", () => {
     done();
   });
 
-  it(`should let you know if you're not set up yet`, async done => {
+  it(`should let you know if you're not set up yet`, async (done) => {
     const server = await createServer();
 
     const memberOne = await createMember({ server, given: 1 });
@@ -56,7 +57,7 @@ describe("commands/use/givers", () => {
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await getTopGivers(args)) as CommandResponse;

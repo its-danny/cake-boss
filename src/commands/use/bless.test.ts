@@ -1,31 +1,32 @@
 import { createConnection, getConnection } from "typeorm";
-import { blessMember, Arguments } from "./bless";
-import { createServer, createMember, createMessage, createClient, ENTITIES } from "../../../test/test-helpers";
-import { EMOJI_INCORRECT_PERMISSIONS, EMOJI_RECORD_NOT_FOUND, EMOJI_CAKE } from "../../utils/emoji";
+
+import { createClient, createMember, createMessage, createServer, ENTITIES } from "../../../test/test-helpers";
 import { CommandResponse } from "../../utils/command-interfaces";
+import { EMOJI_CAKE, EMOJI_INCORRECT_PERMISSIONS, EMOJI_RECORD_NOT_FOUND } from "../../utils/emoji";
+import { Arguments, blessMember } from "./bless";
 
 describe("commands/use/bless", () => {
-  beforeEach(async done => {
+  beforeEach(async (done) => {
     await createConnection({
       type: "sqlite",
       database: ":memory:",
       dropSchema: true,
       entities: ENTITIES,
       synchronize: true,
-      logging: false
+      logging: false,
     });
 
     done();
   });
 
-  afterEach(async done => {
+  afterEach(async (done) => {
     const conn = getConnection();
     await conn.close();
 
     done();
   });
 
-  it(`should require permissions`, async done => {
+  it(`should require permissions`, async (done) => {
     const server = await createServer();
 
     const args: Arguments = {
@@ -37,7 +38,7 @@ describe("commands/use/bless", () => {
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await blessMember(args)) as CommandResponse;
@@ -46,7 +47,7 @@ describe("commands/use/bless", () => {
     done();
   });
 
-  it(`should require a valid member`, async done => {
+  it(`should require a valid member`, async (done) => {
     const server = await createServer();
 
     const args: Arguments = {
@@ -58,7 +59,7 @@ describe("commands/use/bless", () => {
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await blessMember(args)) as CommandResponse;
@@ -67,7 +68,7 @@ describe("commands/use/bless", () => {
     done();
   });
 
-  it("should give them cake", async done => {
+  it("should give them cake", async (done) => {
     const server = await createServer();
     const sender = await createMember({ server });
     const receiver = await createMember({ server });
@@ -78,7 +79,7 @@ describe("commands/use/bless", () => {
         server,
         senderId: sender.discordId,
         serverMembers: [sender, receiver],
-        permission: "ADMINISTRATOR"
+        permission: "ADMINISTRATOR",
       }),
       member: `<@${receiver.discordId}>`,
       role: `<@${receiver.discordId}>`,
@@ -86,7 +87,7 @@ describe("commands/use/bless", () => {
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await blessMember(args)) as CommandResponse;

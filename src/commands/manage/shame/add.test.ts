@@ -1,31 +1,32 @@
 import { createConnection, getConnection } from "typeorm";
-import { createServer, createClient, createMessage, createMember, ENTITIES } from "../../../../test/test-helpers";
-import { shameMember, Arguments } from "./add";
-import { EMOJI_INCORRECT_PERMISSIONS, EMOJI_JOB_WELL_DONE, EMOJI_RECORD_NOT_FOUND } from "../../../utils/emoji";
+
+import { createClient, createMember, createMessage, createServer, ENTITIES } from "../../../../test/test-helpers";
 import { CommandResponse } from "../../../utils/command-interfaces";
+import { EMOJI_INCORRECT_PERMISSIONS, EMOJI_JOB_WELL_DONE, EMOJI_RECORD_NOT_FOUND } from "../../../utils/emoji";
+import { Arguments, shameMember } from "./add";
 
 describe("commands/manage/shamed/add", () => {
-  beforeEach(async done => {
+  beforeEach(async (done) => {
     await createConnection({
       type: "sqlite",
       database: ":memory:",
       dropSchema: true,
       entities: ENTITIES,
       synchronize: true,
-      logging: false
+      logging: false,
     });
 
     done();
   });
 
-  afterEach(async done => {
+  afterEach(async (done) => {
     const conn = getConnection();
     await conn.close();
 
     done();
   });
 
-  it(`should require permissions`, async done => {
+  it(`should require permissions`, async (done) => {
     const server = await createServer();
 
     const args: Arguments = {
@@ -35,7 +36,7 @@ describe("commands/manage/shamed/add", () => {
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await shameMember(args)) as CommandResponse;
@@ -44,7 +45,7 @@ describe("commands/manage/shamed/add", () => {
     done();
   });
 
-  it(`should require valid member`, async done => {
+  it(`should require valid member`, async (done) => {
     const server = await createServer();
 
     const args: Arguments = {
@@ -54,7 +55,7 @@ describe("commands/manage/shamed/add", () => {
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await shameMember(args)) as CommandResponse;
@@ -63,7 +64,7 @@ describe("commands/manage/shamed/add", () => {
     done();
   });
 
-  it(`should shame a member`, async done => {
+  it(`should shame a member`, async (done) => {
     const server = await createServer();
     const member = await createMember({ server });
 
@@ -72,13 +73,13 @@ describe("commands/manage/shamed/add", () => {
       message: await createMessage({
         server,
         serverMembers: [member],
-        permission: "ADMINISTRATOR"
+        permission: "ADMINISTRATOR",
       }),
       member: `<@${member.discordId}>`,
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await shameMember(args)) as CommandResponse;

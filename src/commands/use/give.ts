@@ -1,17 +1,19 @@
-import { Argv } from "yargs";
+import { Role } from "discord.js";
 import moment from "moment";
-import Server from "../../entity/server";
-import { canGive, isShamed } from "../../utils/permissions";
+import { Argv } from "yargs";
+
 import Member from "../../entity/member";
-import { logEvent, logMilestone } from "../../utils/logger";
+import Server from "../../entity/server";
+import { CommandArguments, CommandResponse } from "../../utils/command-interfaces";
 import {
   EMOJI_DONT_DO_THAT,
   EMOJI_INCORRECT_PERMISSIONS,
   EMOJI_RECORD_NOT_FOUND,
-  EMOJI_WORKING_HARD
+  EMOJI_WORKING_HARD,
 } from "../../utils/emoji";
-import { CommandArguments, CommandResponse } from "../../utils/command-interfaces";
 import { handleError } from "../../utils/errors";
+import { logEvent, logMilestone } from "../../utils/logger";
+import { canGive, isShamed } from "../../utils/permissions";
 
 export interface Arguments extends CommandArguments {
   member: string;
@@ -20,8 +22,12 @@ export interface Arguments extends CommandArguments {
 
 export const giveCakeToMember = async (args: Arguments): Promise<CommandResponse | void> => {
   try {
+    if (!args.message.guild) {
+      throw new Error("Could not find Discord Guild.");
+    }
+
     const server = await Server.findOne({
-      where: { discordId: args.message.guild.id }
+      where: { discordId: args.message.guild.id },
     });
 
     if (!server) {
@@ -30,22 +36,26 @@ export const giveCakeToMember = async (args: Arguments): Promise<CommandResponse
 
     if (server.config.noGiving) {
       return {
-        content: `${EMOJI_WORKING_HARD} You can't give ${server.config.cakeNamePlural}!`
+        content: `${EMOJI_WORKING_HARD} You can't give ${server.config.cakeNamePlural}!`,
       };
+    }
+
+    if (!args.message.member) {
+      throw new Error("Could not find Discord GuildMember.");
     }
 
     if (await isShamed(args.message.guild.id, args.message.member.id)) {
       return {
-        content: `${EMOJI_DONT_DO_THAT} You have been **shamed** and can not give ${server.config.cakeNamePlural}!`
+        content: `${EMOJI_DONT_DO_THAT} You have been **shamed** and can not give ${server.config.cakeNamePlural}!`,
       };
     }
 
     const receivingMemberId = args.member.replace(/^<@!?/, "").replace(/>$/, "");
-    const receivingDiscordMember = args.message.guild.members.get(receivingMemberId);
+    const receivingDiscordMember = args.message.guild.members.cache.get(receivingMemberId);
 
     if (!receivingDiscordMember) {
       return {
-        content: `${EMOJI_RECORD_NOT_FOUND} Uh oh, I couldn't find them.`
+        content: `${EMOJI_RECORD_NOT_FOUND} Uh oh, I couldn't find them.`,
       };
     }
 
@@ -55,12 +65,12 @@ export const giveCakeToMember = async (args: Arguments): Promise<CommandResponse
 
     if (await isShamed(server.discordId, receivingDiscordMember.id)) {
       return {
-        content: `${EMOJI_DONT_DO_THAT} They have been **shamed** and can not get ${server.config.cakeNamePlural}!`
+        content: `${EMOJI_DONT_DO_THAT} They have been **shamed** and can not get ${server.config.cakeNamePlural}!`,
       };
     }
 
     const receivingMember = await Member.findOne({
-      where: { discordId: receivingDiscordMember.id }
+      where: { discordId: receivingDiscordMember.id },
     });
 
     if (!receivingMember) {
@@ -68,7 +78,7 @@ export const giveCakeToMember = async (args: Arguments): Promise<CommandResponse
     }
 
     const givingMember = await Member.findOne({
-      where: { discordId: args.message.member.id }
+      where: { discordId: args.message.member.id },
     });
 
     if (!givingMember) {
@@ -78,7 +88,7 @@ export const giveCakeToMember = async (args: Arguments): Promise<CommandResponse
     if (!(await canGive(args.message))) {
       if (givingMember.earned < server.config.requirementToGive) {
         return {
-          content: `${EMOJI_INCORRECT_PERMISSIONS} You need to earn ${server.config.requirementToGive} ${server.config.cakeNamePlural} first!`
+          content: `${EMOJI_INCORRECT_PERMISSIONS} You need to earn ${server.config.requirementToGive} ${server.config.cakeNamePlural} first!`,
         };
       }
       if (givingMember.givenSinceReset >= server.config.giveLimit) {
@@ -88,11 +98,11 @@ export const giveCakeToMember = async (args: Arguments): Promise<CommandResponse
         return {
           content: `${EMOJI_INCORRECT_PERMISSIONS} You're out of ${
             server.config.cakeNamePlural
-          }! You can give more ${date.fromNow()}.`
+          }! You can give more ${date.fromNow()}.`,
         };
       }
       return {
-        content: `${EMOJI_INCORRECT_PERMISSIONS} You can't do that yet!`
+        content: `${EMOJI_INCORRECT_PERMISSIONS} You can't do that yet!`,
       };
     }
 
@@ -126,13 +136,16 @@ export const giveCakeToMember = async (args: Arguments): Promise<CommandResponse
       args.message,
       `${server.config.cakeEmoji}  \`${args.message.author.tag}\` gave \`${
         receivingDiscordMember.user.tag
-      }\` ${amount} ${amount > 1 ? server.config.cakeNamePlural : server.config.cakeNameSingular}!`
+      }\` ${amount} ${amount > 1 ? server.config.cakeNamePlural : server.config.cakeNameSingular}!`,
     );
 
-    server.milestones.forEach(milestone => {
+    server.milestones.forEach((milestone) => {
       if (previousEarned < milestone.amount && receivingMember.earned >= milestone.amount) {
-        const roles = milestone.roleIds.map(roleId => args.message.guild.roles.find(role => role.id === roleId));
-        receivingDiscordMember.addRoles(roles);
+        const roles = milestone.roleIds
+          .map((roleId) => args.message.guild!.roles.cache.find((role) => role.id === roleId))
+          .filter((role): role is Role => !!role);
+
+        receivingDiscordMember.roles.add(roles);
 
         logMilestone(args.client, args.message, milestone, receivingDiscordMember, roles);
       }
@@ -140,7 +153,7 @@ export const giveCakeToMember = async (args: Arguments): Promise<CommandResponse
 
     if (previousEarned < server.config.requirementToGive && receivingMember.earned >= server.config.requirementToGive) {
       args.message.channel.send(
-        `${server.config.cakeEmoji} You can now give ${server.config.cakeNamePlural}, <@${receivingDiscordMember.id}>!`
+        `${server.config.cakeEmoji} You can now give ${server.config.cakeNamePlural}, <@${receivingDiscordMember.id}>!`,
       );
     }
 
@@ -161,7 +174,7 @@ export const giveCakeToMember = async (args: Arguments): Promise<CommandResponse
     return {
       content: `${server.config.cakeEmoji} ${receivingDiscordMember.displayName} just got ${amount} ${
         amount > 1 ? server.config.cakeNamePlural : server.config.cakeNameSingular
-      }, <@${args.message.member.id}>!`
+      }, <@${args.message.member.id}>!`,
     };
   } catch (error) {
     return handleError(error, args.message);

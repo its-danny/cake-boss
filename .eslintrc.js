@@ -1,15 +1,22 @@
 module.exports = {
-  extends: ["airbnb-typescript/base", "prettier/@typescript-eslint", "plugin:prettier/recommended"],
+  extends: ["airbnb-typescript/base", "plugin:prettier/recommended"],
 
-  plugins: ["jest"],
+  plugins: ["simple-import-sort", "prettier", "jest"],
 
   rules: {
-    "no-console": "off",
+    "@typescript-eslint/quotes": "off",
+    "class-methods-use-this": "off",
     "import/no-cycle": "off",
     "import/prefer-default-export": "off",
+    "simple-import-sort/sort": "error",
+    "no-console": "off",
+    "no-param-reassign": "off",
+    "no-return-assign": "off",
+    "no-underscore-dangle": "off"
+  },
 
-    "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
-    "no-param-reassign": ["error", { props: true, ignorePropertyModificationsFor: ["args"] }]
+  parserOptions: {
+    project: "./tsconfig.json"
   },
 
   env: {

@@ -1,24 +1,37 @@
 import { Message } from "discord.js";
-import Server from "../entity/server";
+
 import Member from "../entity/member";
+import Server from "../entity/server";
 
 export const canManage = async (message: Message): Promise<boolean> => {
+  if (!message.member) {
+    throw new Error("Could not find Discord GuildMember.");
+  }
+
   if (message.member.hasPermission("ADMINISTRATOR")) {
     return true;
   }
 
+  if (!message.guild) {
+    throw new Error("Could not find Discord Guild.");
+  }
+
   const server = await Server.findOne({
-    where: { discordId: message.guild.id }
+    where: { discordId: message.guild.id },
   });
 
   if (server) {
-    return message.member.roles.some(role => server.config.managerRoleIds.includes(role.id));
+    return message.member.roles.cache.some((role) => server.config.managerRoleIds.includes(role.id));
   }
 
   return false;
 };
 
 export const canBless = async (message: Message): Promise<boolean> => {
+  if (!message.member) {
+    throw new Error("Could not find Discord GuildMember.");
+  }
+
   if (message.member.hasPermission("ADMINISTRATOR")) {
     return true;
   }
@@ -27,18 +40,26 @@ export const canBless = async (message: Message): Promise<boolean> => {
     return true;
   }
 
+  if (!message.guild) {
+    throw new Error("Could not find Discord Guild.");
+  }
+
   const server = await Server.findOne({
-    where: { discordId: message.guild.id }
+    where: { discordId: message.guild.id },
   });
 
   if (server) {
-    return message.member.roles.some(role => server.config.blesserRoleIds.includes(role.id));
+    return message.member.roles.cache.some((role) => server.config.blesserRoleIds.includes(role.id));
   }
 
   return false;
 };
 
 export const canDrop = async (message: Message): Promise<boolean> => {
+  if (!message.member) {
+    throw new Error("Could not find Discord GuildMember.");
+  }
+
   if (message.member.hasPermission("ADMINISTRATOR")) {
     return true;
   }
@@ -47,25 +68,37 @@ export const canDrop = async (message: Message): Promise<boolean> => {
     return true;
   }
 
+  if (!message.guild) {
+    throw new Error("Could not find Discord Guild.");
+  }
+
   const server = await Server.findOne({
-    where: { discordId: message.guild.id }
+    where: { discordId: message.guild.id },
   });
 
   if (server) {
-    return message.member.roles.some(role => server.config.dropperRoleIds.includes(role.id));
+    return message.member.roles.cache.some((role) => server.config.dropperRoleIds.includes(role.id));
   }
 
   return false;
 };
 
 export const canGive = async (message: Message): Promise<boolean> => {
+  if (!message.guild) {
+    throw new Error("Could not find Discord Guild.");
+  }
+
   const server = await Server.findOne({
-    where: { discordId: message.guild.id }
+    where: { discordId: message.guild.id },
   });
 
   if (server) {
+    if (!message.member) {
+      throw new Error("Could not find Discord GuildMember.");
+    }
+
     const member = await Member.findOne({
-      where: { discordId: message.member.id }
+      where: { discordId: message.member.id },
     });
 
     if (member) {
@@ -78,12 +111,12 @@ export const canGive = async (message: Message): Promise<boolean> => {
 
 export const isShamed = async (discordServerId: string, discordMemberId: string): Promise<boolean> => {
   const server = await Server.findOne({
-    where: { discordId: discordServerId }
+    where: { discordId: discordServerId },
   });
 
   if (server) {
     const member = await Member.findOne({
-      where: { discordId: discordMemberId }
+      where: { discordId: discordMemberId },
     });
 
     if (member) {
@@ -95,5 +128,9 @@ export const isShamed = async (discordServerId: string, discordMemberId: string)
 };
 
 export const hasRole = (message: Message, roleName: string) => {
-  return message.member.roles.find(role => role.name === roleName) !== null;
+  if (!message.member) {
+    throw new Error("Could not find Discord GuildMember.");
+  }
+
+  return message.member.roles.cache.find((role) => role.name === roleName) !== null;
 };

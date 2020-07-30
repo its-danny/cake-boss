@@ -1,31 +1,32 @@
 import { createConnection, getConnection } from "typeorm";
-import { createServer, createClient, createMessage, createChannel, ENTITIES } from "../../../../test/test-helpers";
-import { addPrize, Arguments } from "./add";
-import { EMOJI_ERROR, EMOJI_INCORRECT_PERMISSIONS, EMOJI_JOB_WELL_DONE } from "../../../utils/emoji";
+
+import { createChannel, createClient, createMessage, createServer, ENTITIES } from "../../../../test/test-helpers";
 import { CommandResponse } from "../../../utils/command-interfaces";
+import { EMOJI_ERROR, EMOJI_INCORRECT_PERMISSIONS, EMOJI_JOB_WELL_DONE } from "../../../utils/emoji";
+import { addPrize, Arguments } from "./add";
 
 describe("commands/manage/prize/add", () => {
-  beforeEach(async done => {
+  beforeEach(async (done) => {
     await createConnection({
       type: "sqlite",
       database: ":memory:",
       dropSchema: true,
       entities: ENTITIES,
       synchronize: true,
-      logging: false
+      logging: false,
     });
 
     done();
   });
 
-  afterEach(async done => {
+  afterEach(async (done) => {
     const conn = getConnection();
     await conn.close();
 
     done();
   });
 
-  it(`should require permissions`, async done => {
+  it(`should require permissions`, async (done) => {
     const server = await createServer();
 
     const args: Arguments = {
@@ -37,7 +38,7 @@ describe("commands/manage/prize/add", () => {
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await addPrize(args)) as CommandResponse;
@@ -46,7 +47,7 @@ describe("commands/manage/prize/add", () => {
     done();
   });
 
-  it("should require redeem-channel being set", async done => {
+  it("should require redeem-channel being set", async (done) => {
     const server = await createServer();
 
     const args: Arguments = {
@@ -58,7 +59,7 @@ describe("commands/manage/prize/add", () => {
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await addPrize(args)) as CommandResponse;
@@ -67,7 +68,7 @@ describe("commands/manage/prize/add", () => {
     done();
   });
 
-  it("should require description", async done => {
+  it("should require description", async (done) => {
     const server = await createServer();
     const channel = createChannel("redeem");
 
@@ -79,7 +80,7 @@ describe("commands/manage/prize/add", () => {
       message: await createMessage({
         server,
         serverChannels: [channel],
-        permission: "ADMINISTRATOR"
+        permission: "ADMINISTRATOR",
       }),
       description: "",
       reactionEmoji: "🐺",
@@ -87,7 +88,7 @@ describe("commands/manage/prize/add", () => {
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await addPrize(args)) as CommandResponse;
@@ -96,7 +97,7 @@ describe("commands/manage/prize/add", () => {
     done();
   });
 
-  it("should require reaction emoji", async done => {
+  it("should require reaction emoji", async (done) => {
     const server = await createServer();
     const channel = createChannel("redeem");
 
@@ -108,7 +109,7 @@ describe("commands/manage/prize/add", () => {
       message: await createMessage({
         server,
         serverChannels: [channel],
-        permission: "ADMINISTRATOR"
+        permission: "ADMINISTRATOR",
       }),
       description: "A hellhound",
       reactionEmoji: "",
@@ -116,7 +117,7 @@ describe("commands/manage/prize/add", () => {
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await addPrize(args)) as CommandResponse;
@@ -125,7 +126,7 @@ describe("commands/manage/prize/add", () => {
     done();
   });
 
-  it("should require price of 1 or more", async done => {
+  it("should require price of 1 or more", async (done) => {
     const server = await createServer();
     const channel = createChannel("redeem");
 
@@ -137,7 +138,7 @@ describe("commands/manage/prize/add", () => {
       message: await createMessage({
         server,
         serverChannels: [channel],
-        permission: "ADMINISTRATOR"
+        permission: "ADMINISTRATOR",
       }),
       description: "A hellhound",
       reactionEmoji: "🐺",
@@ -145,7 +146,7 @@ describe("commands/manage/prize/add", () => {
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await addPrize(args)) as CommandResponse;
@@ -154,7 +155,7 @@ describe("commands/manage/prize/add", () => {
     done();
   });
 
-  it("should add the prize", async done => {
+  it("should add the prize", async (done) => {
     const server = await createServer();
     const channel = createChannel("redeem");
 
@@ -166,7 +167,7 @@ describe("commands/manage/prize/add", () => {
       message: await createMessage({
         server,
         serverChannels: [channel],
-        permission: "ADMINISTRATOR"
+        permission: "ADMINISTRATOR",
       }),
       description: "A hellhound",
       reactionEmoji: "🐺",
@@ -174,7 +175,7 @@ describe("commands/manage/prize/add", () => {
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await addPrize(args)) as CommandResponse;

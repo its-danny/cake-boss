@@ -1,32 +1,41 @@
-import { Argv } from "yargs";
-import moment from "moment";
-import { parse } from "json2csv";
 import fs from "fs";
+import { parse } from "json2csv";
+import moment from "moment";
+import { Argv } from "yargs";
+
 import Server from "../../entity/server";
-import { canManage } from "../../utils/permissions";
-import { EMOJI_INCORRECT_PERMISSIONS, EMOJI_WORKING_HARD, EMOJI_ERROR } from "../../utils/emoji";
 import { CommandArguments, CommandResponse } from "../../utils/command-interfaces";
+import { EMOJI_ERROR, EMOJI_INCORRECT_PERMISSIONS, EMOJI_WORKING_HARD } from "../../utils/emoji";
 import { handleError } from "../../utils/errors";
+import { canManage } from "../../utils/permissions";
 
 export const getLedger = async (args: CommandArguments): Promise<CommandResponse | void> => {
   try {
     if (!(await canManage(args.message))) {
       return {
-        content: `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`
+        content: `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`,
       };
     }
 
+    if (!args.message.guild) {
+      throw new Error("Could not find Discord Guild.");
+    }
+
     const server = await Server.findOne({
-      where: { discordId: args.message.guild.id }
+      where: { discordId: args.message.guild.id },
     });
 
     if (!server) {
       throw new Error("Could not find server.");
     }
 
+    if (!args.message.guild.me) {
+      throw new Error("Could not find Discord GuildMember for Cake Boss.");
+    }
+
     if (!args.message.guild.me.hasPermission("ATTACH_FILES")) {
       return {
-        content: `${EMOJI_ERROR} I need permission to \`attach files\`!`
+        content: `${EMOJI_ERROR} I need permission to \`attach files\`!`,
       };
     }
 
@@ -34,21 +43,21 @@ export const getLedger = async (args: CommandArguments): Promise<CommandResponse
 
     if (members.length === 0) {
       return {
-        content: `${EMOJI_WORKING_HARD} Nobody has ${server.config.cakeNamePlural} yet!`
+        content: `${EMOJI_WORKING_HARD} Nobody has ${server.config.cakeNamePlural} yet!`,
       };
     }
 
     const fields = ["Name/ID", "Balance", "Earned", "Date Added"];
     const data: any = [];
 
-    members.forEach(member => {
-      const discordMember = args.message.guild.members.get(member.discordId);
+    members.forEach((member) => {
+      const discordMember = args.message.guild!.members.cache.get(member.discordId);
 
       data.push({
         "Name/ID": discordMember ? discordMember.displayName : member.discordId,
         Balance: member.balance,
         Earned: member.earned,
-        "Date Added": moment(member.createdAt).format("MMMM Do YYYY")
+        "Date Added": moment(member.createdAt).format("MMMM Do YYYY"),
       });
     });
 
@@ -64,7 +73,9 @@ export const getLedger = async (args: CommandArguments): Promise<CommandResponse
 
     return {
       content: `${EMOJI_WORKING_HARD} Of course!`,
-      messageOptions: { files: [filePath + fileName] }
+      messageOptions: {
+        files: [filePath + fileName],
+      },
     };
   } catch (error) {
     return handleError(error, args.message);

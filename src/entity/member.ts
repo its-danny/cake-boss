@@ -1,15 +1,16 @@
 import {
-  Entity,
   BaseEntity,
-  PrimaryGeneratedColumn,
   Column,
-  ManyToOne,
   CreateDateColumn,
-  UpdateDateColumn
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from "typeorm";
-import User from "./user";
-import Server from "./server";
+
 import { handleError } from "../utils/errors";
+import Server from "./server";
+import User from "./user";
 
 @Entity()
 export default class Member extends BaseEntity {
@@ -40,26 +41,20 @@ export default class Member extends BaseEntity {
   @Column({ nullable: false, default: false })
   shamed!: boolean;
 
-  @ManyToOne(
-    () => User,
-    user => user.members
-  )
+  @ManyToOne(() => User, (user) => user.members)
   user!: User;
 
-  @ManyToOne(
-    () => Server,
-    server => server.members
-  )
+  @ManyToOne(() => Server, (server) => server.members)
   server!: Server;
 
   static async findOrCreate(
     serverDiscordId: string,
     discordUserId: string,
-    discordMemberId: string
+    discordMemberId: string,
   ): Promise<Member | void> {
     try {
       const foundMember = await Member.findOne({
-        where: { discordId: discordMemberId }
+        where: { discordId: discordMemberId },
       });
 
       if (foundMember) {
@@ -67,7 +62,7 @@ export default class Member extends BaseEntity {
       }
 
       const server = await Server.findOne({
-        where: { discordId: serverDiscordId }
+        where: { discordId: serverDiscordId },
       });
 
       if (!server) {
@@ -84,7 +79,7 @@ export default class Member extends BaseEntity {
       }
 
       let member = await Member.findOne({
-        where: { discordId: discordMemberId }
+        where: { discordId: discordMemberId },
       });
 
       if (!member) {
@@ -98,7 +93,7 @@ export default class Member extends BaseEntity {
 
       return member;
     } catch (error) {
-      return handleError(error, null);
+      return handleError(error);
     }
   }
 }

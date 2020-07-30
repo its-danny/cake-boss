@@ -1,12 +1,13 @@
 import {
-  Entity,
   BaseEntity,
-  PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
   UpdateDateColumn,
-  ManyToOne
 } from "typeorm";
+
 import Server from "./server";
 
 @Entity()
@@ -32,9 +33,6 @@ export default class Prize extends BaseEntity {
   @Column("simple-array", { nullable: false, default: "" })
   roleIds!: string[];
 
-  @ManyToOne(
-    () => Server,
-    server => server.prizes
-  )
+  @ManyToOne(() => Server, (server) => server.prizes)
   server!: Server;
 }

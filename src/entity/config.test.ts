@@ -1,24 +1,25 @@
-import { createConnection, getConnection } from "typeorm";
-import faker from "faker";
 import { Role } from "discord.js";
+import faker from "faker";
+import { createConnection, getConnection } from "typeorm";
+
+import { createChannel, createMessage, createServer, ENTITIES } from "../../test/test-helpers";
 import Config from "./config";
-import { createServer, createMessage, createChannel, ENTITIES } from "../../test/test-helpers";
 
 describe("entities/config", () => {
-  beforeEach(async done => {
+  beforeEach(async (done) => {
     await createConnection({
       type: "sqlite",
       database: ":memory:",
       dropSchema: true,
       entities: ENTITIES,
       synchronize: true,
-      logging: false
+      logging: false,
     });
 
     done();
   });
 
-  afterEach(async done => {
+  afterEach(async (done) => {
     const conn = getConnection();
     await conn.close();
 
@@ -46,18 +47,18 @@ describe("entities/config", () => {
     expect(config.quietMode).toBe(false);
   });
 
-  test("#setLogChannel", async done => {
+  test("#setLogChannel", async (done) => {
     const server = await createServer();
     const channel = createChannel("games");
     const message = await createMessage({ server, serverChannels: [channel] });
 
-    expect(server.config.setLogChannel("wrong-channel", message.guild)).toBe(false);
+    expect(server.config.setLogChannel("wrong-channel", message.guild!)).toBe(false);
     expect(server.config.logChannelId).toBe(null);
 
-    expect(server.config.setLogChannel("none", message.guild)).toBe(true);
+    expect(server.config.setLogChannel("none", message.guild!)).toBe(true);
     expect(server.config.logChannelId).toBe(null);
 
-    expect(server.config.setLogChannel(`<#${channel.id}>`, message.guild)).toBe(true);
+    expect(server.config.setLogChannel(`<#${channel.id}>`, message.guild!)).toBe(true);
     expect(server.config.logChannelId).toBe(channel.id);
 
     done();
@@ -83,43 +84,46 @@ describe("entities/config", () => {
     expect(config.setRedeemTimer("-3")).toBe(false);
   });
 
-  test("#setRedeemChannel", async done => {
+  test("#setRedeemChannel", async (done) => {
     const server = await createServer();
     const channel = createChannel("games");
     const message = await createMessage({ server, serverChannels: [channel] });
 
-    expect(server.config.setRedeemChannel("wrong-channel", message.guild)).toBe(false);
+    expect(server.config.setRedeemChannel("wrong-channel", message.guild!)).toBe(false);
     expect(server.config.redeemChannelId).toBe(null);
 
-    expect(server.config.setRedeemChannel("none", message.guild)).toBe(true);
+    expect(server.config.setRedeemChannel("none", message.guild!)).toBe(true);
     expect(server.config.redeemChannelId).toBe(null);
 
-    expect(server.config.setRedeemChannel(`<#${channel.id}>`, message.guild)).toBe(true);
+    expect(server.config.setRedeemChannel(`<#${channel.id}>`, message.guild!)).toBe(true);
     expect(server.config.redeemChannelId).toBe(channel.id);
 
     done();
   });
 
-  test("#setRoles", async done => {
+  test("#setRoles", async (done) => {
     const config = new Config();
     const server = await createServer();
+
     const roleOne = {
       id: faker.random.uuid(),
-      name: faker.internet.domainWord()
+      name: faker.internet.domainWord(),
     } as Role;
+
     const roleTwo = {
       id: faker.random.uuid(),
-      name: faker.internet.domainWord()
+      name: faker.internet.domainWord(),
     } as Role;
+
     const message = await createMessage({
       server,
-      serverRoles: [roleOne, roleTwo]
+      serverRoles: [roleOne, roleTwo],
     });
 
-    expect(config.setRoles("none", "manager-roles", message.guild)).toBe(true);
+    expect(config.setRoles("none", "manager-roles", message.guild!)).toBe(true);
     expect(config.managerRoleIds).toEqual([]);
 
-    expect(config.setRoles(`${roleOne.name},${roleTwo.name}`, "manager-roles", message.guild)).toBe(true);
+    expect(config.setRoles(`${roleOne.name},${roleTwo.name}`, "manager-roles", message.guild!)).toBe(true);
     expect(config.managerRoleIds).toEqual([roleOne.id, roleTwo.id]);
 
     done();
@@ -163,12 +167,12 @@ describe("entities/config", () => {
 
     expect(
       config.setDropGifs(
-        "https://media.giphy.com/media/QqkzeedW5Qq7S/giphy.gif,https://media.giphy.com/media/13Wlh2o9yCiMTu/giphy.gif"
-      )
+        "https://media.giphy.com/media/QqkzeedW5Qq7S/giphy.gif,https://media.giphy.com/media/13Wlh2o9yCiMTu/giphy.gif",
+      ),
     ).toBe(true);
     expect(config.dropGifs).toEqual([
       "https://media.giphy.com/media/QqkzeedW5Qq7S/giphy.gif",
-      "https://media.giphy.com/media/13Wlh2o9yCiMTu/giphy.gif"
+      "https://media.giphy.com/media/13Wlh2o9yCiMTu/giphy.gif",
     ]);
   });
 
@@ -180,12 +184,12 @@ describe("entities/config", () => {
 
     expect(
       config.setDropGifs(
-        "https://media.giphy.com/media/QqkzeedW5Qq7S/giphy.gif,https://media.giphy.com/media/13Wlh2o9yCiMTu/giphy.gif"
-      )
+        "https://media.giphy.com/media/QqkzeedW5Qq7S/giphy.gif,https://media.giphy.com/media/13Wlh2o9yCiMTu/giphy.gif",
+      ),
     ).toBe(true);
     expect(config.dropGifs).toEqual([
       "https://media.giphy.com/media/QqkzeedW5Qq7S/giphy.gif",
-      "https://media.giphy.com/media/13Wlh2o9yCiMTu/giphy.gif"
+      "https://media.giphy.com/media/13Wlh2o9yCiMTu/giphy.gif",
     ]);
   });
 

@@ -1,12 +1,13 @@
-import { Argv } from "yargs";
-import { RichEmbed } from "discord.js";
+import { MessageEmbed } from "discord.js";
 import { humanize } from "underscore.string";
-import { EMOJI_INCORRECT_PERMISSIONS, EMOJI_RECORD_NOT_FOUND } from "../../utils/emoji";
-import { CommandArguments } from "../../utils/command-interfaces";
-import { canManage } from "../../utils/permissions";
+import { Argv } from "yargs";
+
 import Member from "../../entity/member";
 import Server from "../../entity/server";
+import { CommandArguments } from "../../utils/command-interfaces";
+import { EMOJI_INCORRECT_PERMISSIONS, EMOJI_RECORD_NOT_FOUND } from "../../utils/emoji";
 import { handleError } from "../../utils/errors";
+import { canManage } from "../../utils/permissions";
 
 interface Arguments extends CommandArguments {
   member: string;
@@ -18,8 +19,12 @@ const getUserStats = async (args: Arguments): Promise<string | void> => {
       return `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`;
     }
 
+    if (!args.message.guild) {
+      throw new Error("Could not find Discord Guild.");
+    }
+
     const server = await Server.findOne({
-      where: { discordId: args.message.guild.id }
+      where: { discordId: args.message.guild.id },
     });
 
     if (!server) {
@@ -27,7 +32,7 @@ const getUserStats = async (args: Arguments): Promise<string | void> => {
     }
 
     const memberId = args.member.replace(/^<@!?/, "").replace(/>$/, "");
-    const discordMember = args.message.guild.members.get(memberId);
+    const discordMember = args.message.guild.members.cache.get(memberId);
 
     if (!discordMember) {
       return `${EMOJI_RECORD_NOT_FOUND} Uh oh, I couldn't find them.`;
@@ -38,10 +43,12 @@ const getUserStats = async (args: Arguments): Promise<string | void> => {
     if (member) {
       const reset = server.config.giveLimitHourReset;
 
-      const embed = new RichEmbed()
+      const embed = new MessageEmbed()
         .setColor("#0099ff")
+        // @ts-ignore
         .setAuthor(discordMember.displayName, discordMember.user.avatarURL)
         .setDescription(`${humanize(server.config.cakeNameSingular)} stats for ${discordMember.user.tag}`)
+        // @ts-ignore
         .setThumbnail(discordMember.user.avatarURL)
         .addField("Balance", member.balance, true)
         .addField("Earned", member.earned, true)

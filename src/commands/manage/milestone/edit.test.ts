@@ -1,32 +1,33 @@
-import { createConnection, getConnection } from "typeorm";
 import { Role } from "discord.js";
-import { createServer, createClient, createMessage, ENTITIES, createMilestone } from "../../../../test/test-helpers";
-import { editMilestone, Arguments } from "./edit";
-import { EMOJI_ERROR, EMOJI_INCORRECT_PERMISSIONS, EMOJI_JOB_WELL_DONE } from "../../../utils/emoji";
+import { createConnection, getConnection } from "typeorm";
+
+import { createClient, createMessage, createMilestone, createServer, ENTITIES } from "../../../../test/test-helpers";
 import { CommandResponse } from "../../../utils/command-interfaces";
+import { EMOJI_ERROR, EMOJI_INCORRECT_PERMISSIONS, EMOJI_JOB_WELL_DONE } from "../../../utils/emoji";
+import { Arguments, editMilestone } from "./edit";
 
 describe("commands/manage/milestone/edit", () => {
-  beforeEach(async done => {
+  beforeEach(async (done) => {
     await createConnection({
       type: "sqlite",
       database: ":memory:",
       dropSchema: true,
       entities: ENTITIES,
       synchronize: true,
-      logging: false
+      logging: false,
     });
 
     done();
   });
 
-  afterEach(async done => {
+  afterEach(async (done) => {
     const conn = getConnection();
     await conn.close();
 
     done();
   });
 
-  it(`should require permissions`, async done => {
+  it(`should require permissions`, async (done) => {
     const server = await createServer();
     const milestone = await createMilestone(server);
 
@@ -39,7 +40,7 @@ describe("commands/manage/milestone/edit", () => {
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await editMilestone(args)) as CommandResponse;
@@ -48,7 +49,7 @@ describe("commands/manage/milestone/edit", () => {
     done();
   });
 
-  it("should require amount of 1 or more", async done => {
+  it("should require amount of 1 or more", async (done) => {
     const server = await createServer();
     const milestone = await createMilestone(server);
 
@@ -61,7 +62,7 @@ describe("commands/manage/milestone/edit", () => {
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await editMilestone(args)) as CommandResponse;
@@ -70,7 +71,7 @@ describe("commands/manage/milestone/edit", () => {
     done();
   });
 
-  it("should require 1 or more roles", async done => {
+  it("should require 1 or more roles", async (done) => {
     const server = await createServer();
     const milestone = await createMilestone(server);
 
@@ -83,7 +84,7 @@ describe("commands/manage/milestone/edit", () => {
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await editMilestone(args)) as CommandResponse;
@@ -92,7 +93,7 @@ describe("commands/manage/milestone/edit", () => {
     done();
   });
 
-  it("should require a valid id", async done => {
+  it("should require a valid id", async (done) => {
     const server = await createServer();
 
     const args: Arguments = {
@@ -104,18 +105,18 @@ describe("commands/manage/milestone/edit", () => {
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await editMilestone(args)) as CommandResponse;
     expect(response.content).toBe(
-      `${EMOJI_ERROR} Couldn't find that milestone, are you sure \`${args.id}\` is the right ID?`
+      `${EMOJI_ERROR} Couldn't find that milestone, are you sure \`${args.id}\` is the right ID?`,
     );
 
     done();
   });
 
-  it("should update the milestone", async done => {
+  it("should update the milestone", async (done) => {
     const server = await createServer();
     const milestone = await createMilestone(server);
 
@@ -126,7 +127,7 @@ describe("commands/manage/milestone/edit", () => {
       message: await createMessage({
         server,
         serverRoles: [role],
-        permission: "ADMINISTRATOR"
+        permission: "ADMINISTRATOR",
       }),
       id: milestone.id,
       amount: 3,
@@ -134,7 +135,7 @@ describe("commands/manage/milestone/edit", () => {
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await editMilestone(args)) as CommandResponse;

@@ -1,10 +1,11 @@
 import { Argv } from "yargs";
-import { CommandArguments, CommandResponse } from "../../../utils/command-interfaces";
-import { canManage } from "../../../utils/permissions";
-import { EMOJI_INCORRECT_PERMISSIONS, EMOJI_ERROR, EMOJI_CONFIG } from "../../../utils/emoji";
-import Server from "../../../entity/server";
+
 import { ConfigCommand } from "../../../entity/config";
+import Server from "../../../entity/server";
+import { CommandArguments, CommandResponse } from "../../../utils/command-interfaces";
+import { EMOJI_CONFIG, EMOJI_ERROR, EMOJI_INCORRECT_PERMISSIONS } from "../../../utils/emoji";
 import { handleError } from "../../../utils/errors";
+import { canManage } from "../../../utils/permissions";
 
 interface Arguments extends CommandArguments {
   config: ConfigCommand;
@@ -14,12 +15,16 @@ export const getValue = async (args: Arguments): Promise<CommandResponse | void>
   try {
     if (!(await canManage(args.message))) {
       return {
-        content: `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`
+        content: `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`,
       };
     }
 
+    if (!args.message.guild) {
+      throw new Error("Could not find Discord Guild.");
+    }
+
     const server = await Server.findOne({
-      where: { discordId: args.message.guild.id }
+      where: { discordId: args.message.guild.id },
     });
 
     if (!server) {
@@ -30,7 +35,7 @@ export const getValue = async (args: Arguments): Promise<CommandResponse | void>
 
     if (value) {
       return {
-        content: `${EMOJI_CONFIG} \`${args.config}\` is currently set to \`${value.value}\`, the default is \`${value.default}\`.`
+        content: `${EMOJI_CONFIG} \`${args.config}\` is currently set to \`${value.value}\`, the default is \`${value.default}\`.`,
       };
     }
 

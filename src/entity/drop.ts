@@ -1,12 +1,13 @@
 import {
-  Entity,
   BaseEntity,
-  PrimaryGeneratedColumn,
   Column,
-  ManyToOne,
   CreateDateColumn,
-  UpdateDateColumn
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from "typeorm";
+
 import Server from "./server";
 
 @Entity()
@@ -26,9 +27,6 @@ export default class Drop extends BaseEntity {
   @Column({ nullable: false, default: 0 })
   amount!: number;
 
-  @ManyToOne(
-    () => Server,
-    server => server.drops
-  )
+  @ManyToOne(() => Server, (server) => server.drops)
   server!: Server;
 }

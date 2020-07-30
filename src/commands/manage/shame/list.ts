@@ -1,19 +1,20 @@
-import { Argv } from "yargs";
 import Table from "cli-table";
 import { getConnection } from "typeorm";
-import { canManage } from "../../../utils/permissions";
+import { Argv } from "yargs";
+
+import Member from "../../../entity/member";
 import Server from "../../../entity/server";
+import { CommandArguments, CommandResponse } from "../../../utils/command-interfaces";
 import {
+  EMOJI_ERROR,
   EMOJI_INCORRECT_PERMISSIONS,
   EMOJI_RECORD_NOT_FOUND,
-  EMOJI_ERROR,
   EMOJI_SHAME,
-  EMOJI_WORKING_HARD
+  EMOJI_WORKING_HARD,
 } from "../../../utils/emoji";
-import getTableBorder from "../../../utils/get-table-border";
-import { CommandArguments, CommandResponse } from "../../../utils/command-interfaces";
-import Member from "../../../entity/member";
 import { handleError } from "../../../utils/errors";
+import getTableBorder from "../../../utils/get-table-border";
+import { canManage } from "../../../utils/permissions";
 
 interface Arguments extends CommandArguments {
   page?: number;
@@ -23,12 +24,16 @@ export const getShamedList = async (args: Arguments): Promise<CommandResponse | 
   try {
     if (!(await canManage(args.message))) {
       return {
-        content: `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`
+        content: `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`,
       };
     }
 
+    if (!args.message.guild) {
+      throw new Error("Could not find Discord Guild.");
+    }
+
     const server = await Server.findOne({
-      where: { discordId: args.message.guild.id }
+      where: { discordId: args.message.guild.id },
     });
 
     if (!server) {
@@ -61,11 +66,11 @@ export const getShamedList = async (args: Arguments): Promise<CommandResponse | 
     const table = new Table({
       head: ["Name"],
       style: { head: [], border: [] },
-      chars: getTableBorder()
+      chars: getTableBorder(),
     });
 
-    shamedMembers.forEach(shamed => {
-      const discordMember = args.message.guild.members.get(shamed.discordId);
+    shamedMembers.forEach((shamed) => {
+      const discordMember = args.message.guild!.members.cache.get(shamed.discordId);
 
       if (!discordMember) {
         return `${EMOJI_RECORD_NOT_FOUND} Uh oh, had trouble finding a user.`;
@@ -77,7 +82,7 @@ export const getShamedList = async (args: Arguments): Promise<CommandResponse | 
     });
 
     return {
-      content: `${EMOJI_SHAME} **Shame List** [ Page ${currentPage} of ${totalPages} ]\n\n\`\`\`\n\n${table.toString()}\n\`\`\``
+      content: `${EMOJI_SHAME} **Shame List** [ Page ${currentPage} of ${totalPages} ]\n\n\`\`\`\n\n${table.toString()}\n\`\`\``,
     };
   } catch (error) {
     return handleError(error, args.message);

@@ -1,7 +1,8 @@
-import { Entity, BaseEntity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from "typeorm";
 import { Guild } from "discord.js";
-import { toSentenceSerial } from "underscore.string";
 import { chain, isEmpty } from "lodash";
+import { BaseEntity, Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { toSentenceSerial } from "underscore.string";
+
 import { EMOJI_CAKE } from "../utils/emoji";
 
 export type ConfigCommand =
@@ -27,8 +28,8 @@ export type ConfigCommand =
   | "give-limit"
   | "give-limit-hour-reset";
 
-type roleTypes = "manager-roles" | "blesser-roles" | "dropper-roles" | "redeem-ping-roles";
-type cakeNameType = "singular" | "plural";
+type RoleType = "manager-roles" | "blesser-roles" | "dropper-roles" | "redeem-ping-roles";
+type CakeNameType = "singular" | "plural";
 
 @Entity()
 export default class Config extends BaseEntity {
@@ -132,7 +133,7 @@ export default class Config extends BaseEntity {
     }
 
     const channelId = channelString.replace(/^<#/, "").replace(/>$/, "");
-    const channel = guild.channels.get(channelId);
+    const channel = guild.channels.cache.get(channelId);
 
     if (!channel) {
       return false;
@@ -161,7 +162,7 @@ export default class Config extends BaseEntity {
     }
 
     const channelId = channelString.replace(/^<#/, "").replace(/>$/, "");
-    const channel = guild.channels.get(channelId);
+    const channel = guild.channels.cache.get(channelId);
 
     if (!channel) {
       return false;
@@ -192,7 +193,7 @@ export default class Config extends BaseEntity {
     }
 
     const channelId = channelString.replace(/^<#/, "").replace(/>$/, "");
-    const channel = guild.channels.get(channelId);
+    const channel = guild.channels.cache.get(channelId);
 
     if (!channel) {
       return false;
@@ -203,7 +204,7 @@ export default class Config extends BaseEntity {
     return true;
   }
 
-  setRoles(roles: string, type: roleTypes, guild: Guild): boolean {
+  setRoles(roles: string, type: RoleType, guild: Guild): boolean {
     if (roles === "none") {
       switch (type) {
         case "manager-roles":
@@ -226,11 +227,13 @@ export default class Config extends BaseEntity {
 
     const foundRolesIds = roles
       .split(",")
-      .map(g => g.trim())
-      .filter(roleName => {
-        return guild.roles.find(role => role.name === roleName.trim());
+      .map((g) => g.trim())
+      .filter((roleName) => {
+        return guild.roles.cache.find((role) => role.name === roleName);
       })
-      .map(roleName => guild.roles.find(role => role.name === roleName.trim()).id);
+      .map((roleName) => {
+        return guild.roles.cache.find((role) => role.name === roleName)!.id;
+      });
 
     if (foundRolesIds.length > 0) {
       switch (type) {
@@ -275,7 +278,7 @@ export default class Config extends BaseEntity {
     return true;
   }
 
-  setCakeName(name: string, type: cakeNameType): boolean {
+  setCakeName(name: string, type: CakeNameType): boolean {
     if (name === "") {
       return false;
     }
@@ -295,7 +298,7 @@ export default class Config extends BaseEntity {
     if (gifs === "none") {
       this.dropGifs = [];
     } else {
-      this.dropGifs = gifs.split(",").map(g => g.trim());
+      this.dropGifs = gifs.split(",").map((g) => g.trim());
     }
 
     return true;
@@ -305,7 +308,7 @@ export default class Config extends BaseEntity {
     if (gifs === "none") {
       this.noDropGifs = [];
     } else {
-      this.noDropGifs = gifs.split(",").map(g => g.trim());
+      this.noDropGifs = gifs.split(",").map((g) => g.trim());
     }
 
     return true;
@@ -358,14 +361,14 @@ export default class Config extends BaseEntity {
   }
 
   getValue(config: ConfigCommand, guild: Guild): { [key: string]: string } | void {
-    const logChannel = this.logChannelId ? guild.channels.get(this.logChannelId) : null;
-    const redeemChannel = this.redeemChannelId ? guild.channels.get(this.redeemChannelId) : null;
-    const milestoneChannel = this.milestoneChannelId ? guild.channels.get(this.milestoneChannelId) : null;
+    const logChannel = this.logChannelId ? guild.channels.cache.get(this.logChannelId) : null;
+    const redeemChannel = this.redeemChannelId ? guild.channels.cache.get(this.redeemChannelId) : null;
+    const milestoneChannel = this.milestoneChannelId ? guild.channels.cache.get(this.milestoneChannelId) : null;
 
     const getRoles = (ids: string[]): string[] => {
       return chain(ids)
-        .map(roleId => {
-          const role = guild.roles.get(roleId);
+        .map((roleId) => {
+          const role = guild.roles.cache.get(roleId);
 
           if (role) {
             return role.name;
@@ -390,41 +393,41 @@ export default class Config extends BaseEntity {
       case "log-channel":
         return {
           default: "none",
-          value: logChannel ? `#${logChannel.name}` : "none"
+          value: logChannel ? `#${logChannel.name}` : "none",
         };
       case "log-with-link":
         return { default: "false", value: `${this.logWithLink}` };
       case "redeem-channel":
         return {
           default: "none",
-          value: redeemChannel ? `#${redeemChannel.name}` : "none"
+          value: redeemChannel ? `#${redeemChannel.name}` : "none",
         };
       case "redeem-timer":
         return { default: "10", value: `${this.redeemTimer}` };
       case "milestone-channel":
         return {
           default: "none",
-          value: milestoneChannel ? `#${milestoneChannel.name}` : "none"
+          value: milestoneChannel ? `#${milestoneChannel.name}` : "none",
         };
       case "manager-roles":
         return {
           default: "none",
-          value: isEmpty(managerRoles) ? "none" : toSentenceSerial(managerRoles)
+          value: isEmpty(managerRoles) ? "none" : toSentenceSerial(managerRoles),
         };
       case "blesser-roles":
         return {
           default: "none",
-          value: isEmpty(blesserRoles) ? "none" : toSentenceSerial(blesserRoles)
+          value: isEmpty(blesserRoles) ? "none" : toSentenceSerial(blesserRoles),
         };
       case "dropper-roles":
         return {
           default: "none",
-          value: isEmpty(dropperRoles) ? "none" : toSentenceSerial(dropperRoles)
+          value: isEmpty(dropperRoles) ? "none" : toSentenceSerial(dropperRoles),
         };
       case "redeem-ping-roles":
         return {
           default: "none",
-          value: isEmpty(redeemPingRoles) ? "none" : toSentenceSerial(redeemPingRoles)
+          value: isEmpty(redeemPingRoles) ? "none" : toSentenceSerial(redeemPingRoles),
         };
       case "nickname":
         return { default: "CAKE BOSS!", value: this.nickname || "" };
@@ -437,12 +440,12 @@ export default class Config extends BaseEntity {
       case "drop-gifs":
         return {
           default: "none",
-          value: isEmpty(this.dropGifs) ? "none" : toSentenceSerial(this.dropGifs)
+          value: isEmpty(this.dropGifs) ? "none" : toSentenceSerial(this.dropGifs),
         };
       case "no-drop-gifs":
         return {
           default: "none",
-          value: isEmpty(this.noDropGifs) ? "none" : toSentenceSerial(this.noDropGifs)
+          value: isEmpty(this.noDropGifs) ? "none" : toSentenceSerial(this.noDropGifs),
         };
       case "no-giving":
         return { default: "false", value: `${this.noGiving}` };

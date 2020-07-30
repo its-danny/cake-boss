@@ -1,15 +1,20 @@
-import { Argv } from "yargs";
 import Table from "cli-table";
+import { Argv } from "yargs";
+
 import Server from "../../entity/server";
-import { EMOJI_WORKING_HARD } from "../../utils/emoji";
-import getTableBorder from "../../utils/get-table-border";
 import { CommandArguments, CommandResponse } from "../../utils/command-interfaces";
+import { EMOJI_WORKING_HARD } from "../../utils/emoji";
 import { handleError } from "../../utils/errors";
+import getTableBorder from "../../utils/get-table-border";
 
 export const getTopGivers = async (args: CommandArguments): Promise<CommandResponse | void> => {
   try {
+    if (!args.message.guild) {
+      throw new Error("Could not find Discord Guild.");
+    }
+
     const server = await Server.findOne({
-      where: { discordId: args.message.guild.id }
+      where: { discordId: args.message.guild.id },
     });
 
     if (!server) {
@@ -22,7 +27,7 @@ export const getTopGivers = async (args: CommandArguments): Promise<CommandRespo
       .concat()
       .sort((a, b) => b.given - a.given)
       .slice(0, 10)
-      .filter(mem => mem.given > 0);
+      .filter((mem) => mem.given > 0);
 
     if (sorted.length === 0) {
       return { content: `${EMOJI_WORKING_HARD} There are no top givers yet!` };
@@ -31,16 +36,16 @@ export const getTopGivers = async (args: CommandArguments): Promise<CommandRespo
     const table = new Table({
       head: ["", "Member", "Given"],
       style: { head: [], border: [] },
-      chars: getTableBorder()
+      chars: getTableBorder(),
     });
 
     sorted.forEach((member, index) => {
-      const discordMember = args.message.guild.members.get(member.discordId);
+      const discordMember = args.message.guild!.members.cache.get(member.discordId);
       table.push([`#${index + 1}`, discordMember ? discordMember.displayName : member.discordId, member.given]);
     });
 
     return {
-      content: `${server.config.cakeEmoji} **Top Givers** \n\n\`\`\`\n\n${table.toString()}\n\`\`\``
+      content: `${server.config.cakeEmoji} **Top Givers** \n\n\`\`\`\n\n${table.toString()}\n\`\`\``,
     };
   } catch (error) {
     return handleError(error, args.message);

@@ -1,12 +1,13 @@
 import {
-  Entity,
   BaseEntity,
-  PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
   UpdateDateColumn,
-  ManyToOne
 } from "typeorm";
+
 import Server from "./server";
 
 @Entity()
@@ -29,9 +30,6 @@ export default class Milestone extends BaseEntity {
   @Column({ nullable: true })
   announcement!: string;
 
-  @ManyToOne(
-    () => Server,
-    server => server.milestones
-  )
+  @ManyToOne(() => Server, (server) => server.milestones)
   server!: Server;
 }

@@ -1,37 +1,38 @@
 import { createConnection, getConnection } from "typeorm";
-import { giveCakeToMember, Arguments } from "./give";
-import { createServer, createMember, createMessage, createClient, ENTITIES } from "../../../test/test-helpers";
+
+import { createClient, createMember, createMessage, createServer, ENTITIES } from "../../../test/test-helpers";
+import { CommandResponse } from "../../utils/command-interfaces";
 import {
-  EMOJI_INCORRECT_PERMISSIONS,
-  EMOJI_RECORD_NOT_FOUND,
   EMOJI_CAKE,
   EMOJI_DONT_DO_THAT,
-  EMOJI_WORKING_HARD
+  EMOJI_INCORRECT_PERMISSIONS,
+  EMOJI_RECORD_NOT_FOUND,
+  EMOJI_WORKING_HARD,
 } from "../../utils/emoji";
-import { CommandResponse } from "../../utils/command-interfaces";
+import { Arguments, giveCakeToMember } from "./give";
 
 describe("commands/use/give", () => {
-  beforeEach(async done => {
+  beforeEach(async (done) => {
     await createConnection({
       type: "sqlite",
       database: ":memory:",
       dropSchema: true,
       entities: ENTITIES,
       synchronize: true,
-      logging: false
+      logging: false,
     });
 
     done();
   });
 
-  afterEach(async done => {
+  afterEach(async (done) => {
     const conn = getConnection();
     await conn.close();
 
     done();
   });
 
-  it(`should stop you if no-giving is enabled`, async done => {
+  it(`should stop you if no-giving is enabled`, async (done) => {
     const server = await createServer({ noGiving: true });
     const sender = await createMember({ server });
     const receiver = await createMember({ server });
@@ -41,14 +42,14 @@ describe("commands/use/give", () => {
       message: await createMessage({
         server,
         serverMembers: [sender, receiver],
-        senderId: sender.discordId
+        senderId: sender.discordId,
       }),
       member: `<@${receiver.discordId}>`,
       amount: 1,
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await giveCakeToMember(args)) as CommandResponse;
@@ -57,7 +58,7 @@ describe("commands/use/give", () => {
     done();
   });
 
-  it(`should stop you if you're shamed`, async done => {
+  it(`should stop you if you're shamed`, async (done) => {
     const server = await createServer();
     const sender = await createMember({ server, shamed: true });
     const receiver = await createMember({ server });
@@ -67,25 +68,25 @@ describe("commands/use/give", () => {
       message: await createMessage({
         server,
         serverMembers: [sender, receiver],
-        senderId: sender.discordId
+        senderId: sender.discordId,
       }),
       member: `<@${receiver.discordId}>`,
       amount: 1,
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await giveCakeToMember(args)) as CommandResponse;
     expect(response.content).toBe(
-      `${EMOJI_DONT_DO_THAT} You have been **shamed** and can not give ${server.config.cakeNamePlural}!`
+      `${EMOJI_DONT_DO_THAT} You have been **shamed** and can not give ${server.config.cakeNamePlural}!`,
     );
 
     done();
   });
 
-  it(`should require a valid member`, async done => {
+  it(`should require a valid member`, async (done) => {
     const server = await createServer();
     const sender = await createMember({ server });
 
@@ -94,14 +95,14 @@ describe("commands/use/give", () => {
       message: await createMessage({
         server,
         serverMembers: [sender],
-        senderId: sender.discordId
+        senderId: sender.discordId,
       }),
       member: `<@12345>`,
       amount: 1,
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await giveCakeToMember(args)) as CommandResponse;
@@ -110,7 +111,7 @@ describe("commands/use/give", () => {
     done();
   });
 
-  it(`shouldn't let you give to yourself`, async done => {
+  it(`shouldn't let you give to yourself`, async (done) => {
     const server = await createServer();
     const sender = await createMember({ server });
 
@@ -119,14 +120,14 @@ describe("commands/use/give", () => {
       message: await createMessage({
         server,
         serverMembers: [sender],
-        senderId: sender.discordId
+        senderId: sender.discordId,
       }),
       member: `<@${sender.discordId}>`,
       amount: 1,
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await giveCakeToMember(args)) as CommandResponse;
@@ -135,7 +136,7 @@ describe("commands/use/give", () => {
     done();
   });
 
-  it(`should stop you if they're shamed`, async done => {
+  it(`should stop you if they're shamed`, async (done) => {
     const server = await createServer();
     const sender = await createMember({ server });
     const receiver = await createMember({ server, shamed: true });
@@ -145,25 +146,25 @@ describe("commands/use/give", () => {
       message: await createMessage({
         server,
         serverMembers: [sender, receiver],
-        senderId: sender.discordId
+        senderId: sender.discordId,
       }),
       member: `<@${receiver.discordId}>`,
       amount: 1,
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await giveCakeToMember(args)) as CommandResponse;
     expect(response.content).toBe(
-      `${EMOJI_DONT_DO_THAT} They have been **shamed** and can not get ${server.config.cakeNamePlural}!`
+      `${EMOJI_DONT_DO_THAT} They have been **shamed** and can not get ${server.config.cakeNamePlural}!`,
     );
 
     done();
   });
 
-  it(`should stop you if you've hit your limit`, async done => {
+  it(`should stop you if you've hit your limit`, async (done) => {
     const server = await createServer();
     const sender = await createMember({ server, givenSinceReset: 5 });
     const receiver = await createMember({ server });
@@ -173,25 +174,25 @@ describe("commands/use/give", () => {
       message: await createMessage({
         server,
         serverMembers: [sender, receiver],
-        senderId: sender.discordId
+        senderId: sender.discordId,
       }),
       member: `<@${receiver.discordId}>`,
       amount: 1,
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await giveCakeToMember(args)) as CommandResponse;
     expect(response.content).toBe(
-      `${EMOJI_INCORRECT_PERMISSIONS} You're out of ${server.config.cakeNamePlural}! You can give more in an hour.`
+      `${EMOJI_INCORRECT_PERMISSIONS} You're out of ${server.config.cakeNamePlural}! You can give more in an hour.`,
     );
 
     done();
   });
 
-  it("should give them cake", async done => {
+  it("should give them cake", async (done) => {
     const server = await createServer();
     const sender = await createMember({ server });
     const receiver = await createMember({ server });
@@ -201,14 +202,14 @@ describe("commands/use/give", () => {
       message: await createMessage({
         server,
         serverMembers: [sender, receiver],
-        senderId: sender.discordId
+        senderId: sender.discordId,
       }),
       member: `<@${receiver.discordId}>`,
       amount: 3,
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await giveCakeToMember(args)) as CommandResponse;

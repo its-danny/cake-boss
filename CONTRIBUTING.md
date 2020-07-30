@@ -28,13 +28,12 @@ It's a [quick read](https://guides.github.com/introduction/flow/index.html) and 
 - Create a feature branch off `master`
 - Write your code, add tests if it makes sense
 - Make sure tests pass (`yarn test`)
-- Run linter & prettier (`yarn run lint` & `yarn run pretty`)
-- Commit via `yarn run commit` for commitizen goodness
+- Run linter & prettier (`yarn lint` & `yarn fix`)
 - Open a pull request
 
 ## Consistent Coding Style
 
-Just let `yarn run lint` & `yarn run pretty` do all the work, tbh.
+Just let `yarn lint` & `yarn fix` do all the work, tbh.
 
 ## License
 

@@ -1,32 +1,33 @@
-import { createConnection, getConnection } from "typeorm";
 import { Role } from "discord.js";
-import { createServer, createClient, createMessage, ENTITIES } from "../../../../test/test-helpers";
-import { addMilestone, Arguments } from "./add";
-import { EMOJI_ERROR, EMOJI_INCORRECT_PERMISSIONS, EMOJI_JOB_WELL_DONE } from "../../../utils/emoji";
+import { createConnection, getConnection } from "typeorm";
+
+import { createClient, createMessage, createServer, ENTITIES } from "../../../../test/test-helpers";
 import { CommandResponse } from "../../../utils/command-interfaces";
+import { EMOJI_ERROR, EMOJI_INCORRECT_PERMISSIONS, EMOJI_JOB_WELL_DONE } from "../../../utils/emoji";
+import { addMilestone, Arguments } from "./add";
 
 describe("commands/manage/milestone/add", () => {
-  beforeEach(async done => {
+  beforeEach(async (done) => {
     await createConnection({
       type: "sqlite",
       database: ":memory:",
       dropSchema: true,
       entities: ENTITIES,
       synchronize: true,
-      logging: false
+      logging: false,
     });
 
     done();
   });
 
-  afterEach(async done => {
+  afterEach(async (done) => {
     const conn = getConnection();
     await conn.close();
 
     done();
   });
 
-  it(`should require permissions`, async done => {
+  it(`should require permissions`, async (done) => {
     const server = await createServer();
 
     const args: Arguments = {
@@ -37,7 +38,7 @@ describe("commands/manage/milestone/add", () => {
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await addMilestone(args)) as CommandResponse;
@@ -46,7 +47,7 @@ describe("commands/manage/milestone/add", () => {
     done();
   });
 
-  it("should require amount of 1 or more", async done => {
+  it("should require amount of 1 or more", async (done) => {
     const server = await createServer();
 
     const args: Arguments = {
@@ -57,7 +58,7 @@ describe("commands/manage/milestone/add", () => {
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await addMilestone(args)) as CommandResponse;
@@ -66,7 +67,7 @@ describe("commands/manage/milestone/add", () => {
     done();
   });
 
-  it("should require 1 or more roles", async done => {
+  it("should require 1 or more roles", async (done) => {
     const server = await createServer();
 
     const args: Arguments = {
@@ -77,7 +78,7 @@ describe("commands/manage/milestone/add", () => {
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await addMilestone(args)) as CommandResponse;
@@ -86,7 +87,7 @@ describe("commands/manage/milestone/add", () => {
     done();
   });
 
-  it("should add the milestone", async done => {
+  it("should add the milestone", async (done) => {
     const server = await createServer();
 
     const role = { id: "123", name: "Cool Dude" } as Role;
@@ -96,14 +97,14 @@ describe("commands/manage/milestone/add", () => {
       message: await createMessage({
         server,
         serverRoles: [role],
-        permission: "ADMINISTRATOR"
+        permission: "ADMINISTRATOR",
       }),
       amount: 3,
       roles: "Cool Dude",
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await addMilestone(args)) as CommandResponse;

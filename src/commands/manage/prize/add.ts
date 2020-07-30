@@ -1,11 +1,13 @@
+import { Role } from "discord.js";
 import { Argv } from "yargs";
-import { canManage } from "../../../utils/permissions";
-import Server from "../../../entity/server";
+
 import Prize from "../../../entity/prize";
-import { logEvent } from "../../../utils/logger";
-import { EMOJI_ERROR, EMOJI_INCORRECT_PERMISSIONS, EMOJI_JOB_WELL_DONE, EMOJI_PRIZE } from "../../../utils/emoji";
+import Server from "../../../entity/server";
 import { CommandArguments, CommandResponse } from "../../../utils/command-interfaces";
+import { EMOJI_ERROR, EMOJI_INCORRECT_PERMISSIONS, EMOJI_JOB_WELL_DONE, EMOJI_PRIZE } from "../../../utils/emoji";
 import { handleError } from "../../../utils/errors";
+import { logEvent } from "../../../utils/logger";
+import { canManage } from "../../../utils/permissions";
 
 export interface Arguments extends CommandArguments {
   description: string;
@@ -18,12 +20,16 @@ export const addPrize = async (args: Arguments): Promise<CommandResponse | void>
   try {
     if (!(await canManage(args.message))) {
       return {
-        content: `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`
+        content: `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`,
       };
     }
 
+    if (!args.message.guild) {
+      throw new Error("Could not find Discord Guild.");
+    }
+
     const server = await Server.findOne({
-      where: { discordId: args.message.guild.id }
+      where: { discordId: args.message.guild.id },
     });
 
     if (!server) {
@@ -32,7 +38,7 @@ export const addPrize = async (args: Arguments): Promise<CommandResponse | void>
 
     if (!server.config.redeemChannelId || server.config.redeemChannelId === "") {
       return {
-        content: `${EMOJI_ERROR} You need to set the \`redeem-channel\` config before using prizes.`
+        content: `${EMOJI_ERROR} You need to set the \`redeem-channel\` config before using prizes.`,
       };
     }
 
@@ -60,11 +66,13 @@ export const addPrize = async (args: Arguments): Promise<CommandResponse | void>
       } else {
         const foundRolesIds = args.roles
           .split(",")
-          .map(g => g.trim())
-          .filter(roleName => {
-            return args.message.guild.roles.find(role => role.name === roleName.trim());
+          .map((g) => g.trim())
+          .filter((roleName) => {
+            return args.message.guild!.roles.cache.find((role) => role.name === roleName.trim());
           })
-          .map(roleName => args.message.guild.roles.find(role => role.name === roleName.trim()).id);
+          .map((roleName) => args.message.guild!.roles.cache.find((role) => role.name === roleName.trim()))
+          .filter((role): role is Role => !!role)
+          .map((role) => role.id);
 
         if (foundRolesIds.length > 0) {
           prize.roleIds = foundRolesIds;
@@ -77,7 +85,7 @@ export const addPrize = async (args: Arguments): Promise<CommandResponse | void>
     logEvent(
       args.client,
       args.message,
-      `${EMOJI_PRIZE} \`${args.message.author.tag}\` added a new prize: \`${prize.description}\``
+      `${EMOJI_PRIZE} \`${args.message.author.tag}\` added a new prize: \`${prize.description}\``,
     );
 
     if (server.config.quietMode) {

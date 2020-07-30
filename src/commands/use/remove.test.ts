@@ -1,31 +1,32 @@
 import { createConnection, getConnection } from "typeorm";
-import { removeCakes, Arguments } from "./remove";
-import { createServer, createMember, createMessage, createClient, ENTITIES } from "../../../test/test-helpers";
-import { EMOJI_INCORRECT_PERMISSIONS, EMOJI_RECORD_NOT_FOUND, EMOJI_JOB_WELL_DONE } from "../../utils/emoji";
+
+import { createClient, createMember, createMessage, createServer, ENTITIES } from "../../../test/test-helpers";
 import { CommandResponse } from "../../utils/command-interfaces";
+import { EMOJI_INCORRECT_PERMISSIONS, EMOJI_JOB_WELL_DONE, EMOJI_RECORD_NOT_FOUND } from "../../utils/emoji";
+import { Arguments, removeCakes } from "./remove";
 
 describe("commands/use/remove", () => {
-  beforeEach(async done => {
+  beforeEach(async (done) => {
     await createConnection({
       type: "sqlite",
       database: ":memory:",
       dropSchema: true,
       entities: ENTITIES,
       synchronize: true,
-      logging: false
+      logging: false,
     });
 
     done();
   });
 
-  afterEach(async done => {
+  afterEach(async (done) => {
     const conn = getConnection();
     await conn.close();
 
     done();
   });
 
-  it(`should require permissions`, async done => {
+  it(`should require permissions`, async (done) => {
     const server = await createServer();
 
     const args: Arguments = {
@@ -36,7 +37,7 @@ describe("commands/use/remove", () => {
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await removeCakes(args)) as CommandResponse;
@@ -45,7 +46,7 @@ describe("commands/use/remove", () => {
     done();
   });
 
-  it(`should require a valid member`, async done => {
+  it(`should require a valid member`, async (done) => {
     const server = await createServer();
 
     const args: Arguments = {
@@ -56,7 +57,7 @@ describe("commands/use/remove", () => {
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await removeCakes(args)) as CommandResponse;
@@ -65,7 +66,7 @@ describe("commands/use/remove", () => {
     done();
   });
 
-  it(`should remove from balance`, async done => {
+  it(`should remove from balance`, async (done) => {
     const server = await createServer();
     const member = await createMember({ server, balance: 5 });
 
@@ -74,14 +75,14 @@ describe("commands/use/remove", () => {
       message: await createMessage({
         server,
         serverMembers: [member],
-        permission: "ADMINISTRATOR"
+        permission: "ADMINISTRATOR",
       }),
       member: `<@${member.discordId}>`,
       amount: 1,
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await removeCakes(args)) as CommandResponse;

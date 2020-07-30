@@ -1,11 +1,13 @@
+import { Role } from "discord.js";
 import { Argv } from "yargs";
-import Server from "../../entity/server";
-import { canBless, isShamed } from "../../utils/permissions";
+
 import Member from "../../entity/member";
-import { logEvent, logMilestone } from "../../utils/logger";
-import { EMOJI_DONT_DO_THAT, EMOJI_INCORRECT_PERMISSIONS, EMOJI_RECORD_NOT_FOUND } from "../../utils/emoji";
+import Server from "../../entity/server";
 import { CommandArguments, CommandResponse } from "../../utils/command-interfaces";
+import { EMOJI_DONT_DO_THAT, EMOJI_INCORRECT_PERMISSIONS, EMOJI_RECORD_NOT_FOUND } from "../../utils/emoji";
 import { handleError } from "../../utils/errors";
+import { logEvent, logMilestone } from "../../utils/logger";
+import { canBless, isShamed } from "../../utils/permissions";
 
 export interface Arguments extends CommandArguments {
   member: string;
@@ -17,12 +19,16 @@ export const blessMember = async (args: Arguments): Promise<CommandResponse | vo
   try {
     if (!(await canBless(args.message))) {
       return {
-        content: `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`
+        content: `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`,
       };
     }
 
+    if (!args.message.guild) {
+      throw new Error("Could not find Discord Guild.");
+    }
+
     const server = await Server.findOne({
-      where: { discordId: args.message.guild.id }
+      where: { discordId: args.message.guild.id },
     });
 
     if (!server) {
@@ -30,22 +36,22 @@ export const blessMember = async (args: Arguments): Promise<CommandResponse | vo
     }
 
     const receivingMemberId = args.member.replace(/^<@!?/, "").replace(/>$/, "");
-    const receivingDiscordMember = args.message.guild.members.get(receivingMemberId);
+    const receivingDiscordMember = args.message.guild.members.cache.get(receivingMemberId);
 
     if (!receivingDiscordMember) {
       return {
-        content: `${EMOJI_RECORD_NOT_FOUND} Uh oh, I couldn't find them.`
+        content: `${EMOJI_RECORD_NOT_FOUND} Uh oh, I couldn't find them.`,
       };
     }
 
     if (await isShamed(server.discordId, receivingDiscordMember.id)) {
       return {
-        content: `${EMOJI_DONT_DO_THAT} They have been **shamed** and can not get ${server.config.cakeNamePlural}!`
+        content: `${EMOJI_DONT_DO_THAT} They have been **shamed** and can not get ${server.config.cakeNamePlural}!`,
       };
     }
 
     const receivingMember = await Member.findOne({
-      where: { discordId: receivingDiscordMember.id }
+      where: { discordId: receivingDiscordMember.id },
     });
 
     if (!receivingMember) {
@@ -69,13 +75,16 @@ export const blessMember = async (args: Arguments): Promise<CommandResponse | vo
       args.message,
       `${server.config.cakeEmoji} \`${args.message.author.tag}\` blessed \`${
         receivingDiscordMember.user.tag
-      }\` with ${amount} ${amount > 1 ? server.config.cakeNamePlural : server.config.cakeNameSingular}!`
+      }\` with ${amount} ${amount > 1 ? server.config.cakeNamePlural : server.config.cakeNameSingular}!`,
     );
 
-    server.milestones.forEach(milestone => {
+    server.milestones.forEach((milestone) => {
       if (previousEarned < milestone.amount && receivingMember.earned >= milestone.amount) {
-        const roles = milestone.roleIds.map(roleId => args.message.guild.roles.find(role => role.id === roleId));
-        receivingDiscordMember.addRoles(roles);
+        const roles = milestone.roleIds
+          .map((roleId) => args.message.guild!.roles.cache.find((role) => role.id === roleId))
+          .filter((role): role is Role => !!role);
+
+        receivingDiscordMember.roles.add(roles);
 
         logMilestone(args.client, args.message, milestone, receivingDiscordMember, roles);
       }
@@ -83,7 +92,7 @@ export const blessMember = async (args: Arguments): Promise<CommandResponse | vo
 
     if (previousEarned < server.config.requirementToGive && receivingMember.earned >= server.config.requirementToGive) {
       args.message.channel.send(
-        `${server.config.cakeEmoji} You can now give ${server.config.cakeNamePlural}, <@${receivingDiscordMember.id}>!`
+        `${server.config.cakeEmoji} You can now give ${server.config.cakeNamePlural}, <@${receivingDiscordMember.id}>!`,
       );
     }
 
@@ -101,10 +110,14 @@ export const blessMember = async (args: Arguments): Promise<CommandResponse | vo
       return undefined;
     }
 
+    if (!args.message.member) {
+      throw new Error("Could not find Discord GuildMember.");
+    }
+
     return {
       content: `${server.config.cakeEmoji} ${receivingDiscordMember.displayName} just got ${amount} ${
         amount > 1 ? server.config.cakeNamePlural : server.config.cakeNameSingular
-      }, <@${args.message.member.id}>!`
+      }, <@${args.message.member.id}>!`,
     };
   } catch (error) {
     return handleError(error, args.message);
@@ -115,23 +128,27 @@ export const blessRole = async (args: Arguments): Promise<CommandResponse | void
   try {
     if (!(await canBless(args.message))) {
       return {
-        content: `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`
+        content: `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`,
       };
     }
 
+    if (!args.message.guild) {
+      throw new Error("Could not find Discord Guild.");
+    }
+
     const server = await Server.findOne({
-      where: { discordId: args.message.guild.id }
+      where: { discordId: args.message.guild.id },
     });
 
     if (!server) {
       throw new Error("Could not find server.");
     }
 
-    const discordRole = args.message.guild.roles.find(role => role.name === args.role);
+    const discordRole = args.message.guild.roles.cache.find((role) => role.name === args.role);
 
     if (!discordRole) {
       return {
-        content: `${EMOJI_RECORD_NOT_FOUND} Uh oh, I couldn't find that role.`
+        content: `${EMOJI_RECORD_NOT_FOUND} Uh oh, I couldn't find that role.`,
       };
     }
 
@@ -143,7 +160,7 @@ export const blessRole = async (args: Arguments): Promise<CommandResponse | void
       if (!(await isShamed(server.discordId, discordMember.id))) {
         // eslint-disable-next-line no-await-in-loop
         const member = await Member.findOne({
-          where: { discordId: discordMember.id }
+          where: { discordId: discordMember.id },
         });
 
         if (member) {
@@ -154,10 +171,13 @@ export const blessRole = async (args: Arguments): Promise<CommandResponse | void
           // eslint-disable-next-line no-await-in-loop
           await member.save();
 
-          server.milestones.forEach(milestone => {
+          server.milestones.forEach((milestone) => {
             if (previousEarned < milestone.amount && member.earned >= milestone.amount) {
-              const roles = milestone.roleIds.map(roleId => args.message.guild.roles.find(role => role.id === roleId));
-              discordMember.addRoles(roles);
+              const roles = milestone.roleIds
+                .map((roleId) => args.message.guild!.roles.cache.find((role) => role.id === roleId))
+                .filter((role): role is Role => !!role);
+
+              discordMember.roles.add(roles);
 
               logMilestone(args.client, args.message, milestone, discordMember, roles);
             }
@@ -165,7 +185,7 @@ export const blessRole = async (args: Arguments): Promise<CommandResponse | void
 
           if (previousEarned < server.config.requirementToGive && member.earned >= server.config.requirementToGive) {
             args.message.channel.send(
-              `${server.config.cakeEmoji} You can now give ${server.config.cakeNamePlural}, <@${discordMember.id}>!`
+              `${server.config.cakeEmoji} You can now give ${server.config.cakeNamePlural}, <@${discordMember.id}>!`,
             );
           }
         }
@@ -177,7 +197,7 @@ export const blessRole = async (args: Arguments): Promise<CommandResponse | void
       args.message,
       `${server.config.cakeEmoji} \`${args.message.author.tag}\` blessed the \`${
         discordRole.name
-      }\` role with ${amount} ${amount > 1 ? server.config.cakeNamePlural : server.config.cakeNameSingular}!`
+      }\` role with ${amount} ${amount > 1 ? server.config.cakeNamePlural : server.config.cakeNameSingular}!`,
     );
 
     if (server.config.quietMode) {
@@ -194,10 +214,14 @@ export const blessRole = async (args: Arguments): Promise<CommandResponse | void
       return undefined;
     }
 
+    if (!args.message.member) {
+      throw new Error("Could not find Discord GuildMember.");
+    }
+
     return {
       content: `${server.config.cakeEmoji} They all just got ${amount} ${
         amount > 1 ? server.config.cakeNamePlural : server.config.cakeNameSingular
-      }, <@${args.message.member.id}>!`
+      }, <@${args.message.member.id}>!`,
     };
   } catch (error) {
     return handleError(error, args.message);

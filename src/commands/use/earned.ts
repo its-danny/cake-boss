@@ -1,6 +1,7 @@
 import { Argv } from "yargs";
-import Server from "../../entity/server";
+
 import Member from "../../entity/member";
+import Server from "../../entity/server";
 import { CommandArguments, CommandResponse } from "../../utils/command-interfaces";
 import { handleError } from "../../utils/errors";
 
@@ -10,8 +11,12 @@ export interface Arguments extends CommandArguments {
 
 export const getEarned = async (args: Arguments): Promise<CommandResponse | void> => {
   try {
+    if (!args.message.guild) {
+      throw new Error("Could not find Discord Guild.");
+    }
+
     const server = await Server.findOne({
-      where: { discordId: args.message.guild.id }
+      where: { discordId: args.message.guild.id },
     });
 
     if (!server) {
@@ -26,11 +31,15 @@ export const getEarned = async (args: Arguments): Promise<CommandResponse | void
 
       usingMember = true;
       member = await Member.findOne({
-        where: { server, discordId: receivingMemberId }
+        where: { server, discordId: receivingMemberId },
       });
     } else {
+      if (!args.message.member) {
+        throw new Error("Could not find Discord GuildMember.");
+      }
+
       member = await Member.findOne({
-        where: { server, discordId: args.message.member.id }
+        where: { server, discordId: args.message.member.id },
       });
     }
 
@@ -41,7 +50,7 @@ export const getEarned = async (args: Arguments): Promise<CommandResponse | void
     return {
       content: `${server.config.cakeEmoji} ${usingMember ? "They" : "You"} have earned a total of ${member.earned} ${
         member.earned === 1 ? server.config.cakeNameSingular : server.config.cakeNamePlural
-      }!`
+      }!`,
     };
   } catch (error) {
     return handleError(error, args.message);

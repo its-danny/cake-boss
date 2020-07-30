@@ -1,11 +1,16 @@
-import { Client, Message, TextChannel, GuildMember, Role } from "discord.js";
-import Server from "../entity/server";
+import { Client, GuildMember, Message, Role, TextChannel } from "discord.js";
+
 import Milestone from "../entity/milestone";
+import Server from "../entity/server";
 import { EMOJI_MILESTONE } from "./emoji";
 
 export const logEvent = async (client: Client, message: Message, string: string) => {
+  if (!message.guild) {
+    throw new Error("Could not find Discord Guild.");
+  }
+
   const server = await Server.findOne({
-    where: { discordId: message.guild.id }
+    where: { discordId: message.guild.id },
   });
 
   if (server) {
@@ -13,7 +18,7 @@ export const logEvent = async (client: Client, message: Message, string: string)
       return;
     }
 
-    const channel: TextChannel = client.channels.get(server.config.logChannelId) as TextChannel;
+    const channel: TextChannel = client.channels.cache.get(server.config.logChannelId) as TextChannel;
 
     if (channel) {
       let eventMessage = string;
@@ -28,8 +33,12 @@ export const logEvent = async (client: Client, message: Message, string: string)
 };
 
 export const logRedeemed = async (client: Client, message: Message, string: string) => {
+  if (!message.guild) {
+    throw new Error("Could not find Discord Guild.");
+  }
+
   const server = await Server.findOne({
-    where: { discordId: message.guild.id }
+    where: { discordId: message.guild.id },
   });
 
   if (server) {
@@ -37,7 +46,7 @@ export const logRedeemed = async (client: Client, message: Message, string: stri
       return;
     }
 
-    const channel: TextChannel = client.channels.get(server.config.redeemChannelId) as TextChannel;
+    const channel: TextChannel = client.channels.cache.get(server.config.redeemChannelId) as TextChannel;
 
     if (channel) {
       channel.send(`\u200B${string}`);
@@ -50,10 +59,14 @@ export const logMilestone = async (
   message: Message,
   milestone: Milestone,
   discordMember: GuildMember,
-  roles: Role[]
+  roles: Role[],
 ) => {
+  if (!message.guild) {
+    throw new Error("Could not find Discord Guild.");
+  }
+
   const server = await Server.findOne({
-    where: { discordId: message.guild.id }
+    where: { discordId: message.guild.id },
   });
 
   if (server) {
@@ -61,13 +74,13 @@ export const logMilestone = async (
       return;
     }
 
-    const channel: TextChannel = client.channels.get(server.config.milestoneChannelId) as TextChannel;
+    const channel: TextChannel = client.channels.cache.get(server.config.milestoneChannelId) as TextChannel;
 
     if (channel) {
       channel.send(
         `\u200B${EMOJI_MILESTONE} \`${discordMember.user.tag}\` reached ${milestone.amount} ${
           server.config.cakeNamePlural
-        } and got the following roles: ${roles.map(role => role.name)}!`
+        } and got the following roles: ${roles.map((role) => role.name)}!`,
       );
     }
   }
