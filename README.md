@@ -13,7 +13,7 @@
 [![Discord Bots](https://discordbots.org/api/widget/lib/611013950942871562.svg)](https://discordbots.org/bot/611013950942871562)
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/dannytatom/cake-boss)
 ![GitHub last commit](https://img.shields.io/github/last-commit/dannytatom/cake-boss?color=blue)
-![Maintenance](https://img.shields.io/maintenance/yes/2019?color=blue)
+![Maintenance](https://img.shields.io/maintenance/yes/2020?color=blue)
 
 ## Features
 
