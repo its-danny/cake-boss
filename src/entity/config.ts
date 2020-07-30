@@ -1,7 +1,8 @@
-import { Entity, BaseEntity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from "typeorm";
 import { Guild } from "discord.js";
-import { toSentenceSerial } from "underscore.string";
 import { chain, isEmpty } from "lodash";
+import { BaseEntity, Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { toSentenceSerial } from "underscore.string";
+
 import { EMOJI_CAKE } from "../utils/emoji";
 
 export type ConfigCommand =
@@ -390,41 +391,41 @@ export default class Config extends BaseEntity {
       case "log-channel":
         return {
           default: "none",
-          value: logChannel ? `#${logChannel.name}` : "none"
+          value: logChannel ? `#${logChannel.name}` : "none",
         };
       case "log-with-link":
         return { default: "false", value: `${this.logWithLink}` };
       case "redeem-channel":
         return {
           default: "none",
-          value: redeemChannel ? `#${redeemChannel.name}` : "none"
+          value: redeemChannel ? `#${redeemChannel.name}` : "none",
         };
       case "redeem-timer":
         return { default: "10", value: `${this.redeemTimer}` };
       case "milestone-channel":
         return {
           default: "none",
-          value: milestoneChannel ? `#${milestoneChannel.name}` : "none"
+          value: milestoneChannel ? `#${milestoneChannel.name}` : "none",
         };
       case "manager-roles":
         return {
           default: "none",
-          value: isEmpty(managerRoles) ? "none" : toSentenceSerial(managerRoles)
+          value: isEmpty(managerRoles) ? "none" : toSentenceSerial(managerRoles),
         };
       case "blesser-roles":
         return {
           default: "none",
-          value: isEmpty(blesserRoles) ? "none" : toSentenceSerial(blesserRoles)
+          value: isEmpty(blesserRoles) ? "none" : toSentenceSerial(blesserRoles),
         };
       case "dropper-roles":
         return {
           default: "none",
-          value: isEmpty(dropperRoles) ? "none" : toSentenceSerial(dropperRoles)
+          value: isEmpty(dropperRoles) ? "none" : toSentenceSerial(dropperRoles),
         };
       case "redeem-ping-roles":
         return {
           default: "none",
-          value: isEmpty(redeemPingRoles) ? "none" : toSentenceSerial(redeemPingRoles)
+          value: isEmpty(redeemPingRoles) ? "none" : toSentenceSerial(redeemPingRoles),
         };
       case "nickname":
         return { default: "CAKE BOSS!", value: this.nickname || "" };
@@ -437,12 +438,12 @@ export default class Config extends BaseEntity {
       case "drop-gifs":
         return {
           default: "none",
-          value: isEmpty(this.dropGifs) ? "none" : toSentenceSerial(this.dropGifs)
+          value: isEmpty(this.dropGifs) ? "none" : toSentenceSerial(this.dropGifs),
         };
       case "no-drop-gifs":
         return {
           default: "none",
-          value: isEmpty(this.noDropGifs) ? "none" : toSentenceSerial(this.noDropGifs)
+          value: isEmpty(this.noDropGifs) ? "none" : toSentenceSerial(this.noDropGifs),
         };
       case "no-giving":
         return { default: "false", value: `${this.noGiving}` };

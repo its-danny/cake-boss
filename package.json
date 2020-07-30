@@ -10,43 +10,26 @@
     "build": "NODE_ENV=production yarn run tsc",
     "start": "NODE_ENV=production node dist/index.js",
     "test": "NODE_ENV=test yarn run jest",
-    "lint": "yarn run eslint --ext .js,.ts ./",
-    "pretty": "yarn run eslint --ext .js,.ts ./ --fix && yarn run pretty-quick --staged",
-    "typeorm": "yarn run ts-node ./node_modules/.bin/typeorm",
-    "commit": "npx git-cz"
+    "lint": "eslint --ext .ts src/",
+    "fix": "eslint --ext .ts src/ --fix && prettier --write '**/*.ts' src/",
+    "typeorm": "yarn run ts-node ./node_modules/.bin/typeorm"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   },
   "husky": {
     "hooks": {
-      "pre-commit": "yarn run pretty"
+      "pre-commit": "yarn fix",
+      "prepare-commit-msg": "exec < /dev/tty && git cz --hook || true"
     }
   },
   "devDependencies": {
-    "@types/jest": "^25.2.1",
-    "@typescript-eslint/eslint-plugin": "^2.21.0",
-    "@typescript-eslint/parser": "^2.27.0",
-    "eslint": "^6.7.2",
-    "eslint-config-airbnb-base": "^14.0.0",
-    "eslint-config-airbnb-typescript": "^7.0.0",
-    "eslint-config-prettier": "^6.10.0",
-    "eslint-plugin-import": "^2.20.1",
-    "eslint-plugin-jest": "^23.8.2",
-    "eslint-plugin-prettier": "^3.1.2",
-    "faker": "^4.1.0",
-    "husky": "^4.2.3",
-    "jest": "^25.1.0",
-    "nodemon": "^2.0.2",
-    "prettier": "^1.19.1",
-    "pretty-quick": "^2.0.1",
-    "sqlite3": "^4.1.1",
-    "ts-jest": "^25.2.1"
-  },
-  "dependencies": {
-    "@discordjs/uws": "^10.149.0",
-    "@koa/cors": "^3.0.0",
-    "@sentry/node": "^5.15.4",
     "@types/cli-table": "^0.3.0",
     "@types/faker": "^4.1.10",
     "@types/fs-extra": "^8.1.0",
+    "@types/jest": "^25.2.1",
     "@types/json2csv": "^4.5.1",
     "@types/koa": "^2.11.2",
     "@types/koa-router": "^7.0.42",
@@ -55,6 +38,30 @@
     "@types/node": "^13.11.1",
     "@types/node-schedule": "^1.2.4",
     "@types/underscore.string": "^0.0.38",
+    "@typescript-eslint/eslint-plugin": "^2.21.0",
+    "@typescript-eslint/parser": "^2.27.0",
+    "commitizen": "^4.1.2",
+    "cz-conventional-changelog": "^3.2.0",
+    "eslint": "^6.7.2",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-config-airbnb-typescript": "^7.0.0",
+    "eslint-config-prettier": "^6.10.0",
+    "eslint-plugin-import": "^2.20.1",
+    "eslint-plugin-jest": "^23.8.2",
+    "eslint-plugin-prettier": "^3.1.2",
+    "eslint-plugin-simple-import-sort": "^5.0.3",
+    "faker": "^4.1.0",
+    "husky": "^4.2.3",
+    "jest": "^25.1.0",
+    "nodemon": "^2.0.2",
+    "prettier": "^1.19.1",
+    "sqlite3": "^4.1.1",
+    "ts-jest": "^25.2.1"
+  },
+  "dependencies": {
+    "@discordjs/uws": "^10.149.0",
+    "@koa/cors": "^3.0.0",
+    "@sentry/node": "^5.15.4",
     "axios": "^0.19.0",
     "cli-table": "^0.3.1",
     "csvtojson": "^2.0.10",

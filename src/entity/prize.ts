@@ -1,12 +1,13 @@
 import {
-  Entity,
   BaseEntity,
-  PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
   UpdateDateColumn,
-  ManyToOne
 } from "typeorm";
+
 import Server from "./server";
 
 @Entity()
@@ -34,7 +35,7 @@ export default class Prize extends BaseEntity {
 
   @ManyToOne(
     () => Server,
-    server => server.prizes
+    server => server.prizes,
   )
   server!: Server;
 }

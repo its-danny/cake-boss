@@ -1,4 +1,5 @@
 import { Argv } from "yargs";
+
 import { CommandArguments } from "../../utils/command-interfaces";
 
 export const command = "vote";
@@ -18,7 +19,7 @@ export const handler = (args: CommandArguments) => {
         .split("\n")
         .map(l => l.trim())
         .join("\n")
-        .trim()
-    })
+        .trim(),
+    }),
   );
 };

@@ -1,9 +1,10 @@
-import { createConnection, getConnection } from "typeorm";
 import { Role } from "discord.js";
-import { createServer, createClient, createMessage, ENTITIES, createMilestone } from "../../../../test/test-helpers";
-import { editMilestone, Arguments } from "./edit";
-import { EMOJI_ERROR, EMOJI_INCORRECT_PERMISSIONS, EMOJI_JOB_WELL_DONE } from "../../../utils/emoji";
+import { createConnection, getConnection } from "typeorm";
+
+import { createClient, createMessage, createMilestone, createServer, ENTITIES } from "../../../../test/test-helpers";
 import { CommandResponse } from "../../../utils/command-interfaces";
+import { EMOJI_ERROR, EMOJI_INCORRECT_PERMISSIONS, EMOJI_JOB_WELL_DONE } from "../../../utils/emoji";
+import { Arguments, editMilestone } from "./edit";
 
 describe("commands/manage/milestone/edit", () => {
   beforeEach(async done => {
@@ -13,7 +14,7 @@ describe("commands/manage/milestone/edit", () => {
       dropSchema: true,
       entities: ENTITIES,
       synchronize: true,
-      logging: false
+      logging: false,
     });
 
     done();
@@ -39,7 +40,7 @@ describe("commands/manage/milestone/edit", () => {
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await editMilestone(args)) as CommandResponse;
@@ -61,7 +62,7 @@ describe("commands/manage/milestone/edit", () => {
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await editMilestone(args)) as CommandResponse;
@@ -83,7 +84,7 @@ describe("commands/manage/milestone/edit", () => {
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await editMilestone(args)) as CommandResponse;
@@ -104,12 +105,12 @@ describe("commands/manage/milestone/edit", () => {
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await editMilestone(args)) as CommandResponse;
     expect(response.content).toBe(
-      `${EMOJI_ERROR} Couldn't find that milestone, are you sure \`${args.id}\` is the right ID?`
+      `${EMOJI_ERROR} Couldn't find that milestone, are you sure \`${args.id}\` is the right ID?`,
     );
 
     done();
@@ -126,7 +127,7 @@ describe("commands/manage/milestone/edit", () => {
       message: await createMessage({
         server,
         serverRoles: [role],
-        permission: "ADMINISTRATOR"
+        permission: "ADMINISTRATOR",
       }),
       id: milestone.id,
       amount: 3,
@@ -134,7 +135,7 @@ describe("commands/manage/milestone/edit", () => {
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await editMilestone(args)) as CommandResponse;

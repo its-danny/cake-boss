@@ -1,15 +1,16 @@
-import { Argv } from "yargs";
 import Table from "cli-table";
 import { chain } from "lodash";
-import { toSentenceSerial } from "underscore.string";
 import { getConnection } from "typeorm";
-import { canManage } from "../../../utils/permissions";
-import Server from "../../../entity/server";
-import { EMOJI_ERROR, EMOJI_INCORRECT_PERMISSIONS, EMOJI_MILESTONE, EMOJI_WORKING_HARD } from "../../../utils/emoji";
-import getTableBorder from "../../../utils/get-table-border";
-import { CommandArguments, CommandResponse } from "../../../utils/command-interfaces";
+import { toSentenceSerial } from "underscore.string";
+import { Argv } from "yargs";
+
 import Milestone from "../../../entity/milestone";
+import Server from "../../../entity/server";
+import { CommandArguments, CommandResponse } from "../../../utils/command-interfaces";
+import { EMOJI_ERROR, EMOJI_INCORRECT_PERMISSIONS, EMOJI_MILESTONE, EMOJI_WORKING_HARD } from "../../../utils/emoji";
 import { handleError } from "../../../utils/errors";
+import getTableBorder from "../../../utils/get-table-border";
+import { canManage } from "../../../utils/permissions";
 
 interface Arguments extends CommandArguments {
   page?: number;
@@ -19,12 +20,12 @@ export const getMilestoneList = async (args: Arguments): Promise<CommandResponse
   try {
     if (!(await canManage(args.message))) {
       return {
-        content: `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`
+        content: `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`,
       };
     }
 
     const server = await Server.findOne({
-      where: { discordId: args.message.guild.id }
+      where: { discordId: args.message.guild.id },
     });
 
     if (!server) {
@@ -57,7 +58,7 @@ export const getMilestoneList = async (args: Arguments): Promise<CommandResponse
     const table = new Table({
       head: ["ID", "Amount", "Roles to Give", "Announcement"],
       style: { head: [], border: [] },
-      chars: getTableBorder()
+      chars: getTableBorder(),
     });
 
     milestones.forEach(milestone => {
@@ -78,14 +79,14 @@ export const getMilestoneList = async (args: Arguments): Promise<CommandResponse
         milestone.id,
         milestone.amount,
         roleNames.length > 0 ? toSentenceSerial(roleNames) : "none",
-        milestone.announcement || ""
+        milestone.announcement || "",
       ]);
 
       return false;
     });
 
     return {
-      content: `${EMOJI_MILESTONE} **Milestone List** [ Page ${currentPage} of ${totalPages} ]\n\n\`\`\`\n\n${table.toString()}\n\`\`\``
+      content: `${EMOJI_MILESTONE} **Milestone List** [ Page ${currentPage} of ${totalPages} ]\n\n\`\`\`\n\n${table.toString()}\n\`\`\``,
     };
   } catch (error) {
     return handleError(error, args.message);

@@ -1,11 +1,12 @@
-import { Client, Message, TextChannel, GuildMember, Role } from "discord.js";
-import Server from "../entity/server";
+import { Client, GuildMember, Message, Role, TextChannel } from "discord.js";
+
 import Milestone from "../entity/milestone";
+import Server from "../entity/server";
 import { EMOJI_MILESTONE } from "./emoji";
 
 export const logEvent = async (client: Client, message: Message, string: string) => {
   const server = await Server.findOne({
-    where: { discordId: message.guild.id }
+    where: { discordId: message.guild.id },
   });
 
   if (server) {
@@ -29,7 +30,7 @@ export const logEvent = async (client: Client, message: Message, string: string)
 
 export const logRedeemed = async (client: Client, message: Message, string: string) => {
   const server = await Server.findOne({
-    where: { discordId: message.guild.id }
+    where: { discordId: message.guild.id },
   });
 
   if (server) {
@@ -50,10 +51,10 @@ export const logMilestone = async (
   message: Message,
   milestone: Milestone,
   discordMember: GuildMember,
-  roles: Role[]
+  roles: Role[],
 ) => {
   const server = await Server.findOne({
-    where: { discordId: message.guild.id }
+    where: { discordId: message.guild.id },
   });
 
   if (server) {
@@ -67,7 +68,7 @@ export const logMilestone = async (
       channel.send(
         `\u200B${EMOJI_MILESTONE} \`${discordMember.user.tag}\` reached ${milestone.amount} ${
           server.config.cakeNamePlural
-        } and got the following roles: ${roles.map(role => role.name)}!`
+        } and got the following roles: ${roles.map(role => role.name)}!`,
       );
     }
   }

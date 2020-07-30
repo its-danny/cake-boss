@@ -1,8 +1,9 @@
 import { createConnection, getConnection } from "typeorm";
-import { getBalance } from "./balance";
-import { createServer, createMember, createMessage, createClient, ENTITIES } from "../../../test/test-helpers";
-import { EMOJI_CAKE } from "../../utils/emoji";
+
+import { createClient, createMember, createMessage, createServer, ENTITIES } from "../../../test/test-helpers";
 import { CommandArguments, CommandResponse } from "../../utils/command-interfaces";
+import { EMOJI_CAKE } from "../../utils/emoji";
+import { getBalance } from "./balance";
 
 describe("commands/use/balance", () => {
   beforeEach(async done => {
@@ -12,7 +13,7 @@ describe("commands/use/balance", () => {
       dropSchema: true,
       entities: ENTITIES,
       synchronize: true,
-      logging: false
+      logging: false,
     });
 
     done();
@@ -35,7 +36,7 @@ describe("commands/use/balance", () => {
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await getBalance(args)) as CommandResponse;

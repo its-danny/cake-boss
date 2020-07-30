@@ -1,6 +1,7 @@
 import { Message } from "discord.js";
-import Server from "../entity/server";
+
 import Member from "../entity/member";
+import Server from "../entity/server";
 
 export const canManage = async (message: Message): Promise<boolean> => {
   if (message.member.hasPermission("ADMINISTRATOR")) {
@@ -8,7 +9,7 @@ export const canManage = async (message: Message): Promise<boolean> => {
   }
 
   const server = await Server.findOne({
-    where: { discordId: message.guild.id }
+    where: { discordId: message.guild.id },
   });
 
   if (server) {
@@ -28,7 +29,7 @@ export const canBless = async (message: Message): Promise<boolean> => {
   }
 
   const server = await Server.findOne({
-    where: { discordId: message.guild.id }
+    where: { discordId: message.guild.id },
   });
 
   if (server) {
@@ -48,7 +49,7 @@ export const canDrop = async (message: Message): Promise<boolean> => {
   }
 
   const server = await Server.findOne({
-    where: { discordId: message.guild.id }
+    where: { discordId: message.guild.id },
   });
 
   if (server) {
@@ -60,12 +61,12 @@ export const canDrop = async (message: Message): Promise<boolean> => {
 
 export const canGive = async (message: Message): Promise<boolean> => {
   const server = await Server.findOne({
-    where: { discordId: message.guild.id }
+    where: { discordId: message.guild.id },
   });
 
   if (server) {
     const member = await Member.findOne({
-      where: { discordId: message.member.id }
+      where: { discordId: message.member.id },
     });
 
     if (member) {
@@ -78,12 +79,12 @@ export const canGive = async (message: Message): Promise<boolean> => {
 
 export const isShamed = async (discordServerId: string, discordMemberId: string): Promise<boolean> => {
   const server = await Server.findOne({
-    where: { discordId: discordServerId }
+    where: { discordId: discordServerId },
   });
 
   if (server) {
     const member = await Member.findOne({
-      where: { discordId: discordMemberId }
+      where: { discordId: discordMemberId },
     });
 
     if (member) {

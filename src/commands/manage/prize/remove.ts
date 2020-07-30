@@ -1,11 +1,12 @@
 import { Argv } from "yargs";
-import { canManage } from "../../../utils/permissions";
-import Server from "../../../entity/server";
+
 import Prize from "../../../entity/prize";
-import { logEvent } from "../../../utils/logger";
+import Server from "../../../entity/server";
 import { CommandArguments, CommandResponse } from "../../../utils/command-interfaces";
-import { EMOJI_ERROR, EMOJI_JOB_WELL_DONE, EMOJI_INCORRECT_PERMISSIONS, EMOJI_PRIZE } from "../../../utils/emoji";
+import { EMOJI_ERROR, EMOJI_INCORRECT_PERMISSIONS, EMOJI_JOB_WELL_DONE, EMOJI_PRIZE } from "../../../utils/emoji";
 import { handleError } from "../../../utils/errors";
+import { logEvent } from "../../../utils/logger";
+import { canManage } from "../../../utils/permissions";
 
 export interface Arguments extends CommandArguments {
   id: number;
@@ -15,12 +16,12 @@ export const removePrize = async (args: Arguments): Promise<CommandResponse | vo
   try {
     if (!(await canManage(args.message))) {
       return {
-        content: `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`
+        content: `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`,
       };
     }
 
     const server = await Server.findOne({
-      where: { discordId: args.message.guild.id }
+      where: { discordId: args.message.guild.id },
     });
 
     if (!server) {
@@ -29,7 +30,7 @@ export const removePrize = async (args: Arguments): Promise<CommandResponse | vo
 
     if (!server.config.redeemChannelId || server.config.redeemChannelId === "") {
       return {
-        content: `${EMOJI_ERROR} You need to set the \`redeem-channel\` config before using prizes.`
+        content: `${EMOJI_ERROR} You need to set the \`redeem-channel\` config before using prizes.`,
       };
     }
 
@@ -37,7 +38,7 @@ export const removePrize = async (args: Arguments): Promise<CommandResponse | vo
 
     if (!prize) {
       return {
-        content: `${EMOJI_ERROR} Couldn't find that prize, are you sure \`${args.id}\` is the right ID?`
+        content: `${EMOJI_ERROR} Couldn't find that prize, are you sure \`${args.id}\` is the right ID?`,
       };
     }
 
@@ -46,7 +47,7 @@ export const removePrize = async (args: Arguments): Promise<CommandResponse | vo
     logEvent(
       args.client,
       args.message,
-      `${EMOJI_PRIZE} \`${args.message.author.tag}\` removed a prize: \`${prize.description}\``
+      `${EMOJI_PRIZE} \`${args.message.author.tag}\` removed a prize: \`${prize.description}\``,
     );
 
     if (server.config.quietMode) {

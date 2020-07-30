@@ -13,6 +13,6 @@ export default () => {
     right: "",
     "right-mid": "",
     middle: "",
-    "mid-mid": "─"
+    "mid-mid": "─",
   };
 };

@@ -1,20 +1,21 @@
 import {
-  Entity,
   BaseEntity,
-  PrimaryGeneratedColumn,
   Column,
-  OneToOne,
+  CreateDateColumn,
+  Entity,
   JoinColumn,
   OneToMany,
-  CreateDateColumn,
-  UpdateDateColumn
+  OneToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from "typeorm";
-import Config from "./config";
-import Member from "./member";
-import Drop from "./drop";
-import Prize from "./prize";
-import Milestone from "./milestone";
+
 import { handleError } from "../utils/errors";
+import Config from "./config";
+import Drop from "./drop";
+import Member from "./member";
+import Milestone from "./milestone";
+import Prize from "./prize";
 
 @Entity()
 export default class Server extends BaseEntity {
@@ -42,35 +43,35 @@ export default class Server extends BaseEntity {
 
   @OneToMany(
     () => Member,
-    member => member.server
+    member => member.server,
   )
   members!: Promise<Member[]>;
 
   @OneToMany(
     () => Prize,
     prize => prize.server,
-    { eager: true }
+    { eager: true },
   )
   prizes!: Prize[];
 
   @OneToMany(
     () => Drop,
     drop => drop.server,
-    { eager: true }
+    { eager: true },
   )
   drops!: Drop[];
 
   @OneToMany(
     () => Milestone,
     milestone => milestone.server,
-    { eager: true }
+    { eager: true },
   )
   milestones!: Milestone[];
 
   static async findOrCreate(guildId: string): Promise<Server | void> {
     try {
       const foundServer = await Server.findOne({
-        where: { discordId: guildId }
+        where: { discordId: guildId },
       });
 
       if (foundServer) {

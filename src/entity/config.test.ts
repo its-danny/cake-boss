@@ -1,8 +1,9 @@
-import { createConnection, getConnection } from "typeorm";
-import faker from "faker";
 import { Role } from "discord.js";
+import faker from "faker";
+import { createConnection, getConnection } from "typeorm";
+
+import { createChannel, createMessage, createServer, ENTITIES } from "../../test/test-helpers";
 import Config from "./config";
-import { createServer, createMessage, createChannel, ENTITIES } from "../../test/test-helpers";
 
 describe("entities/config", () => {
   beforeEach(async done => {
@@ -12,7 +13,7 @@ describe("entities/config", () => {
       dropSchema: true,
       entities: ENTITIES,
       synchronize: true,
-      logging: false
+      logging: false,
     });
 
     done();
@@ -105,15 +106,15 @@ describe("entities/config", () => {
     const server = await createServer();
     const roleOne = {
       id: faker.random.uuid(),
-      name: faker.internet.domainWord()
+      name: faker.internet.domainWord(),
     } as Role;
     const roleTwo = {
       id: faker.random.uuid(),
-      name: faker.internet.domainWord()
+      name: faker.internet.domainWord(),
     } as Role;
     const message = await createMessage({
       server,
-      serverRoles: [roleOne, roleTwo]
+      serverRoles: [roleOne, roleTwo],
     });
 
     expect(config.setRoles("none", "manager-roles", message.guild)).toBe(true);
@@ -163,12 +164,12 @@ describe("entities/config", () => {
 
     expect(
       config.setDropGifs(
-        "https://media.giphy.com/media/QqkzeedW5Qq7S/giphy.gif,https://media.giphy.com/media/13Wlh2o9yCiMTu/giphy.gif"
-      )
+        "https://media.giphy.com/media/QqkzeedW5Qq7S/giphy.gif,https://media.giphy.com/media/13Wlh2o9yCiMTu/giphy.gif",
+      ),
     ).toBe(true);
     expect(config.dropGifs).toEqual([
       "https://media.giphy.com/media/QqkzeedW5Qq7S/giphy.gif",
-      "https://media.giphy.com/media/13Wlh2o9yCiMTu/giphy.gif"
+      "https://media.giphy.com/media/13Wlh2o9yCiMTu/giphy.gif",
     ]);
   });
 
@@ -180,12 +181,12 @@ describe("entities/config", () => {
 
     expect(
       config.setDropGifs(
-        "https://media.giphy.com/media/QqkzeedW5Qq7S/giphy.gif,https://media.giphy.com/media/13Wlh2o9yCiMTu/giphy.gif"
-      )
+        "https://media.giphy.com/media/QqkzeedW5Qq7S/giphy.gif,https://media.giphy.com/media/13Wlh2o9yCiMTu/giphy.gif",
+      ),
     ).toBe(true);
     expect(config.dropGifs).toEqual([
       "https://media.giphy.com/media/QqkzeedW5Qq7S/giphy.gif",
-      "https://media.giphy.com/media/13Wlh2o9yCiMTu/giphy.gif"
+      "https://media.giphy.com/media/13Wlh2o9yCiMTu/giphy.gif",
     ]);
   });
 

@@ -1,16 +1,17 @@
 import { Argv } from "yargs";
-import Server from "../../entity/server";
-import { canManage } from "../../utils/permissions";
+
 import Member from "../../entity/member";
-import { logEvent } from "../../utils/logger";
+import Server from "../../entity/server";
+import { CommandArguments, CommandResponse } from "../../utils/command-interfaces";
 import {
   EMOJI_ERROR,
   EMOJI_INCORRECT_PERMISSIONS,
+  EMOJI_JOB_WELL_DONE,
   EMOJI_RECORD_NOT_FOUND,
-  EMOJI_JOB_WELL_DONE
 } from "../../utils/emoji";
-import { CommandArguments, CommandResponse } from "../../utils/command-interfaces";
 import { handleError } from "../../utils/errors";
+import { logEvent } from "../../utils/logger";
+import { canManage } from "../../utils/permissions";
 
 export interface Arguments extends CommandArguments {
   member: string;
@@ -21,12 +22,12 @@ export const removeCakes = async (args: Arguments): Promise<CommandResponse | vo
   try {
     if (!(await canManage(args.message))) {
       return {
-        content: `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`
+        content: `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`,
       };
     }
 
     const server = await Server.findOne({
-      where: { discordId: args.message.guild.id }
+      where: { discordId: args.message.guild.id },
     });
 
     if (!server) {
@@ -38,12 +39,12 @@ export const removeCakes = async (args: Arguments): Promise<CommandResponse | vo
 
     if (!targetDiscordMember) {
       return {
-        content: `${EMOJI_RECORD_NOT_FOUND} Uh oh, I couldn't find them.`
+        content: `${EMOJI_RECORD_NOT_FOUND} Uh oh, I couldn't find them.`,
       };
     }
 
     const targetMember = await Member.findOne({
-      where: { discordId: targetDiscordMember.id }
+      where: { discordId: targetDiscordMember.id },
     });
 
     if (!targetMember) {
@@ -69,7 +70,7 @@ export const removeCakes = async (args: Arguments): Promise<CommandResponse | vo
       args.message,
       `${server.config.cakeEmoji} \`${args.message.author.tag}\` removed ${amount} ${
         amount > 1 ? server.config.cakeNamePlural : server.config.cakeNameSingular
-      } from \`${targetDiscordMember.user.tag}\`.`
+      } from \`${targetDiscordMember.user.tag}\`.`,
     );
 
     if (server.config.quietMode) {

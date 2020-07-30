@@ -1,15 +1,16 @@
 import { createConnection, getConnection } from "typeorm";
+
 import {
-  createServer,
+  createChannel,
   createClient,
   createMessage,
-  createChannel,
   createPrize,
-  ENTITIES
+  createServer,
+  ENTITIES,
 } from "../../../../test/test-helpers";
-import { removePrize, Arguments } from "./remove";
-import { EMOJI_ERROR, EMOJI_INCORRECT_PERMISSIONS, EMOJI_JOB_WELL_DONE } from "../../../utils/emoji";
 import { CommandResponse } from "../../../utils/command-interfaces";
+import { EMOJI_ERROR, EMOJI_INCORRECT_PERMISSIONS, EMOJI_JOB_WELL_DONE } from "../../../utils/emoji";
+import { Arguments, removePrize } from "./remove";
 
 describe("commands/manage/prize/remove", () => {
   beforeEach(async done => {
@@ -19,7 +20,7 @@ describe("commands/manage/prize/remove", () => {
       dropSchema: true,
       entities: ENTITIES,
       synchronize: true,
-      logging: false
+      logging: false,
     });
 
     done();
@@ -43,7 +44,7 @@ describe("commands/manage/prize/remove", () => {
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await removePrize(args)) as CommandResponse;
@@ -63,7 +64,7 @@ describe("commands/manage/prize/remove", () => {
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await removePrize(args)) as CommandResponse;
@@ -84,18 +85,18 @@ describe("commands/manage/prize/remove", () => {
       message: await createMessage({
         server,
         serverChannels: [channel],
-        permission: "ADMINISTRATOR"
+        permission: "ADMINISTRATOR",
       }),
       id: 7,
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await removePrize(args)) as CommandResponse;
     expect(response.content).toBe(
-      `${EMOJI_ERROR} Couldn't find that prize, are you sure \`${args.id}\` is the right ID?`
+      `${EMOJI_ERROR} Couldn't find that prize, are you sure \`${args.id}\` is the right ID?`,
     );
 
     done();
@@ -114,13 +115,13 @@ describe("commands/manage/prize/remove", () => {
       message: await createMessage({
         server,
         serverChannels: [channel],
-        permission: "ADMINISTRATOR"
+        permission: "ADMINISTRATOR",
       }),
       id: prize.id,
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await removePrize(args)) as CommandResponse;

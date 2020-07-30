@@ -1,8 +1,9 @@
 import { createConnection, getConnection } from "typeorm";
-import { removeCakes, Arguments } from "./remove";
-import { createServer, createMember, createMessage, createClient, ENTITIES } from "../../../test/test-helpers";
-import { EMOJI_INCORRECT_PERMISSIONS, EMOJI_RECORD_NOT_FOUND, EMOJI_JOB_WELL_DONE } from "../../utils/emoji";
+
+import { createClient, createMember, createMessage, createServer, ENTITIES } from "../../../test/test-helpers";
 import { CommandResponse } from "../../utils/command-interfaces";
+import { EMOJI_INCORRECT_PERMISSIONS, EMOJI_JOB_WELL_DONE, EMOJI_RECORD_NOT_FOUND } from "../../utils/emoji";
+import { Arguments, removeCakes } from "./remove";
 
 describe("commands/use/remove", () => {
   beforeEach(async done => {
@@ -12,7 +13,7 @@ describe("commands/use/remove", () => {
       dropSchema: true,
       entities: ENTITIES,
       synchronize: true,
-      logging: false
+      logging: false,
     });
 
     done();
@@ -36,7 +37,7 @@ describe("commands/use/remove", () => {
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await removeCakes(args)) as CommandResponse;
@@ -56,7 +57,7 @@ describe("commands/use/remove", () => {
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await removeCakes(args)) as CommandResponse;
@@ -74,14 +75,14 @@ describe("commands/use/remove", () => {
       message: await createMessage({
         server,
         serverMembers: [member],
-        permission: "ADMINISTRATOR"
+        permission: "ADMINISTRATOR",
       }),
       member: `<@${member.discordId}>`,
       amount: 1,
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await removeCakes(args)) as CommandResponse;

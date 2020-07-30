@@ -1,19 +1,20 @@
-import { Argv } from "yargs";
 import { TextChannel } from "discord.js";
-import { sample, isEmpty } from "lodash";
-import { canDrop } from "../../utils/permissions";
-import Server from "../../entity/server";
+import { isEmpty, sample } from "lodash";
+import { Argv } from "yargs";
+
 import Drop from "../../entity/drop";
-import { logEvent } from "../../utils/logger";
-import {
-  EMOJI_INCORRECT_PERMISSIONS,
-  EMOJI_RECORD_NOT_FOUND,
-  EMOJI_JOB_WELL_DONE,
-  EMOJI_WORKING_HARD,
-  EMOJI_ERROR
-} from "../../utils/emoji";
+import Server from "../../entity/server";
 import { CommandArguments, CommandResponse } from "../../utils/command-interfaces";
+import {
+  EMOJI_ERROR,
+  EMOJI_INCORRECT_PERMISSIONS,
+  EMOJI_JOB_WELL_DONE,
+  EMOJI_RECORD_NOT_FOUND,
+  EMOJI_WORKING_HARD,
+} from "../../utils/emoji";
 import { handleError } from "../../utils/errors";
+import { logEvent } from "../../utils/logger";
+import { canDrop } from "../../utils/permissions";
 
 export interface Arguments extends CommandArguments {
   channel: string;
@@ -24,12 +25,12 @@ export const dropCakes = async (args: Arguments): Promise<CommandResponse | void
   try {
     if (!(await canDrop(args.message))) {
       return {
-        content: `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`
+        content: `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`,
       };
     }
 
     const server = await Server.findOne({
-      where: { discordId: args.message.guild.id }
+      where: { discordId: args.message.guild.id },
     });
 
     if (!server) {
@@ -41,7 +42,7 @@ export const dropCakes = async (args: Arguments): Promise<CommandResponse | void
 
     if (!discordChannel) {
       return {
-        content: `${EMOJI_RECORD_NOT_FOUND} Uh oh, I couldn't find that channel.`
+        content: `${EMOJI_RECORD_NOT_FOUND} Uh oh, I couldn't find that channel.`,
       };
     }
 
@@ -64,7 +65,7 @@ export const dropCakes = async (args: Arguments): Promise<CommandResponse | void
       args.message,
       `${server.config.cakeEmoji} \`${args.message.author.tag}\` dropped ${amount} ${
         amount > 1 ? server.config.cakeNamePlural : server.config.cakeNameSingular
-      } in \`#${discordChannel.name}\`!`
+      } in \`#${discordChannel.name}\`!`,
     );
 
     discordChannel.send(
@@ -72,7 +73,7 @@ export const dropCakes = async (args: Arguments): Promise<CommandResponse | void
         amount > 1 ? server.config.cakeNamePlural : server.config.cakeNameSingular
       } just dropped! \`${server.config.commandPrefix} take\` it!\n${
         !isEmpty(server.config.dropGifs) ? sample(server.config.dropGifs) : ""
-      }`
+      }`,
     );
 
     if (server.config.quietMode) {

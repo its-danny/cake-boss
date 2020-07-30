@@ -1,8 +1,9 @@
 import { createConnection, getConnection } from "typeorm";
-import { createServer, createClient, createMessage, createChannel, ENTITIES } from "../../../../test/test-helpers";
-import { addPrize, Arguments } from "./add";
-import { EMOJI_ERROR, EMOJI_INCORRECT_PERMISSIONS, EMOJI_JOB_WELL_DONE } from "../../../utils/emoji";
+
+import { createChannel, createClient, createMessage, createServer, ENTITIES } from "../../../../test/test-helpers";
 import { CommandResponse } from "../../../utils/command-interfaces";
+import { EMOJI_ERROR, EMOJI_INCORRECT_PERMISSIONS, EMOJI_JOB_WELL_DONE } from "../../../utils/emoji";
+import { addPrize, Arguments } from "./add";
 
 describe("commands/manage/prize/add", () => {
   beforeEach(async done => {
@@ -12,7 +13,7 @@ describe("commands/manage/prize/add", () => {
       dropSchema: true,
       entities: ENTITIES,
       synchronize: true,
-      logging: false
+      logging: false,
     });
 
     done();
@@ -37,7 +38,7 @@ describe("commands/manage/prize/add", () => {
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await addPrize(args)) as CommandResponse;
@@ -58,7 +59,7 @@ describe("commands/manage/prize/add", () => {
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await addPrize(args)) as CommandResponse;
@@ -79,7 +80,7 @@ describe("commands/manage/prize/add", () => {
       message: await createMessage({
         server,
         serverChannels: [channel],
-        permission: "ADMINISTRATOR"
+        permission: "ADMINISTRATOR",
       }),
       description: "",
       reactionEmoji: "🐺",
@@ -87,7 +88,7 @@ describe("commands/manage/prize/add", () => {
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await addPrize(args)) as CommandResponse;
@@ -108,7 +109,7 @@ describe("commands/manage/prize/add", () => {
       message: await createMessage({
         server,
         serverChannels: [channel],
-        permission: "ADMINISTRATOR"
+        permission: "ADMINISTRATOR",
       }),
       description: "A hellhound",
       reactionEmoji: "",
@@ -116,7 +117,7 @@ describe("commands/manage/prize/add", () => {
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await addPrize(args)) as CommandResponse;
@@ -137,7 +138,7 @@ describe("commands/manage/prize/add", () => {
       message: await createMessage({
         server,
         serverChannels: [channel],
-        permission: "ADMINISTRATOR"
+        permission: "ADMINISTRATOR",
       }),
       description: "A hellhound",
       reactionEmoji: "🐺",
@@ -145,7 +146,7 @@ describe("commands/manage/prize/add", () => {
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await addPrize(args)) as CommandResponse;
@@ -166,7 +167,7 @@ describe("commands/manage/prize/add", () => {
       message: await createMessage({
         server,
         serverChannels: [channel],
-        permission: "ADMINISTRATOR"
+        permission: "ADMINISTRATOR",
       }),
       description: "A hellhound",
       reactionEmoji: "🐺",
@@ -174,7 +175,7 @@ describe("commands/manage/prize/add", () => {
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await addPrize(args)) as CommandResponse;

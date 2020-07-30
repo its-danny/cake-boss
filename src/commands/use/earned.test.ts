@@ -1,8 +1,9 @@
 import { createConnection, getConnection } from "typeorm";
-import { getEarned } from "./earned";
-import { createServer, createMember, createMessage, createClient, ENTITIES } from "../../../test/test-helpers";
-import { EMOJI_CAKE } from "../../utils/emoji";
+
+import { createClient, createMember, createMessage, createServer, ENTITIES } from "../../../test/test-helpers";
 import { CommandArguments, CommandResponse } from "../../utils/command-interfaces";
+import { EMOJI_CAKE } from "../../utils/emoji";
+import { getEarned } from "./earned";
 
 describe("commands/use/earned", () => {
   beforeEach(async done => {
@@ -12,7 +13,7 @@ describe("commands/use/earned", () => {
       dropSchema: true,
       entities: ENTITIES,
       synchronize: true,
-      logging: false
+      logging: false,
     });
 
     done();
@@ -35,7 +36,7 @@ describe("commands/use/earned", () => {
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await getEarned(args)) as CommandResponse;

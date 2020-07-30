@@ -1,5 +1,6 @@
 import * as Sentry from "@sentry/node";
 import { Message } from "discord.js";
+
 import { EMOJI_ERROR } from "./emoji";
 
 const NODE_ENV: string = process.env.NODE_ENV as string;

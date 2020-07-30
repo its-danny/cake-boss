@@ -1,9 +1,10 @@
 import { createConnection, getConnection } from "typeorm";
-import { getDropList } from "./dropped";
-import { createServer, createMessage, createClient, createChannel, ENTITIES } from "../../../test/test-helpers";
-import { EMOJI_INCORRECT_PERMISSIONS, EMOJI_CAKE } from "../../utils/emoji";
+
+import { createChannel, createClient, createMessage, createServer, ENTITIES } from "../../../test/test-helpers";
 import Drop from "../../entity/drop";
 import { CommandArguments, CommandResponse } from "../../utils/command-interfaces";
+import { EMOJI_CAKE, EMOJI_INCORRECT_PERMISSIONS } from "../../utils/emoji";
+import { getDropList } from "./dropped";
 
 describe("commands/use/dropped", () => {
   beforeEach(async done => {
@@ -13,7 +14,7 @@ describe("commands/use/dropped", () => {
       dropSchema: true,
       entities: ENTITIES,
       synchronize: true,
-      logging: false
+      logging: false,
     });
 
     done();
@@ -35,7 +36,7 @@ describe("commands/use/dropped", () => {
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await getDropList(args)) as CommandResponse;
@@ -72,12 +73,12 @@ describe("commands/use/dropped", () => {
       message: await createMessage({
         server,
         serverChannels: [channelOne, channelTwo],
-        permission: "ADMINISTRATOR"
+        permission: "ADMINISTRATOR",
       }),
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await getDropList(args)) as CommandResponse;

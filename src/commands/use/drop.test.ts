@@ -1,9 +1,10 @@
 import { createConnection, getConnection } from "typeorm";
-import { dropCakes, Arguments } from "./drop";
-import { createServer, createMessage, createClient, createChannel, ENTITIES } from "../../../test/test-helpers";
-import { EMOJI_INCORRECT_PERMISSIONS, EMOJI_JOB_WELL_DONE } from "../../utils/emoji";
+
+import { createChannel, createClient, createMessage, createServer, ENTITIES } from "../../../test/test-helpers";
 import Drop from "../../entity/drop";
 import { CommandResponse } from "../../utils/command-interfaces";
+import { EMOJI_INCORRECT_PERMISSIONS, EMOJI_JOB_WELL_DONE } from "../../utils/emoji";
+import { Arguments, dropCakes } from "./drop";
 
 describe("commands/use/drop", () => {
   beforeEach(async done => {
@@ -13,7 +14,7 @@ describe("commands/use/drop", () => {
       dropSchema: true,
       entities: ENTITIES,
       synchronize: true,
-      logging: false
+      logging: false,
     });
 
     done();
@@ -37,7 +38,7 @@ describe("commands/use/drop", () => {
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await dropCakes(args)) as CommandResponse;
@@ -55,21 +56,21 @@ describe("commands/use/drop", () => {
       message: await createMessage({
         server,
         serverChannels: [channel],
-        permission: "ADMINISTRATOR"
+        permission: "ADMINISTRATOR",
       }),
       channel: `<#${channel.id}>`,
       amount: 1,
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await dropCakes(args)) as CommandResponse;
     expect(response.content).toBe(`${EMOJI_JOB_WELL_DONE} Done!`);
 
     const drop = await Drop.findOne({
-      where: { server, channelDiscordId: channel.id }
+      where: { server, channelDiscordId: channel.id },
     });
     expect(drop).toBeDefined();
     expect(drop!.amount).toBe(1);

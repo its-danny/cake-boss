@@ -1,16 +1,17 @@
 import { createConnection, getConnection } from "typeorm";
-import { takeCake } from "./take";
+
 import {
-  createServer,
-  createMessage,
-  createClient,
   createChannel,
+  createClient,
   createMember,
-  ENTITIES
+  createMessage,
+  createServer,
+  ENTITIES,
 } from "../../../test/test-helpers";
-import { EMOJI_JOB_WELL_DONE, EMOJI_DONT_DO_THAT, EMOJI_RECORD_NOT_FOUND } from "../../utils/emoji";
 import Drop from "../../entity/drop";
 import { CommandArguments, CommandResponse } from "../../utils/command-interfaces";
+import { EMOJI_DONT_DO_THAT, EMOJI_JOB_WELL_DONE, EMOJI_RECORD_NOT_FOUND } from "../../utils/emoji";
+import { takeCake } from "./take";
 
 describe("commands/use/take", () => {
   beforeEach(async done => {
@@ -20,7 +21,7 @@ describe("commands/use/take", () => {
       dropSchema: true,
       entities: ENTITIES,
       synchronize: true,
-      logging: false
+      logging: false,
     });
 
     done();
@@ -44,17 +45,17 @@ describe("commands/use/take", () => {
         server,
         channel,
         serverMembers: [member],
-        senderId: member.discordId
+        senderId: member.discordId,
       }),
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await takeCake(args)) as CommandResponse;
     expect(response.content).toBe(
-      `${EMOJI_DONT_DO_THAT} You have been **shamed** and can not get ${server.config.cakeNamePlural}!`
+      `${EMOJI_DONT_DO_THAT} You have been **shamed** and can not get ${server.config.cakeNamePlural}!`,
     );
 
     done();
@@ -70,7 +71,7 @@ describe("commands/use/take", () => {
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await takeCake(args)) as CommandResponse;
@@ -96,17 +97,17 @@ describe("commands/use/take", () => {
         server,
         senderId: member.discordId,
         channel,
-        serverChannels: [channel]
+        serverChannels: [channel],
       }),
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await takeCake(args)) as CommandResponse;
     expect(response.content).toBe(
-      `${EMOJI_JOB_WELL_DONE} ${server.config.cakeEmoji} You got it, <@${member.discordId}>!`
+      `${EMOJI_JOB_WELL_DONE} ${server.config.cakeEmoji} You got it, <@${member.discordId}>!`,
     );
 
     await drop.reload();

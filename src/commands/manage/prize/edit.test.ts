@@ -1,15 +1,16 @@
 import { createConnection, getConnection } from "typeorm";
+
 import {
-  createServer,
+  createChannel,
   createClient,
   createMessage,
-  createChannel,
   createPrize,
-  ENTITIES
+  createServer,
+  ENTITIES,
 } from "../../../../test/test-helpers";
-import { editPrize, Arguments } from "./edit";
-import { EMOJI_ERROR, EMOJI_INCORRECT_PERMISSIONS, EMOJI_JOB_WELL_DONE } from "../../../utils/emoji";
 import { CommandResponse } from "../../../utils/command-interfaces";
+import { EMOJI_ERROR, EMOJI_INCORRECT_PERMISSIONS, EMOJI_JOB_WELL_DONE } from "../../../utils/emoji";
+import { Arguments, editPrize } from "./edit";
 
 describe("commands/manage/prize/edit", () => {
   beforeEach(async done => {
@@ -19,7 +20,7 @@ describe("commands/manage/prize/edit", () => {
       dropSchema: true,
       entities: ENTITIES,
       synchronize: true,
-      logging: false
+      logging: false,
     });
 
     done();
@@ -46,7 +47,7 @@ describe("commands/manage/prize/edit", () => {
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await editPrize(args)) as CommandResponse;
@@ -69,7 +70,7 @@ describe("commands/manage/prize/edit", () => {
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await editPrize(args)) as CommandResponse;
@@ -91,7 +92,7 @@ describe("commands/manage/prize/edit", () => {
       message: await createMessage({
         server,
         serverChannels: [channel],
-        permission: "ADMINISTRATOR"
+        permission: "ADMINISTRATOR",
       }),
       id: prize.id,
       description: "",
@@ -100,7 +101,7 @@ describe("commands/manage/prize/edit", () => {
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await editPrize(args)) as CommandResponse;
@@ -122,7 +123,7 @@ describe("commands/manage/prize/edit", () => {
       message: await createMessage({
         server,
         serverChannels: [channel],
-        permission: "ADMINISTRATOR"
+        permission: "ADMINISTRATOR",
       }),
       id: prize.id,
       description: "A hellhound",
@@ -131,7 +132,7 @@ describe("commands/manage/prize/edit", () => {
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await editPrize(args)) as CommandResponse;
@@ -153,7 +154,7 @@ describe("commands/manage/prize/edit", () => {
       message: await createMessage({
         server,
         serverChannels: [channel],
-        permission: "ADMINISTRATOR"
+        permission: "ADMINISTRATOR",
       }),
       id: prize.id,
       description: "A hellhound",
@@ -162,7 +163,7 @@ describe("commands/manage/prize/edit", () => {
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await editPrize(args)) as CommandResponse;
@@ -183,7 +184,7 @@ describe("commands/manage/prize/edit", () => {
       message: await createMessage({
         server,
         serverChannels: [channel],
-        permission: "ADMINISTRATOR"
+        permission: "ADMINISTRATOR",
       }),
       id: 7,
       description: "A hellhound",
@@ -192,12 +193,12 @@ describe("commands/manage/prize/edit", () => {
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await editPrize(args)) as CommandResponse;
     expect(response.content).toBe(
-      `${EMOJI_ERROR} Couldn't find that prize, are you sure \`${args.id}\` is the right ID?`
+      `${EMOJI_ERROR} Couldn't find that prize, are you sure \`${args.id}\` is the right ID?`,
     );
 
     done();
@@ -216,7 +217,7 @@ describe("commands/manage/prize/edit", () => {
       message: await createMessage({
         server,
         serverChannels: [channel],
-        permission: "ADMINISTRATOR"
+        permission: "ADMINISTRATOR",
       }),
       id: prize.id,
       description: "A hellhound",
@@ -225,7 +226,7 @@ describe("commands/manage/prize/edit", () => {
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await editPrize(args)) as CommandResponse;

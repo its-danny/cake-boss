@@ -1,8 +1,9 @@
 import { createConnection, getConnection } from "typeorm";
-import { createServer, createClient, createMessage, createMember, ENTITIES } from "../../../../test/test-helpers";
-import { unshameMember, Arguments } from "./remove";
-import { EMOJI_INCORRECT_PERMISSIONS, EMOJI_JOB_WELL_DONE, EMOJI_RECORD_NOT_FOUND } from "../../../utils/emoji";
+
+import { createClient, createMember, createMessage, createServer, ENTITIES } from "../../../../test/test-helpers";
 import { CommandResponse } from "../../../utils/command-interfaces";
+import { EMOJI_INCORRECT_PERMISSIONS, EMOJI_JOB_WELL_DONE, EMOJI_RECORD_NOT_FOUND } from "../../../utils/emoji";
+import { Arguments, unshameMember } from "./remove";
 
 describe("commands/manage/shame/remove", () => {
   beforeEach(async done => {
@@ -12,7 +13,7 @@ describe("commands/manage/shame/remove", () => {
       dropSchema: true,
       entities: ENTITIES,
       synchronize: true,
-      logging: false
+      logging: false,
     });
 
     done();
@@ -35,7 +36,7 @@ describe("commands/manage/shame/remove", () => {
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await unshameMember(args)) as CommandResponse;
@@ -54,7 +55,7 @@ describe("commands/manage/shame/remove", () => {
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await unshameMember(args)) as CommandResponse;
@@ -72,13 +73,13 @@ describe("commands/manage/shame/remove", () => {
       message: await createMessage({
         server,
         serverMembers: [member],
-        permission: "ADMINISTRATOR"
+        permission: "ADMINISTRATOR",
       }),
       member: `<@${member.discordId}>`,
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await unshameMember(args)) as CommandResponse;

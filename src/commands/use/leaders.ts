@@ -1,15 +1,16 @@
-import { Argv } from "yargs";
 import Table from "cli-table";
+import { Argv } from "yargs";
+
 import Server from "../../entity/server";
-import { EMOJI_WORKING_HARD } from "../../utils/emoji";
-import getTableBorder from "../../utils/get-table-border";
 import { CommandArguments, CommandResponse } from "../../utils/command-interfaces";
+import { EMOJI_WORKING_HARD } from "../../utils/emoji";
 import { handleError } from "../../utils/errors";
+import getTableBorder from "../../utils/get-table-border";
 
 export const getTopEarners = async (args: CommandArguments): Promise<CommandResponse | void> => {
   try {
     const server = await Server.findOne({
-      where: { discordId: args.message.guild.id }
+      where: { discordId: args.message.guild.id },
     });
 
     if (!server) {
@@ -31,7 +32,7 @@ export const getTopEarners = async (args: CommandArguments): Promise<CommandResp
     const table = new Table({
       head: ["", "Member", "Earned"],
       style: { head: [], border: [] },
-      chars: getTableBorder()
+      chars: getTableBorder(),
     });
 
     sorted.forEach((member, index) => {
@@ -40,7 +41,7 @@ export const getTopEarners = async (args: CommandArguments): Promise<CommandResp
     });
 
     return {
-      content: `${server.config.cakeEmoji} **Top Earners** \n\n\`\`\`\n\n${table.toString()}\n\`\`\``
+      content: `${server.config.cakeEmoji} **Top Earners** \n\n\`\`\`\n\n${table.toString()}\n\`\`\``,
     };
   } catch (error) {
     return handleError(error, args.message);

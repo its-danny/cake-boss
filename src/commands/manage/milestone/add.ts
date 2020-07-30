@@ -1,11 +1,12 @@
 import { Argv } from "yargs";
-import { canManage } from "../../../utils/permissions";
-import Server from "../../../entity/server";
+
 import Milestone from "../../../entity/milestone";
-import { logEvent } from "../../../utils/logger";
-import { EMOJI_ERROR, EMOJI_INCORRECT_PERMISSIONS, EMOJI_JOB_WELL_DONE, EMOJI_MILESTONE } from "../../../utils/emoji";
+import Server from "../../../entity/server";
 import { CommandArguments, CommandResponse } from "../../../utils/command-interfaces";
+import { EMOJI_ERROR, EMOJI_INCORRECT_PERMISSIONS, EMOJI_JOB_WELL_DONE, EMOJI_MILESTONE } from "../../../utils/emoji";
 import { handleError } from "../../../utils/errors";
+import { logEvent } from "../../../utils/logger";
+import { canManage } from "../../../utils/permissions";
 
 export interface Arguments extends CommandArguments {
   amount: number;
@@ -17,12 +18,12 @@ export const addMilestone = async (args: Arguments): Promise<CommandResponse | v
   try {
     if (!(await canManage(args.message))) {
       return {
-        content: `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`
+        content: `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`,
       };
     }
 
     const server = await Server.findOne({
-      where: { discordId: args.message.guild.id }
+      where: { discordId: args.message.guild.id },
     });
 
     if (!server) {
@@ -64,7 +65,7 @@ export const addMilestone = async (args: Arguments): Promise<CommandResponse | v
     logEvent(
       args.client,
       args.message,
-      `${EMOJI_MILESTONE} \`${args.message.author.tag}\` added a new milestone: \`${milestone.amount}\``
+      `${EMOJI_MILESTONE} \`${args.message.author.tag}\` added a new milestone: \`${milestone.amount}\``,
     );
 
     if (server.config.quietMode) {

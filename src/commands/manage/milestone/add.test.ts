@@ -1,9 +1,10 @@
-import { createConnection, getConnection } from "typeorm";
 import { Role } from "discord.js";
-import { createServer, createClient, createMessage, ENTITIES } from "../../../../test/test-helpers";
-import { addMilestone, Arguments } from "./add";
-import { EMOJI_ERROR, EMOJI_INCORRECT_PERMISSIONS, EMOJI_JOB_WELL_DONE } from "../../../utils/emoji";
+import { createConnection, getConnection } from "typeorm";
+
+import { createClient, createMessage, createServer, ENTITIES } from "../../../../test/test-helpers";
 import { CommandResponse } from "../../../utils/command-interfaces";
+import { EMOJI_ERROR, EMOJI_INCORRECT_PERMISSIONS, EMOJI_JOB_WELL_DONE } from "../../../utils/emoji";
+import { addMilestone, Arguments } from "./add";
 
 describe("commands/manage/milestone/add", () => {
   beforeEach(async done => {
@@ -13,7 +14,7 @@ describe("commands/manage/milestone/add", () => {
       dropSchema: true,
       entities: ENTITIES,
       synchronize: true,
-      logging: false
+      logging: false,
     });
 
     done();
@@ -37,7 +38,7 @@ describe("commands/manage/milestone/add", () => {
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await addMilestone(args)) as CommandResponse;
@@ -57,7 +58,7 @@ describe("commands/manage/milestone/add", () => {
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await addMilestone(args)) as CommandResponse;
@@ -77,7 +78,7 @@ describe("commands/manage/milestone/add", () => {
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await addMilestone(args)) as CommandResponse;
@@ -96,14 +97,14 @@ describe("commands/manage/milestone/add", () => {
       message: await createMessage({
         server,
         serverRoles: [role],
-        permission: "ADMINISTRATOR"
+        permission: "ADMINISTRATOR",
       }),
       amount: 3,
       roles: "Cool Dude",
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await addMilestone(args)) as CommandResponse;

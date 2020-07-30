@@ -1,6 +1,7 @@
 import { Argv } from "yargs";
-import Server from "../../entity/server";
+
 import Member from "../../entity/member";
+import Server from "../../entity/server";
 import { CommandArguments, CommandResponse } from "../../utils/command-interfaces";
 import { handleError } from "../../utils/errors";
 
@@ -11,7 +12,7 @@ export interface Arguments extends CommandArguments {
 export const getBalance = async (args: Arguments): Promise<CommandResponse | void> => {
   try {
     const server = await Server.findOne({
-      where: { discordId: args.message.guild.id }
+      where: { discordId: args.message.guild.id },
     });
 
     if (!server) {
@@ -26,11 +27,11 @@ export const getBalance = async (args: Arguments): Promise<CommandResponse | voi
 
       usingMember = true;
       member = await Member.findOne({
-        where: { server, discordId: receivingMemberId }
+        where: { server, discordId: receivingMemberId },
       });
     } else {
       member = await Member.findOne({
-        where: { server, discordId: args.message.member.id }
+        where: { server, discordId: args.message.member.id },
       });
     }
 
@@ -41,7 +42,7 @@ export const getBalance = async (args: Arguments): Promise<CommandResponse | voi
     return {
       content: `${server.config.cakeEmoji} ${usingMember ? "Their" : "Your"} current balance is ${member.balance} ${
         member.balance === 1 ? server.config.cakeNameSingular : server.config.cakeNamePlural
-      }!`
+      }!`,
     };
   } catch (error) {
     return handleError(error, args.message);

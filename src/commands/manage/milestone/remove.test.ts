@@ -1,8 +1,9 @@
 import { createConnection, getConnection } from "typeorm";
-import { createServer, createClient, createMessage, createMilestone, ENTITIES } from "../../../../test/test-helpers";
-import { removeMilestone, Arguments } from "./remove";
-import { EMOJI_ERROR, EMOJI_INCORRECT_PERMISSIONS, EMOJI_JOB_WELL_DONE } from "../../../utils/emoji";
+
+import { createClient, createMessage, createMilestone, createServer, ENTITIES } from "../../../../test/test-helpers";
 import { CommandResponse } from "../../../utils/command-interfaces";
+import { EMOJI_ERROR, EMOJI_INCORRECT_PERMISSIONS, EMOJI_JOB_WELL_DONE } from "../../../utils/emoji";
+import { Arguments, removeMilestone } from "./remove";
 
 describe("commands/manage/milestone/remove", () => {
   beforeEach(async done => {
@@ -12,7 +13,7 @@ describe("commands/manage/milestone/remove", () => {
       dropSchema: true,
       entities: ENTITIES,
       synchronize: true,
-      logging: false
+      logging: false,
     });
 
     done();
@@ -36,7 +37,7 @@ describe("commands/manage/milestone/remove", () => {
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await removeMilestone(args)) as CommandResponse;
@@ -55,12 +56,12 @@ describe("commands/manage/milestone/remove", () => {
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await removeMilestone(args)) as CommandResponse;
     expect(response.content).toBe(
-      `${EMOJI_ERROR} Couldn't find that milestone, are you sure \`${args.id}\` is the right ID?`
+      `${EMOJI_ERROR} Couldn't find that milestone, are you sure \`${args.id}\` is the right ID?`,
     );
 
     done();
@@ -77,7 +78,7 @@ describe("commands/manage/milestone/remove", () => {
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await removeMilestone(args)) as CommandResponse;

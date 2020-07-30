@@ -1,8 +1,9 @@
 import { createConnection, getConnection } from "typeorm";
-import { getTopEarners } from "./leaders";
-import { createServer, createMember, createMessage, createClient, ENTITIES } from "../../../test/test-helpers";
-import { EMOJI_CAKE, EMOJI_WORKING_HARD } from "../../utils/emoji";
+
+import { createClient, createMember, createMessage, createServer, ENTITIES } from "../../../test/test-helpers";
 import { CommandArguments, CommandResponse } from "../../utils/command-interfaces";
+import { EMOJI_CAKE, EMOJI_WORKING_HARD } from "../../utils/emoji";
+import { getTopEarners } from "./leaders";
 
 describe("commands/use/leaders", () => {
   beforeEach(async done => {
@@ -12,7 +13,7 @@ describe("commands/use/leaders", () => {
       dropSchema: true,
       entities: ENTITIES,
       synchronize: true,
-      logging: false
+      logging: false,
     });
 
     done();
@@ -34,7 +35,7 @@ describe("commands/use/leaders", () => {
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await getTopEarners(args)) as CommandResponse;
@@ -56,7 +57,7 @@ describe("commands/use/leaders", () => {
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await getTopEarners(args)) as CommandResponse;

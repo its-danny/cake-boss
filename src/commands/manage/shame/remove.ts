@@ -1,16 +1,17 @@
 import { Argv } from "yargs";
-import { canManage } from "../../../utils/permissions";
-import Server from "../../../entity/server";
+
 import Member from "../../../entity/member";
+import Server from "../../../entity/server";
+import { CommandArguments, CommandResponse } from "../../../utils/command-interfaces";
 import {
   EMOJI_INCORRECT_PERMISSIONS,
-  EMOJI_RECORD_NOT_FOUND,
   EMOJI_JOB_WELL_DONE,
-  EMOJI_SHAME
+  EMOJI_RECORD_NOT_FOUND,
+  EMOJI_SHAME,
 } from "../../../utils/emoji";
-import { logEvent } from "../../../utils/logger";
-import { CommandArguments, CommandResponse } from "../../../utils/command-interfaces";
 import { handleError } from "../../../utils/errors";
+import { logEvent } from "../../../utils/logger";
+import { canManage } from "../../../utils/permissions";
 
 export interface Arguments extends CommandArguments {
   member: string;
@@ -20,12 +21,12 @@ export const unshameMember = async (args: Arguments): Promise<CommandResponse | 
   try {
     if (!(await canManage(args.message))) {
       return {
-        content: `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`
+        content: `${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`,
       };
     }
 
     const server = await Server.findOne({
-      where: { discordId: args.message.guild.id }
+      where: { discordId: args.message.guild.id },
     });
 
     if (!server) {
@@ -37,12 +38,12 @@ export const unshameMember = async (args: Arguments): Promise<CommandResponse | 
 
     if (!discordMember) {
       return {
-        content: `${EMOJI_RECORD_NOT_FOUND} Uh oh, I couldn't find them.`
+        content: `${EMOJI_RECORD_NOT_FOUND} Uh oh, I couldn't find them.`,
       };
     }
 
     const member = await Member.findOne({
-      where: { discordId: discordMember.id }
+      where: { discordId: discordMember.id },
     });
 
     if (!member) {
@@ -55,7 +56,7 @@ export const unshameMember = async (args: Arguments): Promise<CommandResponse | 
     logEvent(
       args.client,
       args.message,
-      `${EMOJI_SHAME} \`${args.message.author.tag}\` removed \`${discordMember.user.tag}\` from the shame list.`
+      `${EMOJI_SHAME} \`${args.message.author.tag}\` removed \`${discordMember.user.tag}\` from the shame list.`,
     );
 
     if (server.config.quietMode) {

@@ -1,8 +1,9 @@
 import { createConnection, getConnection } from "typeorm";
-import { getTopGivers } from "./givers";
-import { createServer, createMember, createMessage, createClient, ENTITIES } from "../../../test/test-helpers";
-import { EMOJI_CAKE, EMOJI_WORKING_HARD } from "../../utils/emoji";
+
+import { createClient, createMember, createMessage, createServer, ENTITIES } from "../../../test/test-helpers";
 import { CommandArguments, CommandResponse } from "../../utils/command-interfaces";
+import { EMOJI_CAKE, EMOJI_WORKING_HARD } from "../../utils/emoji";
+import { getTopGivers } from "./givers";
 
 describe("commands/use/givers", () => {
   beforeEach(async done => {
@@ -12,7 +13,7 @@ describe("commands/use/givers", () => {
       dropSchema: true,
       entities: ENTITIES,
       synchronize: true,
-      logging: false
+      logging: false,
     });
 
     done();
@@ -34,7 +35,7 @@ describe("commands/use/givers", () => {
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await getTopGivers(args)) as CommandResponse;
@@ -56,7 +57,7 @@ describe("commands/use/givers", () => {
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
-      reactions: {}
+      reactions: {},
     };
 
     const response = (await getTopGivers(args)) as CommandResponse;

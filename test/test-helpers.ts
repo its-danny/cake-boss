@@ -1,12 +1,13 @@
+import { Client, Guild, GuildMember, Message, Role, TextChannel } from "discord.js";
 import faker from "faker";
-import { Message, Guild, GuildMember, Client, TextChannel, Role } from "discord.js";
+
 import Config from "../src/entity/config";
 import Drop from "../src/entity/drop";
+import Member from "../src/entity/member";
+import Milestone from "../src/entity/milestone";
+import Prize from "../src/entity/prize";
 import Server from "../src/entity/server";
 import User from "../src/entity/user";
-import Member from "../src/entity/member";
-import Prize from "../src/entity/prize";
-import Milestone from "../src/entity/milestone";
 
 export const ENTITIES = [Config, Drop, Member, Milestone, Prize, Server, User];
 
@@ -127,14 +128,14 @@ export const createMessage = async (opts: MessageOptions): Promise<Message> => {
                 displayName: found.discordId,
 
                 user: {
-                  tag: `${found.discordId}#1234`
-                }
+                  tag: `${found.discordId}#1234`,
+                },
               };
             }
             return null;
           }
           return null;
-        }
+        },
       },
 
       channels: {
@@ -147,20 +148,20 @@ export const createMessage = async (opts: MessageOptions): Promise<Message> => {
                 id: found.id,
                 name: found.name,
 
-                send() {}
+                send() {},
               };
             }
             return null;
           }
           return null;
-        }
+        },
       },
 
-      roles: opts.serverRoles ? opts.serverRoles : []
+      roles: opts.serverRoles ? opts.serverRoles : [],
     } as unknown) as Guild,
 
     author: {
-      tag: `${faker.random.uuid()}#1234`
+      tag: `${faker.random.uuid()}#1234`,
     },
 
     channel: opts.channel ? opts.channel : null,
@@ -175,14 +176,14 @@ export const createMessage = async (opts: MessageOptions): Promise<Message> => {
         }
 
         return false;
-      }
-    } as unknown) as GuildMember
+      },
+    } as unknown) as GuildMember,
   } as Message;
 };
 
 export const createChannel = (name?: string): TextChannel => {
   return {
     id: faker.random.uuid(),
-    name: name || faker.internet.domainName()
+    name: name || faker.internet.domainName(),
   } as TextChannel;
 };

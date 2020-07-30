@@ -1,12 +1,13 @@
-import { Argv } from "yargs";
 import { RichEmbed } from "discord.js";
 import { humanize } from "underscore.string";
-import { EMOJI_INCORRECT_PERMISSIONS, EMOJI_RECORD_NOT_FOUND } from "../../utils/emoji";
-import { CommandArguments } from "../../utils/command-interfaces";
-import { canManage } from "../../utils/permissions";
+import { Argv } from "yargs";
+
 import Member from "../../entity/member";
 import Server from "../../entity/server";
+import { CommandArguments } from "../../utils/command-interfaces";
+import { EMOJI_INCORRECT_PERMISSIONS, EMOJI_RECORD_NOT_FOUND } from "../../utils/emoji";
 import { handleError } from "../../utils/errors";
+import { canManage } from "../../utils/permissions";
 
 interface Arguments extends CommandArguments {
   member: string;
@@ -19,7 +20,7 @@ const getUserStats = async (args: Arguments): Promise<string | void> => {
     }
 
     const server = await Server.findOne({
-      where: { discordId: args.message.guild.id }
+      where: { discordId: args.message.guild.id },
     });
 
     if (!server) {

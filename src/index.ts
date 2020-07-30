@@ -1,22 +1,24 @@
 import "reflect-metadata";
-import dotenv from "dotenv";
-import Discord, { Message, Guild, TextChannel } from "discord.js";
+
+import cors from "@koa/cors";
 import * as Sentry from "@sentry/node";
-import yargs from "yargs";
-import { createConnection } from "typeorm";
-import moment from "moment";
+import Axios from "axios";
+import Discord, { Guild, Message, TextChannel } from "discord.js";
+import dotenv from "dotenv";
 import fs from "fs";
 import fsExtra from "fs-extra";
-import schedule from "node-schedule";
 import Koa from "koa";
 import Router from "koa-router";
-import cors from "@koa/cors";
-import Axios from "axios";
+import moment from "moment";
+import schedule from "node-schedule";
+import { createConnection } from "typeorm";
+import yargs from "yargs";
+
 import Member from "./entity/member";
 import Server from "./entity/server";
 import User from "./entity/user";
 import { CommandArguments, CommandResponse } from "./utils/command-interfaces";
-import { EMOJI_JOB_WELL_DONE, EMOJI_WORKING_HARD, EMOJI_THINKING, EMOJI_CAKE } from "./utils/emoji";
+import { EMOJI_CAKE, EMOJI_JOB_WELL_DONE, EMOJI_THINKING, EMOJI_WORKING_HARD } from "./utils/emoji";
 import { handleError } from "./utils/errors";
 
 dotenv.config({ path: `./.env` });
@@ -33,7 +35,7 @@ if (!SENTRY_DISABLED) {
 // Bot
 
 const client = new Discord.Client({
-  fetchAllMembers: true
+  fetchAllMembers: true,
 });
 
 const NODE_ENV: string = process.env.NODE_ENV as string;
@@ -42,11 +44,11 @@ const commandParser = yargs
   .scriptName("[command-prefix]")
   .commandDir("commands/manage", {
     exclude: /\.test\./gm,
-    extensions: [NODE_ENV === "production" ? "js" : "ts"]
+    extensions: [NODE_ENV === "production" ? "js" : "ts"],
   })
   .commandDir("commands/use", {
     exclude: /\.test\./gm,
-    extensions: [NODE_ENV === "production" ? "js" : "ts"]
+    extensions: [NODE_ENV === "production" ? "js" : "ts"],
   })
   .showHelpOnFail(true)
   .wrap(null)
@@ -100,7 +102,7 @@ client.on("messageReactionAdd", async (reaction, user) => {
       messagesToWatch.splice(index, 1);
 
       const server = await Server.findOne({
-        where: { discordId: message.message.guild.id }
+        where: { discordId: message.message.guild.id },
       });
 
       if (server && server.config.redeemChannelId && server.config.redeemPingRoleIds.length > 0) {
@@ -148,7 +150,7 @@ client.on("message", async (message: Message) => {
             needsFetch: false,
             careAboutQuietMode: false,
             promisedOutput: null,
-            reactions: null
+            reactions: null,
           };
 
           let command = cleanContent.replace(commandPrefix, "");
@@ -162,7 +164,7 @@ client.on("message", async (message: Message) => {
             if (error) {
               if (error.name === "YError") {
                 message.channel.send(
-                  `\u200B${EMOJI_WORKING_HARD} Looks like you need some help! Check the commands here: <https://cake-boss.js.org/>`
+                  `\u200B${EMOJI_WORKING_HARD} Looks like you need some help! Check the commands here: <https://cake-boss.js.org/>`,
                 );
               } else {
                 handleError(error, message);
@@ -181,7 +183,7 @@ client.on("message", async (message: Message) => {
 
             if (argv.help) {
               message.channel.send(
-                `\u200B${EMOJI_WORKING_HARD} Looks like you need some help! Check the commands here: <https://cake-boss.js.org/>`
+                `\u200B${EMOJI_WORKING_HARD} Looks like you need some help! Check the commands here: <https://cake-boss.js.org/>`,
               );
             }
 
@@ -191,12 +193,12 @@ client.on("message", async (message: Message) => {
               if (sentMessage) {
                 await sentMessage.edit(
                   `\u200B${commandResponse.content}`,
-                  commandResponse.messageOptions || commandResponse.richEmbed
+                  commandResponse.messageOptions || commandResponse.richEmbed,
                 );
               } else {
                 sentMessage = (await message.channel.send(
                   `\u200B${commandResponse.content}`,
-                  commandResponse.messageOptions || commandResponse.richEmbed || commandResponse.attachment
+                  commandResponse.messageOptions || commandResponse.richEmbed || commandResponse.attachment,
                 )) as Message;
               }
 
@@ -220,7 +222,7 @@ client.on("message", async (message: Message) => {
                 const toWatch = {
                   message: sentMessage,
                   reactions,
-                  userId: message.author.id
+                  userId: message.author.id,
                 };
                 messagesToWatch.push(toWatch);
                 const toWatchIndex = messagesToWatch.indexOf(toWatch);
@@ -320,7 +322,7 @@ createConnection()
               const cakeTotalsCombined = (await cakeTotalsByServer).reduce((a, b) => a + b, 0);
 
               await supportChannel.setTopic(
-                `${EMOJI_WORKING_HARD} ${servers.length} servers, ${userCount} users, ${cakeTotalsCombined} cakes given!`
+                `${EMOJI_WORKING_HARD} ${servers.length} servers, ${userCount} users, ${cakeTotalsCombined} cakes given!`,
               );
 
               const BOTS_ON_DISCORD_API_KEY: string = process.env.BOTS_ON_DISCORD_API_KEY as string;
@@ -329,13 +331,13 @@ createConnection()
                 await Axios.post(
                   `https://bots.ondiscord.xyz/bot-api/bots/611013950942871562/guilds`,
                   {
-                    guildCount: servers.length
+                    guildCount: servers.length,
                   },
                   {
                     headers: {
-                      Authorization: BOTS_ON_DISCORD_API_KEY
-                    }
-                  }
+                      Authorization: BOTS_ON_DISCORD_API_KEY,
+                    },
+                  },
                 );
               }
 
@@ -345,13 +347,13 @@ createConnection()
                 await Axios.post(
                   `https://top.gg/api/bots/611013950942871562/stats`,
                   {
-                    server_count: servers.length
+                    server_count: servers.length,
                   },
                   {
                     headers: {
-                      Authorization: process.env.TOP_GG_API_KEY
-                    }
-                  }
+                      Authorization: process.env.TOP_GG_API_KEY,
+                    },
+                  },
                 );
               }
             }
