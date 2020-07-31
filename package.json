@@ -52,7 +52,7 @@
     "eslint-plugin-simple-import-sort": "^5.0.3",
     "faker": "^4.1.0",
     "husky": "^4.2.5",
-    "jest": "^26.2.1",
+    "jest": "^26.2.2",
     "nodemon": "^2.0.4",
     "prettier": "^2.0.5",
     "sqlite3": "^5.0.0",
