@@ -219,7 +219,7 @@ client.on("message", async (message: Message) => {
               );
             }
 
-            if (argv.promisedOutput) {
+            if (argv.promisedOutput && argv.commandResponse) {
               const commandResponse: CommandResponse = (await argv.promisedOutput) as CommandResponse;
 
               if (sentMessage) {
