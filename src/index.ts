@@ -219,16 +219,18 @@ client.on("message", async (message: Message) => {
               );
             }
 
-            if (argv.promisedOutput && argv.commandResponse) {
+            if (argv.promisedOutput) {
               const commandResponse: CommandResponse = (await argv.promisedOutput) as CommandResponse;
 
-              if (sentMessage) {
-                await sentMessage.edit(`\u200B${commandResponse.content}`, commandResponse.messageEditOptions);
-              } else {
-                sentMessage = (await message.channel.send(
-                  `\u200B${commandResponse.content}`,
-                  commandResponse.messageOptions,
-                )) as Message;
+              if (commandResponse) {
+                if (sentMessage) {
+                  await sentMessage.edit(`\u200B${commandResponse.content}`, commandResponse.messageEditOptions);
+                } else {
+                  sentMessage = (await message.channel.send(
+                    `\u200B${commandResponse.content}`,
+                    commandResponse.messageOptions,
+                  )) as Message;
+                }
               }
 
               const reactions = argv.reactions as {
