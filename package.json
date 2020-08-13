@@ -60,7 +60,7 @@
   },
   "dependencies": {
     "@koa/cors": "^3.1.0",
-    "@sentry/node": "^5.20.1",
+    "@sentry/node": "^5.21.1",
     "axios": "^0.19.2",
     "cli-table": "^0.3.1",
     "csvtojson": "^2.0.10",
