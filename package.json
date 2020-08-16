@@ -6,13 +6,13 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "dev": "NODE_ENV=development yarn run nodemon --watch 'src/**/*.ts' --ignore 'src/**/*.test.ts' --exec 'yarn run ts-node' src/index.ts",
-    "build": "NODE_ENV=production yarn run tsc",
+    "dev": "NODE_ENV=development nodemon --watch 'src/**/*.ts' --ignore 'src/**/*.test.ts' --exec 'ts-node' src/index.ts",
+    "build": "NODE_ENV=production tsc",
     "start": "NODE_ENV=production node dist/src/index.js",
-    "test": "NODE_ENV=test yarn run jest",
+    "test": "NODE_ENV=test jest",
     "lint": "eslint --ext .ts src/",
     "fix": "eslint --ext .ts src/ --fix && prettier --write '**/*.ts' src/",
-    "typeorm": "yarn run ts-node ./node_modules/.bin/typeorm"
+    "typeorm": "ts-node ./node_modules/.bin/typeorm"
   },
   "config": {
     "commitizen": {
