@@ -2,13 +2,7 @@
 
 > A Discord bot that lets users reward each other cakes for being helpful, and redeem those cakes for prizes.
 
-![LGTM Grade](https://img.shields.io/lgtm/grade/javascript/github/dannytatom/cake-boss) ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/dannytatom/cake-boss/test)
-
-[![Discord Bots](https://discordbots.org/api/widget/status/611013950942871562.svg)](https://discordbots.org/bot/611013950942871562)
-[![Discord Bots](https://discordbots.org/api/widget/lib/611013950942871562.svg)](https://discordbots.org/bot/611013950942871562)
-![GitHub commit activity](https://img.shields.io/github/commit-activity/m/dannytatom/cake-boss)
-![GitHub last commit](https://img.shields.io/github/last-commit/dannytatom/cake-boss?color=blue)
-![Maintenance](https://img.shields.io/maintenance/yes/2020?color=blue)
+![LGTM Grade](https://img.shields.io/lgtm/grade/javascript/github/dannytatom/cake-boss) ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/dannytatom/cake-boss/ci) [![Discord Bots](https://discordbots.org/api/widget/status/611013950942871562.svg)](https://discordbots.org/bot/611013950942871562) [![Discord Bots](https://discordbots.org/api/widget/lib/611013950942871562.svg)](https://discordbots.org/bot/611013950942871562)
 
 ## Features
 
