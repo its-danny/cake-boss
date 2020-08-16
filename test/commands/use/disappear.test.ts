@@ -1,9 +1,9 @@
 import { createConnection, getConnection } from "typeorm";
 
-import { createClient, createMember, createMessage, createServer, ENTITIES } from "../../../test/test-helpers";
-import { CommandResponse } from "../../utils/command-interfaces";
-import { EMOJI_INCORRECT_PERMISSIONS, EMOJI_JOB_WELL_DONE, EMOJI_RECORD_NOT_FOUND } from "../../utils/emoji";
-import { Arguments, disappearCakes } from "./disappear";
+import { Arguments, disappearCakes } from "@src/commands/use/disappear";
+import { CommandResponse } from "@src/utils/command-interfaces";
+import { EMOJI_INCORRECT_PERMISSIONS, EMOJI_JOB_WELL_DONE, EMOJI_RECORD_NOT_FOUND } from "@src/utils/emoji";
+import { createClient, createMember, createMessage, createServer, ENTITIES } from "@test/test-helpers";
 
 describe("commands/use/disappear", () => {
   beforeEach(async (done) => {

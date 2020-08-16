@@ -2,6 +2,7 @@ import { Client, GuildMember, Message, Role, TextChannel } from "discord.js";
 
 import Milestone from "../entity/milestone";
 import Server from "../entity/server";
+
 import { EMOJI_MILESTONE } from "./emoji";
 
 export const logEvent = async (client: Client, message: Message, string: string) => {

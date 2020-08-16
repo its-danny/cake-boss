@@ -1,10 +1,10 @@
 import { Role } from "discord.js";
 import { createConnection, getConnection } from "typeorm";
 
-import { createClient, createMessage, createMilestone, createServer, ENTITIES } from "../../../../test/test-helpers";
-import { CommandResponse } from "../../../utils/command-interfaces";
-import { EMOJI_ERROR, EMOJI_INCORRECT_PERMISSIONS, EMOJI_JOB_WELL_DONE } from "../../../utils/emoji";
-import { Arguments, editMilestone } from "./edit";
+import { Arguments, editMilestone } from "@src/commands/manage/milestone/edit";
+import { CommandResponse } from "@src/utils/command-interfaces";
+import { EMOJI_ERROR, EMOJI_INCORRECT_PERMISSIONS, EMOJI_JOB_WELL_DONE } from "@src/utils/emoji";
+import { createClient, createMessage, createMilestone, createServer, ENTITIES } from "@test/test-helpers";
 
 describe("commands/manage/milestone/edit", () => {
   beforeEach(async (done) => {

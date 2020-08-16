@@ -1,16 +1,9 @@
 import { createConnection, getConnection } from "typeorm";
 
-import {
-  createChannel,
-  createClient,
-  createMessage,
-  createPrize,
-  createServer,
-  ENTITIES,
-} from "../../../../test/test-helpers";
-import { CommandResponse } from "../../../utils/command-interfaces";
-import { EMOJI_ERROR, EMOJI_INCORRECT_PERMISSIONS, EMOJI_JOB_WELL_DONE } from "../../../utils/emoji";
-import { Arguments, removePrize } from "./remove";
+import { Arguments, removePrize } from "@src/commands/manage/prize/remove";
+import { CommandResponse } from "@src/utils/command-interfaces";
+import { EMOJI_ERROR, EMOJI_INCORRECT_PERMISSIONS, EMOJI_JOB_WELL_DONE } from "@src/utils/emoji";
+import { createChannel, createClient, createMessage, createPrize, createServer, ENTITIES } from "@test/test-helpers";
 
 describe("commands/manage/prize/remove", () => {
   beforeEach(async (done) => {

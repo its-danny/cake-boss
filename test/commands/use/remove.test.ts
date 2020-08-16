@@ -1,11 +1,11 @@
 import { createConnection, getConnection } from "typeorm";
 
-import { createClient, createMember, createMessage, createServer, ENTITIES } from "../../../../test/test-helpers";
-import { CommandResponse } from "../../../utils/command-interfaces";
-import { EMOJI_INCORRECT_PERMISSIONS, EMOJI_JOB_WELL_DONE, EMOJI_RECORD_NOT_FOUND } from "../../../utils/emoji";
-import { Arguments, shameMember } from "./add";
+import { Arguments, removeCakes } from "@src/commands/use/remove";
+import { CommandResponse } from "@src/utils/command-interfaces";
+import { EMOJI_INCORRECT_PERMISSIONS, EMOJI_JOB_WELL_DONE, EMOJI_RECORD_NOT_FOUND } from "@src/utils/emoji";
+import { createClient, createMember, createMessage, createServer, ENTITIES } from "@test/test-helpers";
 
-describe("commands/manage/shamed/add", () => {
+describe("commands/use/remove", () => {
   beforeEach(async (done) => {
     await createConnection({
       type: "sqlite",
@@ -32,41 +32,43 @@ describe("commands/manage/shamed/add", () => {
     const args: Arguments = {
       client: createClient(),
       message: await createMessage({ server }),
-      member: "<@12345>",
+      member: "",
+      amount: 1,
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
       reactions: {},
     };
 
-    const response = (await shameMember(args)) as CommandResponse;
+    const response = (await removeCakes(args)) as CommandResponse;
     expect(response.content).toBe(`${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`);
 
     done();
   });
 
-  it(`should require valid member`, async (done) => {
+  it(`should require a valid member`, async (done) => {
     const server = await createServer();
 
     const args: Arguments = {
       client: createClient(),
       message: await createMessage({ server, permission: "ADMINISTRATOR" }),
-      member: "<@12345>",
+      member: `<@12345>`,
+      amount: 1,
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
       reactions: {},
     };
 
-    const response = (await shameMember(args)) as CommandResponse;
+    const response = (await removeCakes(args)) as CommandResponse;
     expect(response.content).toBe(`${EMOJI_RECORD_NOT_FOUND} Uh oh, I couldn't find them.`);
 
     done();
   });
 
-  it(`should shame a member`, async (done) => {
+  it(`should remove from balance`, async (done) => {
     const server = await createServer();
-    const member = await createMember({ server });
+    const member = await createMember({ server, balance: 5 });
 
     const args: Arguments = {
       client: createClient(),
@@ -76,16 +78,18 @@ describe("commands/manage/shamed/add", () => {
         permission: "ADMINISTRATOR",
       }),
       member: `<@${member.discordId}>`,
+      amount: 1,
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
       reactions: {},
     };
 
-    const response = (await shameMember(args)) as CommandResponse;
+    const response = (await removeCakes(args)) as CommandResponse;
     expect(response.content).toBe(`${EMOJI_JOB_WELL_DONE} Done!`);
+
     await member.reload();
-    expect(member.shamed).toBe(true);
+    expect(member.balance).toBe(4);
 
     done();
   });

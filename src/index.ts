@@ -1,11 +1,10 @@
-import "reflect-metadata";
+import fs from "fs";
 
 import cors from "@koa/cors";
 import * as Sentry from "@sentry/node";
 import Axios from "axios";
 import Discord, { Guild, Message, TextChannel } from "discord.js";
 import dotenv from "dotenv";
-import fs from "fs";
 import fsExtra from "fs-extra";
 import Koa from "koa";
 import Router from "koa-router";
@@ -13,6 +12,8 @@ import moment from "moment";
 import schedule from "node-schedule";
 import { createConnection } from "typeorm";
 import yargs from "yargs";
+
+import "reflect-metadata";
 
 import Member from "./entity/member";
 import Server from "./entity/server";

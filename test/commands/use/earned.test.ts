@@ -1,11 +1,11 @@
 import { createConnection, getConnection } from "typeorm";
 
-import { createClient, createMember, createMessage, createServer, ENTITIES } from "../../../test/test-helpers";
-import { CommandArguments, CommandResponse } from "../../utils/command-interfaces";
-import { EMOJI_CAKE } from "../../utils/emoji";
-import { getBalance } from "./balance";
+import { getEarned } from "@src/commands/use/earned";
+import { CommandArguments, CommandResponse } from "@src/utils/command-interfaces";
+import { EMOJI_CAKE } from "@src/utils/emoji";
+import { createClient, createMember, createMessage, createServer, ENTITIES } from "@test/test-helpers";
 
-describe("commands/use/balance", () => {
+describe("commands/use/earned", () => {
   beforeEach(async (done) => {
     await createConnection({
       type: "sqlite",
@@ -26,9 +26,9 @@ describe("commands/use/balance", () => {
     done();
   });
 
-  it(`should give you your balance`, async (done) => {
+  it(`should let you how much you've earned over time`, async (done) => {
     const server = await createServer();
-    const member = await createMember({ server, balance: 3 });
+    const member = await createMember({ server, earned: 5 });
 
     const args: CommandArguments = {
       client: createClient(),
@@ -39,8 +39,8 @@ describe("commands/use/balance", () => {
       reactions: {},
     };
 
-    const response = (await getBalance(args)) as CommandResponse;
-    expect(response.content).toBe(`${EMOJI_CAKE} Your current balance is 3 cakes!`);
+    const response = (await getEarned(args)) as CommandResponse;
+    expect(response.content).toBe(`${EMOJI_CAKE} You have earned a total of 5 cakes!`);
 
     done();
   });

@@ -2,8 +2,8 @@ import { Role } from "discord.js";
 import faker from "faker";
 import { createConnection, getConnection } from "typeorm";
 
-import { createChannel, createMessage, createServer, ENTITIES } from "../../test/test-helpers";
-import Config from "./config";
+import Config from "@src/entity/config";
+import { createChannel, createMessage, createServer, ENTITIES } from "@test/test-helpers";
 
 describe("entities/config", () => {
   beforeEach(async (done) => {
