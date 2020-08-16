@@ -11,6 +11,7 @@ import {
 } from "typeorm";
 
 import { handleError } from "../utils/errors";
+
 import Config from "./config";
 import Drop from "./drop";
 import Member from "./member";

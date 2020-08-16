@@ -1,15 +1,15 @@
 import { createConnection, getConnection } from "typeorm";
 
-import { createClient, createMember, createMessage, createServer, ENTITIES } from "../../../test/test-helpers";
-import { CommandResponse } from "../../utils/command-interfaces";
+import { Arguments, giveCakeToMember } from "@src/commands/use/give";
+import { CommandResponse } from "@src/utils/command-interfaces";
 import {
   EMOJI_CAKE,
   EMOJI_DONT_DO_THAT,
   EMOJI_INCORRECT_PERMISSIONS,
   EMOJI_RECORD_NOT_FOUND,
   EMOJI_WORKING_HARD,
-} from "../../utils/emoji";
-import { Arguments, giveCakeToMember } from "./give";
+} from "@src/utils/emoji";
+import { createClient, createMember, createMessage, createServer, ENTITIES } from "@test/test-helpers";
 
 describe("commands/use/give", () => {
   beforeEach(async (done) => {

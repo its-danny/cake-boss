@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
+    "baseUrl": ".",
     "declaration": true,
     "emitDecoratorMetadata": true,
     "esModuleInterop": true,
@@ -9,11 +10,14 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "outDir": "dist",
+    "paths": {
+      "@src/*": ["src/*"],
+      "@test/*": ["test/*"]
+    },
     "resolveJsonModule": true,
     "strict": true,
     "skipLibCheck": true,
     "target": "ES2020"
   },
-  "include": ["src"],
-  "exclude": ["node_modules"]
+  "include": ["src/**/*", "test/**/*"]
 }

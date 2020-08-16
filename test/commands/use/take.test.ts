@@ -1,17 +1,10 @@
 import { createConnection, getConnection } from "typeorm";
 
-import {
-  createChannel,
-  createClient,
-  createMember,
-  createMessage,
-  createServer,
-  ENTITIES,
-} from "../../../test/test-helpers";
-import Drop from "../../entity/drop";
-import { CommandArguments, CommandResponse } from "../../utils/command-interfaces";
-import { EMOJI_DONT_DO_THAT, EMOJI_JOB_WELL_DONE, EMOJI_RECORD_NOT_FOUND } from "../../utils/emoji";
-import { takeCake } from "./take";
+import { takeCake } from "@src/commands/use/take";
+import Drop from "@src/entity/drop";
+import { CommandArguments, CommandResponse } from "@src/utils/command-interfaces";
+import { EMOJI_DONT_DO_THAT, EMOJI_JOB_WELL_DONE, EMOJI_RECORD_NOT_FOUND } from "@src/utils/emoji";
+import { createChannel, createClient, createMember, createMessage, createServer, ENTITIES } from "@test/test-helpers";
 
 describe("commands/use/take", () => {
   beforeEach(async (done) => {

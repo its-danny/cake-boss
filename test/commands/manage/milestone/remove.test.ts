@@ -1,11 +1,11 @@
 import { createConnection, getConnection } from "typeorm";
 
-import { createClient, createMember, createMessage, createServer, ENTITIES } from "../../../../test/test-helpers";
-import { CommandResponse } from "../../../utils/command-interfaces";
-import { EMOJI_INCORRECT_PERMISSIONS, EMOJI_JOB_WELL_DONE, EMOJI_RECORD_NOT_FOUND } from "../../../utils/emoji";
-import { Arguments, unshameMember } from "./remove";
+import { Arguments, removeMilestone } from "@src/commands/manage/milestone/remove";
+import { CommandResponse } from "@src/utils/command-interfaces";
+import { EMOJI_ERROR, EMOJI_INCORRECT_PERMISSIONS, EMOJI_JOB_WELL_DONE } from "@src/utils/emoji";
+import { createClient, createMessage, createMilestone, createServer, ENTITIES } from "@test/test-helpers";
 
-describe("commands/manage/shame/remove", () => {
+describe("commands/manage/milestone/remove", () => {
   beforeEach(async (done) => {
     await createConnection({
       type: "sqlite",
@@ -28,64 +28,63 @@ describe("commands/manage/shame/remove", () => {
 
   it(`should require permissions`, async (done) => {
     const server = await createServer();
+    const milestone = await createMilestone(server);
 
     const args: Arguments = {
       client: createClient(),
       message: await createMessage({ server }),
-      member: "<@12345>",
+      id: milestone.id,
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
       reactions: {},
     };
 
-    const response = (await unshameMember(args)) as CommandResponse;
+    const response = (await removeMilestone(args)) as CommandResponse;
     expect(response.content).toBe(`${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`);
 
     done();
   });
 
-  it(`should require valid member`, async (done) => {
+  it("should require a valid id", async (done) => {
     const server = await createServer();
 
     const args: Arguments = {
       client: createClient(),
       message: await createMessage({ server, permission: "ADMINISTRATOR" }),
-      member: "<@12345>",
+      id: 7,
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
       reactions: {},
     };
 
-    const response = (await unshameMember(args)) as CommandResponse;
-    expect(response.content).toBe(`${EMOJI_RECORD_NOT_FOUND} Uh oh, I couldn't find them.`);
+    const response = (await removeMilestone(args)) as CommandResponse;
+    expect(response.content).toBe(
+      `${EMOJI_ERROR} Couldn't find that milestone, are you sure \`${args.id}\` is the right ID?`,
+    );
 
     done();
   });
 
-  it(`should unshame a member`, async (done) => {
+  it("should remove the milestone", async (done) => {
     const server = await createServer();
-    const member = await createMember({ server, shamed: true });
+    const milestone = await createMilestone(server);
 
     const args: Arguments = {
       client: createClient(),
-      message: await createMessage({
-        server,
-        serverMembers: [member],
-        permission: "ADMINISTRATOR",
-      }),
-      member: `<@${member.discordId}>`,
+      message: await createMessage({ server, permission: "ADMINISTRATOR" }),
+      id: milestone.id,
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
       reactions: {},
     };
 
-    const response = (await unshameMember(args)) as CommandResponse;
+    const response = (await removeMilestone(args)) as CommandResponse;
     expect(response.content).toBe(`${EMOJI_JOB_WELL_DONE} Done!`);
-    await member.reload();
-    expect(member.shamed).toBe(false);
+    await server.reload();
+    expect(server.milestones).toHaveLength(0);
 
     done();
   });

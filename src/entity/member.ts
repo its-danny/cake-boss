@@ -9,6 +9,7 @@ import {
 } from "typeorm";
 
 import { handleError } from "../utils/errors";
+
 import Server from "./server";
 import User from "./user";
 

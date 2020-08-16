@@ -1,9 +1,9 @@
 import { createConnection, getConnection } from "typeorm";
 
-import { createClient, createMember, createMessage, createServer, ENTITIES } from "../../../test/test-helpers";
-import { CommandArguments, CommandResponse } from "../../utils/command-interfaces";
-import { EMOJI_CAKE, EMOJI_WORKING_HARD } from "../../utils/emoji";
-import { getTopGivers } from "./givers";
+import { getTopGivers } from "@src/commands/use/givers";
+import { CommandArguments, CommandResponse } from "@src/utils/command-interfaces";
+import { EMOJI_CAKE, EMOJI_WORKING_HARD } from "@src/utils/emoji";
+import { createClient, createMember, createMessage, createServer, ENTITIES } from "@test/test-helpers";
 
 describe("commands/use/givers", () => {
   beforeEach(async (done) => {

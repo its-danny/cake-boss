@@ -1,11 +1,11 @@
 import { createConnection, getConnection } from "typeorm";
 
-import { createClient, createMember, createMessage, createServer, ENTITIES } from "../../../test/test-helpers";
-import { CommandResponse } from "../../utils/command-interfaces";
-import { EMOJI_INCORRECT_PERMISSIONS, EMOJI_JOB_WELL_DONE, EMOJI_RECORD_NOT_FOUND } from "../../utils/emoji";
-import { Arguments, removeCakes } from "./remove";
+import { Arguments, blessMember } from "@src/commands/use/bless";
+import { CommandResponse } from "@src/utils/command-interfaces";
+import { EMOJI_CAKE, EMOJI_INCORRECT_PERMISSIONS, EMOJI_RECORD_NOT_FOUND } from "@src/utils/emoji";
+import { createClient, createMember, createMessage, createServer, ENTITIES } from "@test/test-helpers";
 
-describe("commands/use/remove", () => {
+describe("commands/use/bless", () => {
   beforeEach(async (done) => {
     await createConnection({
       type: "sqlite",
@@ -33,6 +33,7 @@ describe("commands/use/remove", () => {
       client: createClient(),
       message: await createMessage({ server }),
       member: "",
+      role: "",
       amount: 1,
       needsFetch: false,
       careAboutQuietMode: false,
@@ -40,7 +41,7 @@ describe("commands/use/remove", () => {
       reactions: {},
     };
 
-    const response = (await removeCakes(args)) as CommandResponse;
+    const response = (await blessMember(args)) as CommandResponse;
     expect(response.content).toBe(`${EMOJI_INCORRECT_PERMISSIONS} You ain't got permission to do that!`);
 
     done();
@@ -53,6 +54,7 @@ describe("commands/use/remove", () => {
       client: createClient(),
       message: await createMessage({ server, permission: "ADMINISTRATOR" }),
       member: `<@12345>`,
+      role: "<@12345>",
       amount: 1,
       needsFetch: false,
       careAboutQuietMode: false,
@@ -60,36 +62,40 @@ describe("commands/use/remove", () => {
       reactions: {},
     };
 
-    const response = (await removeCakes(args)) as CommandResponse;
+    const response = (await blessMember(args)) as CommandResponse;
     expect(response.content).toBe(`${EMOJI_RECORD_NOT_FOUND} Uh oh, I couldn't find them.`);
 
     done();
   });
 
-  it(`should remove from balance`, async (done) => {
+  it("should give them cake", async (done) => {
     const server = await createServer();
-    const member = await createMember({ server, balance: 5 });
+    const sender = await createMember({ server });
+    const receiver = await createMember({ server });
 
     const args: Arguments = {
       client: createClient(),
       message: await createMessage({
         server,
-        serverMembers: [member],
+        senderId: sender.discordId,
+        serverMembers: [sender, receiver],
         permission: "ADMINISTRATOR",
       }),
-      member: `<@${member.discordId}>`,
-      amount: 1,
+      member: `<@${receiver.discordId}>`,
+      role: `<@${receiver.discordId}>`,
+      amount: 3,
       needsFetch: false,
       careAboutQuietMode: false,
       promisedOutput: null,
       reactions: {},
     };
 
-    const response = (await removeCakes(args)) as CommandResponse;
-    expect(response.content).toBe(`${EMOJI_JOB_WELL_DONE} Done!`);
+    const response = (await blessMember(args)) as CommandResponse;
+    expect(response.content).toBe(`${EMOJI_CAKE} ${receiver.discordId} just got 3 cakes, <@${sender.discordId}>!`);
 
-    await member.reload();
-    expect(member.balance).toBe(4);
+    await receiver.reload();
+    expect(receiver.balance).toBe(3);
+    expect(receiver.earned).toBe(3);
 
     done();
   });
