@@ -55,4 +55,4 @@ Contributions are welcome. Check the [guidelines](https://github.com/dannytatom/
 
 ---
 
-If you dig the bot, feel free to upvote it on [Top.GG](https://top.gg/bot/611013950942871562) or [Bots on Discord](https://bots.ondiscord.xyz/bots/611013950942871562).
+If you dig the bot, feel free to upvote it on [Top.GG](https://top.gg/bot/611013950942871562).
