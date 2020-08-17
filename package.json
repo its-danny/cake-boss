@@ -64,7 +64,7 @@
     "axios": "^0.19.2",
     "cli-table": "^0.3.1",
     "csvtojson": "^2.0.10",
-    "discord.js": "^12.2.0",
+    "discord.js": "^12.3.1",
     "dotenv": "^8.2.0",
     "fs-extra": "^9.0.1",
     "json2csv": "^5.0.1",
