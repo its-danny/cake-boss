@@ -50,7 +50,7 @@
     "eslint-plugin-jest": "^23.20.0",
     "eslint-plugin-prettier": "^3.1.4",
     "eslint-plugin-simple-import-sort": "^5.0.3",
-    "faker": "^5.0.0",
+    "faker": "^5.1.0",
     "husky": "^4.2.5",
     "jest": "^26.4.2",
     "nodemon": "^2.0.4",
