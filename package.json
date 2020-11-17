@@ -61,7 +61,7 @@
   "dependencies": {
     "@koa/cors": "^3.1.0",
     "@sentry/node": "^5.27.4",
-    "axios": "^0.20.0",
+    "axios": "^0.21.0",
     "cli-table": "^0.3.1",
     "csvtojson": "^2.0.10",
     "discord.js": "^12.4.1",
