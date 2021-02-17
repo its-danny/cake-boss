@@ -39,7 +39,7 @@
     "@types/node-schedule": "^1.3.1",
     "@types/underscore.string": "^0.0.38",
     "@typescript-eslint/eslint-plugin": "^3.10.1",
-    "@typescript-eslint/parser": "^3.10.1",
+    "@typescript-eslint/parser": "^4.15.1",
     "commitizen": "^4.2.3",
     "cz-conventional-changelog": "^3.3.0",
     "eslint": "^7.19.0",
